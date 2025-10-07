@@ -1,30 +1,21 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { usePuzzles } from "../context/PuzzleContext";
+import { Link } from "react-router-dom";
 
 export default function Play() {
   const { token } = useAuth();
-  const [puzzles, setPuzzles] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
+  const { puzzles, selectedPuzzle, setSelectedPuzzle, fetchPuzzles } =
+    usePuzzles();
+
   const [attempt, setAttempt] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchPuzzles() {
-      try {
-        const res = await fetch("http://localhost:3001/puzzles", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to load puzzles");
-        setPuzzles(data);
-      } catch (err) {
-        setError(err.message);
-      }
+    if (token && puzzles.length === 0) {
+      fetchPuzzles();
     }
-
-    if (token) fetchPuzzles();
-  }, [token]);
+  }, [token, fetchPuzzles, puzzles.length]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -37,7 +28,7 @@ export default function Play() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          puzzle_id: selectedId,
+          puzzle_id: selectedPuzzle.id,
           attempt: attempt.split(",").map((n) => parseInt(n.trim())),
         }),
       });
@@ -49,7 +40,7 @@ export default function Play() {
       } else {
         setMessage("❌ Incorrect. Try again.");
       }
-    } catch (err) {
+    } catch {
       setMessage("Error submitting attempt.");
     }
   }
@@ -57,23 +48,21 @@ export default function Play() {
   return (
     <div>
       <h2>🔐 Available Puzzles</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
       <ul>
         {puzzles.map((p) => (
           <li key={p.id}>
             <strong>{p.name}</strong>
             <p>{p.prompt}</p>
-            <button onClick={() => setSelectedId(p.id)}>
-              {selectedId === p.id ? "Selected" : "Play"}
-            </button>
+            <Link to={`/puzzle/${p.id}`}>
+              <button>Play</button>
+            </Link>
           </li>
         ))}
       </ul>
 
-      {selectedId && (
+      {selectedPuzzle && (
         <form onSubmit={handleSubmit}>
-          <h3>Enter your attempt (comma-separated numbers):</h3>
+          <h3>{selectedPuzzle.name}</h3>
           <input
             type="text"
             value={attempt}
