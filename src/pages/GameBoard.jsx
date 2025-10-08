@@ -1,7 +1,9 @@
+//Puzzle fetch & set,Token usage, Error/message handling,handleAttempt integration, PinTumbler rendering
 import { useParams, useNavigate } from "react-router-dom";
 import { usePuzzles } from "../context/PuzzleContext";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import PinTumbler from "../components/PinTumbler";
 
 export default function GameBoard() {
   const { id } = useParams();
@@ -10,7 +12,6 @@ export default function GameBoard() {
   const { token } = useAuth();
 
   const [puzzle, setPuzzle] = useState(null);
-  const [attempt, setAttempt] = useState("");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -26,8 +27,7 @@ export default function GameBoard() {
 
   if (!puzzle) return <p>Loading puzzle...</p>;
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleAttempt(attemptArray) {
     setMessage("");
 
     try {
@@ -39,7 +39,7 @@ export default function GameBoard() {
         },
         body: JSON.stringify({
           puzzle_id: puzzle.id,
-          attempt: attempt.split(",").map((n) => parseInt(n.trim())),
+          attempt: attemptArray,
         }),
       });
 
@@ -60,16 +60,10 @@ export default function GameBoard() {
       <h2>{puzzle.name}</h2>
       <p>{puzzle.prompt}</p>
 
-      {/* Temporary input for testing */}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={attempt}
-          onChange={(e) => setAttempt(e.target.value)}
-          placeholder="e.g. 40,30,50,20,60"
-        />
-        <button type="submit">Submit</button>
-      </form>
+      <PinTumbler
+        pinCount={JSON.parse(puzzle.solution_code).length} // so you actually pass the correct # of pins (5)) for [40,30,50,20,60]).
+        onSubmit={handleAttempt}
+      />
 
       {message && <p>{message}</p>}
     </div>
