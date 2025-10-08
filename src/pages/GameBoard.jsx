@@ -54,17 +54,21 @@ export default function GameBoard() {
     }
   }
 
+  let parsedCode = [];
+  try {
+    if (puzzle?.solution_code) {
+      parsedCode = JSON.parse(puzzle.solution_code);
+    }
+  } catch (err) {
+    console.error("Failed to parse puzzle.solution_code:", err);
+  }
+
   return (
     <div>
       <button onClick={() => navigate("/")}>← Back to Puzzles</button>
       <h2>{puzzle.name}</h2>
       <p>{puzzle.prompt}</p>
-
-      <PinTumbler
-        pinCount={JSON.parse(puzzle.solution_code).length} // so you actually pass the correct # of pins (5)) for [40,30,50,20,60]).
-        onSubmit={handleAttempt}
-      />
-
+      <PinTumbler pinCount={parsedCode.length || 5} onSubmit={handleAttempt} />
       {message && <p>{message}</p>}
     </div>
   );
