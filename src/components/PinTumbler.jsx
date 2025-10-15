@@ -63,12 +63,12 @@ export default function PinTumbler({ pinCount = 5, onSubmit }) {
           strokeDasharray="5,5"
         />
 
-        {/* 5 pin shafts */}
-        {[0, 1, 2, 3, 4].map((i) => {
+        {/* Dynamic pins */}
+        {pins.map((height, i) => {
           const x = 70 + i * 40;
           return (
             <g key={i}>
-              {/* Shaft background */}
+              {/* Shaft */}
               <rect
                 x={x - 5}
                 y="60"
@@ -78,14 +78,18 @@ export default function PinTumbler({ pinCount = 5, onSubmit }) {
                 stroke="#aaa"
                 strokeWidth="1"
               />
-
               {/* Top pin */}
               <rect x={x - 5} y="60" width="10" height="60" fill="#999" />
-
-              {/* Bottom pin */}
-              <rect x={x - 5} y="140" width="10" height="40" fill="#f4a261" />
-
-              {/* Spring (optional) */}
+              {/* Bottom pin – moves with slider */}
+              <rect
+                x={x - 5}
+                y={180 - height} // vertical position
+                width="10"
+                height={height} // height of pin
+                fill="#f4a261"
+                style={{ transition: "all 0.15s ease" }}
+              />
+              {/* Spring */}
               <line
                 x1={x}
                 y1="50"
@@ -99,7 +103,7 @@ export default function PinTumbler({ pinCount = 5, onSubmit }) {
           );
         })}
 
-        {/* Pick tool (optional - can animate later) */}
+        {/* Pick tool */}
         <rect
           x="40"
           y="260"
@@ -110,6 +114,7 @@ export default function PinTumbler({ pinCount = 5, onSubmit }) {
           transform="rotate(-10 40 260)"
         />
       </svg>
+
       <button onClick={handleSubmit}>Unlock</button>
     </div>
   );
