@@ -58,10 +58,13 @@ export default function PinTumbler({ pinCount = 5, onSubmit }) {
           y1="180"
           x2="250"
           y2="180"
-          stroke="#444"
+          stroke="#000"
           strokeWidth="2"
-          strokeDasharray="5,5"
+          strokeDasharray="4,2"
         />
+
+        {/* gray guide line at shear */}
+        <rect x={x - 5} y="179" width="10" height="2" fill="#444" />
 
         {/* Dynamic pins */}
         {pins.map((height, i) => {
