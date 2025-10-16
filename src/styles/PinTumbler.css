@@ -1,0 +1,22 @@
+.lock-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pin-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.pin-slot {
+  margin: 0 5px;
+  text-align: center;
+}
+
+.pin {
+  background-color: #aaa;
+  width: 10px;
+  margin: 0 auto;
+}
