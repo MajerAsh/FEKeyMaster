@@ -77,12 +77,25 @@ export default function GameBoard() {
       <button onClick={() => navigate("/")}>← Back to Puzzles</button>
       <h2>{puzzle.name}</h2>
       <p>{puzzle.prompt}</p>
-      <PinTumbler
-        pinCount={parsedCode.length || 5}
-        solutionCode={parsedCode}
-        onSubmit={handleAttempt}
-      />
-      {message && <p>{message}</p>}
+
+      {/* PUZZLE TYPE CONDITIONAL RENDERING */}
+      {puzzle.type === "pin-tumbler" && (
+        <PinTumbler
+          pinCount={parsedCode.length}
+          solutionCode={parsedCode}
+          onSubmit={handleAttempt}
+        />
+      )}
+
+      {puzzle.type === "dial" && (
+        <DialLock
+          dialCount={parsedCode.length}
+          solutionCode={parsedCode}
+          onSubmit={handleAttempt}
+        />
+      )}
+
+      <div className="unlocked message">{message && <p>{message}</p>}</div>
     </div>
   );
 }
