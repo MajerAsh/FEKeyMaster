@@ -1,14 +1,48 @@
 //react component
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/PinTumbler.css";
 
-export default function PinTumbler({ pinCount = 5, onSubmit }) {
+export default function PinTumbler({
+  pinCount = 5,
+  solutionCode = [],
+  onSubmit,
+}) {
   const [pins, setPins] = useState(Array(pinCount).fill(0));
+  const [setPinsStatus, setSetPinsStatus] = useState(
+    Array(pinCount).fill(false)
+  );
+
+  // Reset pins if puzzle changes
+  useEffect(() => {
+    setPins(Array(pinCount).fill(0));
+    setSetPinsStatus(Array(pinCount).fill(false));
+  }, [pinCount]);
 
   function handleChange(index, value) {
+    const height = parseInt(value);
     const newPins = [...pins];
-    newPins[index] = parseInt(value);
+    const newStatus = [...setPinsStatus];
+
+    newPins[index] = height;
+
+    // Parse solution value as integer for comparison
+    const target = parseInt(solutionCode[index]);
+    if (!isNaN(target) && Math.abs(height - target) <= 2) {
+      newStatus[index] = true;
+    } else {
+      newStatus[index] = false;
+    }
+    console.log(
+      `Pin ${index + 1} | Height: ${height} | Target: ${target} | Set: ${
+        newStatus[index]
+      }`
+    );
     setPins(newPins);
+    setSetPinsStatus(newStatus);
+  }
+  function handleReset() {
+    setPins(Array(pinCount).fill(0));
+    setSetPinsStatus(Array(pinCount).fill(false));
   }
 
   function handleSubmit(e) {
@@ -19,6 +53,7 @@ export default function PinTumbler({ pinCount = 5, onSubmit }) {
   return (
     <div className="lock-container">
       <h3>Pick the Lock</h3>
+
       <div className="pin-row">
         {pins.map((height, i) => (
           <div className="pin-slot" key={i}>
@@ -26,13 +61,14 @@ export default function PinTumbler({ pinCount = 5, onSubmit }) {
             <input
               type="range"
               min="0"
-              max="100"
+              max="120"
               value={height}
               onChange={(e) => handleChange(i, e.target.value)}
             />
           </div>
         ))}
       </div>
+
       {/* --- SVG lock illustration --- */}
       <svg
         width="300"
@@ -40,7 +76,7 @@ export default function PinTumbler({ pinCount = 5, onSubmit }) {
         viewBox="0 0 300 400"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Lock casing */}
+        {/* Lock body */}
         <rect
           x="50"
           y="50"
@@ -63,15 +99,13 @@ export default function PinTumbler({ pinCount = 5, onSubmit }) {
           strokeDasharray="4,2"
         />
 
-        {/* gray guide line at shear */}
-        <rect x={x - 5} y="179" width="10" height="2" fill="#444" />
-
         {/* Dynamic pins */}
         {pins.map((height, i) => {
           const x = 70 + i * 40;
+
           return (
             <g key={i}>
-              {/* Shaft */}
+              {/* Pin Shaft background */}
               <rect
                 x={x - 5}
                 y="60"
@@ -81,17 +115,30 @@ export default function PinTumbler({ pinCount = 5, onSubmit }) {
                 stroke="#aaa"
                 strokeWidth="1"
               />
-              {/* Top pin */}
-              <rect x={x - 5} y="60" width="10" height="60" fill="#999" />
-              {/* Bottom pin – moves with slider */}
+
+              {/* Shear guide inside each shaft */}
+              <rect x={x - 5} y="179" width="10" height="2" fill="#444" />
+
+              {/* Bottom (key) pin */}
               <rect
                 x={x - 5}
-                y={180 - height} // vertical position
+                y={180 - height}
                 width="10"
-                height={height} // height of pin
+                height={height}
                 fill="#f4a261"
-                style={{ transition: "all 0.15s ease" }}
+                style={{ transition: "all 0.2s ease" }}
               />
+
+              {/* Top (driver) pin */}
+              <rect
+                x={x - 5}
+                y="60"
+                width="10"
+                height={setPinsStatus[i] ? 60 : 120 - height}
+                fill={setPinsStatus[i] ? "#2ecc71" : "#999"}
+                style={{ transition: "all 0.2s ease" }}
+              />
+
               {/* Spring */}
               <line
                 x1={x}
@@ -118,7 +165,12 @@ export default function PinTumbler({ pinCount = 5, onSubmit }) {
         />
       </svg>
 
-      <button onClick={handleSubmit}>Unlock</button>
+      <div style={{ marginTop: "1rem" }}>
+        <button onClick={handleSubmit}>Unlock</button>
+        <button onClick={handleReset} style={{ marginLeft: "10px" }}>
+          Reset Pins
+        </button>
+      </div>
     </div>
   );
 }

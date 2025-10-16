@@ -14,6 +14,8 @@ export default function GameBoard() {
   const [puzzle, setPuzzle] = useState(null);
   const [message, setMessage] = useState("");
 
+  console.log("GameBoard id:", id, "puzzles:", puzzles);
+
   useEffect(() => {
     async function load() {
       if (puzzles.length === 0) {
@@ -21,6 +23,7 @@ export default function GameBoard() {
       }
       const found = puzzles.find((p) => p.id === parseInt(id));
       setPuzzle(found);
+      console.log("Found puzzle:", found);
     }
     load();
   }, [id, puzzles, fetchPuzzles]);
@@ -62,13 +65,23 @@ export default function GameBoard() {
   } catch (err) {
     console.error("Failed to parse puzzle.solution_code:", err);
   }
+  console.log(
+    "parsedCode",
+    parsedCode,
+    "raw solution_code",
+    puzzle?.solution_code
+  );
 
   return (
     <div>
       <button onClick={() => navigate("/")}>← Back to Puzzles</button>
       <h2>{puzzle.name}</h2>
       <p>{puzzle.prompt}</p>
-      <PinTumbler pinCount={parsedCode.length || 5} onSubmit={handleAttempt} />
+      <PinTumbler
+        pinCount={parsedCode.length || 5}
+        solutionCode={parsedCode}
+        onSubmit={handleAttempt}
+      />
       {message && <p>{message}</p>}
     </div>
   );

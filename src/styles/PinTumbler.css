@@ -1,25 +1,22 @@
 .lock-container {
-  text-align: center;
-  margin-top: 2rem;
-}
-
-.pin-row {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  margin: 1rem 0;
-}
-
-.pin-slot {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+.pin-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.pin-slot {
+  margin: 0 5px;
+  text-align: center;
+}
+
 .pin {
-  width: 20px;
-  background-color: #ccc;
-  transition: height 0.2s;
-  border-radius: 4px 4px 0 0;
-  margin-bottom: 0.5rem;
+  background-color: #aaa;
+  width: 10px;
+  margin: 0 auto;
 }
