@@ -1,6 +1,9 @@
 //react component
 import { useState, useEffect } from "react";
 import "../styles/PinTumbler.css";
+import lockBody from "../assets/lock_body.png";
+import shackleClosed from "../assets/shackle_closed.png";
+import shackle-springClosed from "../assets/shackle_spring_closed.png";
 
 export default function PinTumbler({
   pinCount = 5,
