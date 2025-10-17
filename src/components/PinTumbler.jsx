@@ -1,9 +1,32 @@
-//react component
+// src/components/PinTumbler.jsx
 import { useState, useEffect } from "react";
 import "../styles/PinTumbler.css";
-import lockBody from "../assets/lock_body.png";
-import shackleClosed from "../assets/shackle_closed.png";
-import shackle-springClosed from "../assets/shackle_spring_closed.png";
+
+// 🗝️ Base lock parts
+import lockBody from "../assets/lockbody.png";
+import shackleClosed from "../assets/shackleClosed.png";
+import shackleSpringClosed from "../assets/shackle-springClosed.png";
+
+// 🧩 Pin components (drivers, key pins, springs)
+import driver1 from "../assets/driver1.png";
+import key1 from "../assets/key1.png";
+import spring1 from "../assets/spring1.png";
+
+import driver2 from "../assets/driver2.png";
+import key2 from "../assets/key2.png";
+import spring2 from "../assets/spring2.png";
+
+import driver3 from "../assets/driver3.png";
+import key3 from "../assets/key3.png";
+import spring3 from "../assets/spring3.png";
+
+import driver4 from "../assets/driver4.png";
+import key4 from "../assets/key4.png";
+import spring4 from "../assets/spring4.png";
+
+import driver5 from "../assets/driver5.png";
+import key5 from "../assets/key5.png";
+import spring5 from "../assets/spring5.png";
 
 export default function PinTumbler({
   pinCount = 5,
@@ -52,122 +75,68 @@ export default function PinTumbler({
     e.preventDefault();
     onSubmit(pins);
   }
+  // Assets arrays for rendering
+  const springs = [spring1, spring2, spring3, spring4, spring5];
+  const drivers = [driver1, driver2, driver3, driver4, driver5];
+  const keys = [key1, key2, key3, key4, key5];
 
   return (
     <div className="lock-container">
       <h3>Pick the Lock</h3>
 
-      <div className="pin-row">
+      {/* 🎨 Lock artwork stack (replaces SVG) */}
+      <div className="lock-scene">
+        {/* Base lock body + shackle */}
+        <img src={lockBody} alt="Lock body" className="layer" />
+        <img src={shackleSpringClosed} alt="Shackle spring" className="layer" />
+        <img src={shackleClosed} alt="Shackle closed" className="layer" />
+
+        {/* Dynamic pin layers */}
         {pins.map((height, i) => (
-          <div className="pin-slot" key={i}>
-            <div className="pin" style={{ height: `${height}px` }} />
-            <input
-              type="range"
-              min="0"
-              max="120"
-              value={height}
-              onChange={(e) => handleChange(i, e.target.value)}
+          <div key={i} className="pin-layer">
+            <img
+              src={springs[i]}
+              alt={`spring ${i + 1}`}
+              className="layer"
+              style={{
+                transform: `translateY(${pins[i] * -0.5}px) rotate(45deg)`,
+              }}
+            />
+            <img
+              src={drivers[i]}
+              alt={`driver ${i + 1}`}
+              className="layer"
+              style={{
+                transform: `translateY(${pins[i] * -0.6}px) rotate(45deg)`,
+              }}
+            />
+            <img
+              src={keys[i]}
+              alt={`key ${i + 1}`}
+              className="layer"
+              style={{
+                transform: `translateY(${pins[i] * -0.4}px) rotate(45deg)`,
+              }}
             />
           </div>
         ))}
       </div>
 
-      {/* --- SVG lock illustration --- */}
-      <svg
-        width="300"
-        height="400"
-        viewBox="0 0 300 400"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* Lock body */}
-        <rect
-          x="50"
-          y="50"
-          width="200"
-          height="300"
-          rx="20"
-          fill="#ccc"
-          stroke="#999"
-          strokeWidth="4"
-        />
+      {/* 🎚️ Sliders */}
+      <div className="pin-controls">
+        {pins.map((height, i) => (
+          <input
+            key={i}
+            type="range"
+            min="0"
+            max="120"
+            value={height}
+            onChange={(e) => handleChange(i, e.target.value)}
+          />
+        ))}
+      </div>
 
-        {/* Shear line */}
-        <line
-          x1="50"
-          y1="180"
-          x2="250"
-          y2="180"
-          stroke="#000"
-          strokeWidth="2"
-          strokeDasharray="4,2"
-        />
-
-        {/* Dynamic pins */}
-        {pins.map((height, i) => {
-          const x = 70 + i * 40;
-
-          return (
-            <g key={i}>
-              {/* Pin Shaft background */}
-              <rect
-                x={x - 5}
-                y="60"
-                width="10"
-                height="260"
-                fill="#eee"
-                stroke="#aaa"
-                strokeWidth="1"
-              />
-
-              {/* Shear guide inside each shaft */}
-              <rect x={x - 5} y="179" width="10" height="2" fill="#444" />
-
-              {/* Bottom (key) pin */}
-              <rect
-                x={x - 5}
-                y={180 - height}
-                width="10"
-                height={height}
-                fill="#f4a261"
-                style={{ transition: "all 0.2s ease" }}
-              />
-
-              {/* Top (driver) pin */}
-              <rect
-                x={x - 5}
-                y="60"
-                width="10"
-                height={setPinsStatus[i] ? 60 : 120 - height}
-                fill={setPinsStatus[i] ? "#2ecc71" : "#999"}
-                style={{ transition: "all 0.2s ease" }}
-              />
-
-              {/* Spring */}
-              <line
-                x1={x}
-                y1="50"
-                x2={x}
-                y2="60"
-                stroke="#333"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </g>
-          );
-        })}
-
-        {/* Pick tool */}
-        <rect
-          x="40"
-          y="260"
-          width="180"
-          height="10"
-          rx="5"
-          fill="#444"
-          transform="rotate(-10 40 260)"
-        />
-      </svg>
-
+      {/* Buttons */}
       <div style={{ marginTop: "1rem" }}>
         <button onClick={handleSubmit}>Unlock</button>
         <button onClick={handleReset} style={{ marginLeft: "10px" }}>

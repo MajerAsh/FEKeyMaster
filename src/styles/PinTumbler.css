@@ -20,3 +20,43 @@
   width: 10px;
   margin: 0 auto;
 }
+ {
+  /***************added below after custom imgs:****************/
+}
+.lock-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lock-scene {
+  position: relative;
+  width: 552px;
+  height: 1020px;
+  transform: rotate(45deg);
+  transform-origin: center center;
+}
+
+.lock-scene .layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 552px;
+  height: 1020px;
+  transition: transform 0.25s ease;
+}
+
+.pin-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 552px;
+  height: 1020px;
+}
+
+.pin-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 10px;
+}
