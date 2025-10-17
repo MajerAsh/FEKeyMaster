@@ -10,23 +10,23 @@ import shackleSpringClosed from "../assets/shackle-springClosed.png";
 // 🧩 Pin components (drivers, key pins, springs)
 import driver1 from "../assets/driver1.png";
 import key1 from "../assets/key1.png";
-import spring1 from "../assets/spring1.png";
+import spring1 from "../assets/Spring1.png";
 
 import driver2 from "../assets/driver2.png";
 import key2 from "../assets/key2.png";
-import spring2 from "../assets/spring2.png";
+import spring2 from "../assets/Spring2.png";
 
 import driver3 from "../assets/driver3.png";
 import key3 from "../assets/key3.png";
-import spring3 from "../assets/spring3.png";
+import spring3 from "../assets/Spring3.png";
 
 import driver4 from "../assets/driver4.png";
 import key4 from "../assets/key4.png";
-import spring4 from "../assets/spring4.png";
+import spring4 from "../assets/Spring4.png";
 
 import driver5 from "../assets/driver5.png";
 import key5 from "../assets/key5.png";
-import spring5 from "../assets/spring5.png";
+import spring5 from "../assets/Spring5.png";
 
 export default function PinTumbler({
   pinCount = 5,
@@ -99,7 +99,7 @@ export default function PinTumbler({
               alt={`spring ${i + 1}`}
               className="layer"
               style={{
-                transform: `translateY(${pins[i] * -0.5}px) rotate(45deg)`,
+                transform: `translateY(${pins[i] * -0.5}px) rotate(90deg)`,
               }}
             />
             <img
@@ -107,7 +107,7 @@ export default function PinTumbler({
               alt={`driver ${i + 1}`}
               className="layer"
               style={{
-                transform: `translateY(${pins[i] * -0.6}px) rotate(45deg)`,
+                transform: `translateY(${pins[i] * -0.6}px) rotate(90deg)`,
               }}
             />
             <img
@@ -115,7 +115,7 @@ export default function PinTumbler({
               alt={`key ${i + 1}`}
               className="layer"
               style={{
-                transform: `translateY(${pins[i] * -0.4}px) rotate(45deg)`,
+                transform: `translateY(${pins[i] * -0.4}px) rotate(90deg)`,
               }}
             />
           </div>
