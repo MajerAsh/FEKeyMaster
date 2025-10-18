@@ -1,7 +1,9 @@
+//Puzzle fetch & set,Token usage, Error/message handling,handleAttempt integration, PinTumbler rendering
 import { useParams, useNavigate } from "react-router-dom";
 import { usePuzzles } from "../context/PuzzleContext";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import PinTumbler from "../components/PinTumbler";
 
 export default function GameBoard() {
   const { id } = useParams();
@@ -10,8 +12,9 @@ export default function GameBoard() {
   const { token } = useAuth();
 
   const [puzzle, setPuzzle] = useState(null);
-  const [attempt, setAttempt] = useState("");
   const [message, setMessage] = useState("");
+
+  console.log("GameBoard id:", id, "puzzles:", puzzles);
 
   useEffect(() => {
     async function load() {
@@ -20,14 +23,14 @@ export default function GameBoard() {
       }
       const found = puzzles.find((p) => p.id === parseInt(id));
       setPuzzle(found);
+      console.log("Found puzzle:", found);
     }
     load();
   }, [id, puzzles, fetchPuzzles]);
 
   if (!puzzle) return <p>Loading puzzle...</p>;
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleAttempt(attemptArray) {
     setMessage("");
 
     try {
@@ -39,7 +42,7 @@ export default function GameBoard() {
         },
         body: JSON.stringify({
           puzzle_id: puzzle.id,
-          attempt: attempt.split(",").map((n) => parseInt(n.trim())),
+          attempt: attemptArray,
         }),
       });
 
@@ -54,24 +57,45 @@ export default function GameBoard() {
     }
   }
 
+  let parsedCode = [];
+  try {
+    if (puzzle?.solution_code) {
+      parsedCode = JSON.parse(puzzle.solution_code);
+    }
+  } catch (err) {
+    console.error("Failed to parse puzzle.solution_code:", err);
+  }
+  console.log(
+    "parsedCode",
+    parsedCode,
+    "raw solution_code",
+    puzzle?.solution_code
+  );
+
   return (
     <div>
       <button onClick={() => navigate("/")}>← Back to Puzzles</button>
       <h2>{puzzle.name}</h2>
       <p>{puzzle.prompt}</p>
 
-      {/* Temporary input for testing */}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={attempt}
-          onChange={(e) => setAttempt(e.target.value)}
-          placeholder="e.g. 40,30,50,20,60"
+      {/* PUZZLE TYPE CONDITIONAL RENDERING */}
+      {puzzle.type === "pin-tumbler" && (
+        <PinTumbler
+          pinCount={parsedCode.length}
+          solutionCode={parsedCode}
+          onSubmit={handleAttempt}
         />
-        <button type="submit">Submit</button>
-      </form>
+      )}
 
-      {message && <p>{message}</p>}
+      {puzzle.type === "dial" && (
+        <DialLock
+          dialCount={parsedCode.length}
+          solutionCode={parsedCode}
+          onSubmit={handleAttempt}
+        />
+      )}
+
+      <div className="unlocked message">{message && <p>{message}</p>}</div>
     </div>
   );
 }

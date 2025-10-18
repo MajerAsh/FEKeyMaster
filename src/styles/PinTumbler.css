@@ -1,0 +1,75 @@
+.lock-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pin-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.pin-slot {
+  margin: 0 5px;
+  text-align: center;
+}
+
+.pin {
+  background-color: #aaa;
+  width: 10px;
+  margin: 0 auto;
+}
+
+/***************added below after custom imgs:****************/
+
+.lock-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.lock-scene {
+  position: relative;
+  width: 40vw; /* Scales with screen width */
+  aspect-ratio: 552 / 1020; /* Keeps your image proportions */
+  max-width: 400px; /* Prevents it from being too huge on big screens */
+  margin: 0 auto; /* Center it */
+  transform-origin: center center;
+}
+
+.lock-scene .layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 552px;
+  height: 1020px;
+  transition: transform 0.25s ease;
+}
+
+.pin-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 552px;
+  height: 1020px;
+}
+
+.lock-scene .layer,
+.pin-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* Match parent width */
+  height: 100%; /* Maintain aspect ratio automatically */
+  transition: transform 0.25s ease;
+}
+
+.pin-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 10px;
+}
