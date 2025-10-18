@@ -33,7 +33,6 @@
   position: relative;
   width: 552px;
   height: 1020px;
-  transform: rotate(90deg) translateY(-100px);
   transform-origin: center center;
 }
 
