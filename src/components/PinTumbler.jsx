@@ -99,7 +99,7 @@ export default function PinTumbler({
               alt={`spring ${i + 1}`}
               className="layer"
               style={{
-                transform: `translateY(${pins[i] * -0.5}px) rotate(90deg)`,
+                transform: `translateY(${pins[i] * -0.5}px)`,
               }}
             />
             <img
@@ -107,7 +107,7 @@ export default function PinTumbler({
               alt={`driver ${i + 1}`}
               className="layer"
               style={{
-                transform: `translateY(${pins[i] * -0.6}px) rotate(90deg)`,
+                transform: `translateY(${pins[i] * -0.6}px)`,
               }}
             />
             <img
@@ -115,14 +115,14 @@ export default function PinTumbler({
               alt={`key ${i + 1}`}
               className="layer"
               style={{
-                transform: `translateY(${pins[i] * -0.4}px) rotate(90deg)`,
+                transform: `translateY(${pins[i] * -0.4}px)`,
               }}
             />
           </div>
         ))}
       </div>
 
-      {/* 🎚️ Sliders */}
+      {/* Sliders */}
       <div className="pin-controls">
         {pins.map((height, i) => (
           <input
