@@ -33,38 +33,30 @@
 
 .lock-scene {
   position: relative;
-  width: 40vw; /* Scales with screen width */
-  aspect-ratio: 552 / 1020; /* Keeps your image proportions */
-  max-width: 400px; /* Prevents it from being too huge on big screens */
-  margin: 0 auto; /* Center it */
+  width: 40vw; /* scales with screen width */
+  aspect-ratio: 552 / 1020; /* keeps your image proportions */
+  max-width: 480px;
+  margin: 0 auto;
   transform-origin: center center;
 }
 
-.lock-scene .layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 552px;
-  height: 1020px;
-  transition: transform 0.25s ease;
-}
-
-.pin-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 552px;
-  height: 1020px;
-}
-
+/* layers should fill the container without stretching the image contents */
 .lock-scene .layer,
 .pin-layer {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%; /* Match parent width */
-  height: 100%; /* Maintain aspect ratio automatically */
+  width: 100%;
+  height: 100%;
   transition: transform 0.25s ease;
+}
+
+.lock-scene .layer {
+  object-fit: contain;
+}
+
+.pin-layer {
+  pointer-events: none; /* allow sliders and buttons to receive pointer events */
 }
 
 .pin-controls {
