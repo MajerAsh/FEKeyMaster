@@ -1,14 +1,11 @@
 //Puzzle fetch & set,Token usage, Error/message handling,handleAttempt integration, PinTumbler rendering
 import { useParams, useNavigate } from "react-router-dom";
 import { usePuzzles } from "../context/PuzzleContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import PinTumbler from "../components/PinTumbler";
-import PhaserLock from "../components/PhaserLock";
-import { useState } from "react";
 
 export default function GameBoard() {
-  const [usePhaser, setUsePhaser] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
   const { puzzles, fetchPuzzles } = usePuzzles();
@@ -81,28 +78,13 @@ export default function GameBoard() {
       <h2>{puzzle.name}</h2>
       <p>{puzzle.prompt}</p>
 
-      {/* Toggle between classic UI and Phaser UI */}
+      {/* PUZZLE TYPE CONDITIONAL RENDERING */}
       {puzzle.type === "pin-tumbler" && (
-        <div>
-          <label style={{ marginRight: 8 }}>
-            <input
-              type="checkbox"
-              checked={usePhaser}
-              onChange={(e) => setUsePhaser(e.target.checked)}
-            />{" "}
-            Use Phaser UI
-          </label>
-
-          {usePhaser ? (
-            <PhaserLock pinCount={parsedCode.length || 5} />
-          ) : (
-            <PinTumbler
-              pinCount={parsedCode.length}
-              solutionCode={parsedCode}
-              onSubmit={handleAttempt}
-            />
-          )}
-        </div>
+        <PinTumbler
+          pinCount={parsedCode.length}
+          solutionCode={parsedCode}
+          onSubmit={handleAttempt}
+        />
       )}
 
       {puzzle.type === "dial" && (
