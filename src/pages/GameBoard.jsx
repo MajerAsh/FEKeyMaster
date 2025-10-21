@@ -4,6 +4,7 @@ import { usePuzzles } from "../context/PuzzleContext";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import PinTumbler from "../components/PinTumbler";
+import DialLock from "../components/DialLock";
 
 export default function GameBoard() {
   const { id } = useParams();
