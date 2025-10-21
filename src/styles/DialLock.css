@@ -19,15 +19,25 @@
   z-index: 0;
 }
 
+.dial-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 368px;
+  height: 734px;
+}
+
 .dial-image {
   position: absolute;
   top: 0;
   left: 0;
   width: 368px;
   height: 734px;
-  z-index: 10;
+
+  /* 🌀 Center the rotation on the actual center of the dial */
+  transform-origin: 110px 604px; /* 110px from left, 604px from top (734 - 130) */
   transition: transform 0.3s ease;
-  transform-origin: 110px 604px; /* dial center */
+  pointer-events: none;
 }
 
 .dial-controls {
