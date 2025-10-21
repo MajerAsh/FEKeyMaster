@@ -35,9 +35,9 @@
   height: 734px;
 
   /* 🌀 Center the rotation on the actual center of the dial 
-  130px up and 110px in from side*/
+  almost: 216px up and 184px in from side*/
 
-  transform-origin: 176px 526px; /* 176px from left, 526px from top (734 - 208= 526) */
+  transform-origin: 185px 527px; /* not exact: 185px from left, 527px from top (734 - 216= 518) */
   transition: transform 0.3s ease;
   pointer-events: none;
 }
