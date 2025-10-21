@@ -65,3 +65,11 @@
   margin-top: 1rem;
   gap: 10px;
 }
+/* attempts to tweak springs and fitting 
+.layer {
+  transition: transform 0.25s ease;
+  object-fit: contain;
+}
+
+.spring-layer {
+  transform-origin: top center;*/
