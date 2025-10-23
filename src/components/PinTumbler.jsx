@@ -4,7 +4,7 @@ import "../styles/PinTumbler.css";
 // 🗝️ Base lock parts
 import lockBody from "../assets/lockbody.png";
 import shackleClosed from "../assets/shackleClosed.png";
-import shackleSpringClosed from "../assets/shackle-springClosed.png";
+//import shackleSpringClosed from "../assets/shackle-springClosed.png";
 
 // 🧩 Pin components (drivers, key pins, springs)
 import driver1 from "../assets/driver1.png";
