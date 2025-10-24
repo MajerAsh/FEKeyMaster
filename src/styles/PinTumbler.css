@@ -61,6 +61,26 @@
   z-index: 3; /* pins above springs, below shackle */
 }
 
+.pin-layer {
+  overflow: hidden;
+}
+
+.pin-stack {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.pin-stack .pin-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 /* explicit stacking for full-canvas layers */
 .lock-scene .layer.lock-body {
   z-index: 1;

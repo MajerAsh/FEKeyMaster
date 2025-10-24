@@ -221,19 +221,26 @@ export default function PinTumbler({
                 />
               )}
 
-              <img
-                src={isSet ? driverGreen : drivers[i]}
-                alt={`driver ${i + 1}`}
-                className="pin-img driver"
-                style={{ transform: `translateY(${-t}px)` }}
-              />
+              {/* Stack driver+key together so they always touch; anchor to bottom and move the stack */}
+              <div
+                className="pin-stack"
+                style={{
+                  transform: `translateX(-50%) translateY(${-t}px)`,
+                  bottom: 0,
+                }}
+              >
+                <img
+                  src={isSet ? driverGreen : drivers[i]}
+                  alt={`driver ${i + 1}`}
+                  className="pin-img driver"
+                />
 
-              <img
-                src={keys[i]}
-                alt={`key ${i + 1}`}
-                className="pin-img key"
-                style={{ transform: `translateY(${t * 0.6}px)` }}
-              />
+                <img
+                  src={keys[i]}
+                  alt={`key ${i + 1}`}
+                  className="pin-img key"
+                />
+              </div>
             </div>
           );
         })}
