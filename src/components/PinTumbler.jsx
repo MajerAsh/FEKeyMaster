@@ -10,7 +10,7 @@ import shackleClosed from "../assets/shackleClosed.png";
 import driver from "../assets/driver.png";
 import driverGreen from "../assets/driverGreen.png";
 import key from "../assets/key.png";
-import spring from "../assets/spring.png";
+import springs from "../assets/springs.png";
 
 export default function PinTumbler({
   pinCount = 5,
@@ -65,10 +65,11 @@ export default function PinTumbler({
     onSubmit(pins);
   }
 
-  // refs + responsive geometry
+  // refs + responsive geometry:  component reads the image natural width/height at runtime
+  // (via bodyRef.current.naturalWidth/naturalHeight) and falls back to 1332×552 if not available.
   const sceneRef = useRef(null);
   const bodyRef = useRef(null);
-  const [scale, setScale] = useState(1);
+  // scale removed (not used directly) - kept computed in layout calculations
   const [effectiveTravel, setEffectiveTravel] = useState(120);
   const [shafts, setShafts] = useState([]);
 
@@ -85,7 +86,7 @@ export default function PinTumbler({
       let renderedW = body.clientWidth || body.getBoundingClientRect().width;
       let renderedH = body.clientHeight || body.getBoundingClientRect().height;
 
-      const naturalW = body.naturalWidth || 1330;
+      const naturalW = body.naturalWidth || 1332;
       const naturalH = body.naturalHeight || 552;
 
       // Optionally snap rendered dimensions so they align to a grid (e.g. 5px)
@@ -105,11 +106,6 @@ export default function PinTumbler({
 
       // choose scale based on width to keep horizontal placement stable
       const newScale = renderedW / naturalW;
-      setScale(newScale);
-
-      // map slider 0..120 to pixel travel (natural estimate)
-      const travelNatural = 200; // natural px travel for full range; tune if needed
-      setEffectiveTravel(travelNatural * newScale);
 
       // Use user's Procreate measurements (natural pixels)
       // Whole canvas: naturalW x naturalH (1330 x 552)
@@ -120,9 +116,6 @@ export default function PinTumbler({
 
       // per-part natural sizes
       const shaftWidthNatural = 21.5; // approx 21-21.5px wide
-      const springNaturalH = 121;
-      const driverNaturalH = 93;
-      const keyNaturalH = 76;
 
       // vertical partition of shaft: upper (177) and lower (95)
       const upperPortionH = 177;
@@ -135,8 +128,12 @@ export default function PinTumbler({
       const gapsTotal = shaftsBlockWidth - pinCount * shaftWidthNatural;
       const gapNatural = gapsTotal / (pinCount - 1);
 
-      // position shafts block vertically: center it within naturalH by default
-      const shaftsBlockTop = Math.round((naturalH - shaftsBlockHeight) / 2);
+      // position shafts block vertically: according to your measurements there is ~20px above
+      const shaftsBlockTop = 20;
+
+      // map slider 0..120 to pixel travel: driver travel spans the lower portion of the shafts
+      const travelNatural = lowerPortionH; // natural px travel for full driver movement
+      setEffectiveTravel(travelNatural * newScale);
 
       const centers = [];
       for (let i = 0; i < pinCount; i++) {
@@ -148,16 +145,14 @@ export default function PinTumbler({
         centers.push({ x: cx, y: cy });
       }
 
-      const shaftInnerNatural =
-        springNaturalH + driverNaturalH + keyNaturalH + 20; // pad
+      // each shaft (natural) is 22px by 272px
+      const shaftInnerNatural = 272;
       const shearNaturalY = shaftsBlockTop + upperPortionH; // natural Y of shear line
 
       const newShafts = centers.map((c) => ({
         x: (c.x / naturalW) * renderedW,
-        // top of the shaft box (rendered) so innerLength fits inside
-        top:
-          (c.y / naturalH) * renderedH -
-          ((shaftInnerNatural / naturalH) * renderedH) / 2,
+        // top of the shaft box (rendered)
+        top: (shaftsBlockTop / naturalH) * renderedH,
         innerLength: (shaftInnerNatural / naturalH) * renderedH,
         width: (shaftWidthNatural / naturalW) * renderedW,
         shearY: (shearNaturalY / naturalH) * renderedH,
@@ -180,10 +175,11 @@ export default function PinTumbler({
     <div className="lock-container">
       <h3>Pick the Lock</h3>
 
+      {/* Render order inside .lock-scene: lockBody (base) → full springs.png (full-layer) → per-shaft pin layers (drivers & keys) → shackleClosed (top). */}
       <div className="lock-scene" ref={sceneRef}>
-        {/* Base lock body + shackle */}
-        <img src={lockBody} alt="Lock body" className="layer" ref={bodyRef} />
-        <img src={shackleClosed} alt="Shackle closed" className="layer" />
+        {/* Base lock body + springs (full-layer) */}
+  <img src={lockBody} alt="Lock body" className="layer lock-body" ref={bodyRef} />
+  <img src={springs} alt="springs" className="layer springs-full" />
 
         {/* 🎯 Dynamic pins - each pin-layer is anchored to a computed shaft box */}
         {pins.map((height, i) => {
@@ -194,14 +190,7 @@ export default function PinTumbler({
           let t = (height / 120) * effectiveTravel;
           t = Math.max(0, Math.min(t, effectiveTravel));
 
-          const springNaturalH = 121;
-          const springCompress = Math.max(
-            0.35,
-            1 - t / (springNaturalH * scale)
-          );
-          const springTranslate = -t * 0.5;
-          const driverTranslate = -t * 0.6;
-          const keyTranslate = -t * 0.4;
+          // driver/key transforms driven directly by t
 
           const shaft = shafts[i] || {
             x: 80,
@@ -228,31 +217,23 @@ export default function PinTumbler({
               )}
 
               <img
-                src={spring}
-                alt={`spring ${i + 1}`}
-                className="pin-img spring"
-                style={{
-                  transform: `translateY(${springTranslate}px) scaleY(${springCompress})`,
-                  transformOrigin: "top center",
-                }}
-              />
-
-              <img
                 src={isSet ? driverGreen : drivers[i]}
                 alt={`driver ${i + 1}`}
                 className="pin-img driver"
-                style={{ transform: `translateY(${driverTranslate}px)` }}
+                style={{ transform: `translateY(${-t}px)` }}
               />
 
               <img
                 src={keys[i]}
                 alt={`key ${i + 1}`}
                 className="pin-img key"
-                style={{ transform: `translateY(${keyTranslate}px)` }}
+                style={{ transform: `translateY(${t * 0.6}px)` }}
               />
             </div>
           );
         })}
+  {/* shackle should be on top of pins */}
+  <img src={shackleClosed} alt="Shackle closed" className="layer shackle" />
       </div>
 
       {/* 🕹️ Sliders */}
