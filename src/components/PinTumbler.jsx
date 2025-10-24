@@ -85,7 +85,7 @@ export default function PinTumbler({
       let renderedW = body.clientWidth || body.getBoundingClientRect().width;
       let renderedH = body.clientHeight || body.getBoundingClientRect().height;
 
-      const naturalW = body.naturalWidth || 1332;
+      const naturalW = body.naturalWidth || 1330;
       const naturalH = body.naturalHeight || 552;
 
       // Optionally snap rendered dimensions so they align to a grid (e.g. 5px)
@@ -111,46 +111,56 @@ export default function PinTumbler({
       const travelNatural = 200; // natural px travel for full range; tune if needed
       setEffectiveTravel(travelNatural * newScale);
 
-      // Use provided natural coordinates (5px grid)
-      // X range for all shafts: 53..109 (natural px)
-      const xMin = 53;
-      const xMax = 109;
+      // Use user's Procreate measurements (natural pixels)
+      // Whole canvas: naturalW x naturalH (1330 x 552)
+      // Shafts block: total area for 5 shafts + 4 gaps is 205 x 273
+      // Positioned at natural X = 219 (space to the left of shafts = 219)
+      const shaftsBlockLeft = 219;
+      const shaftsBlockWidth = 205;
 
-      // Y midpoints for shafts 1..5 (natural px)
-      // shaft1 midpoint from earlier: (45+49.5)/2 = 47.25
-      const shaftYs = [
-        47.25,
-        (55 + 59) / 2,
-        (64 + 68) / 2,
-        (82 + 87) / 2,
-        (92 + 96) / 2,
-      ];
-
-      // shear line natural X (provided)
-      const shearLineX = 73;
-
-      const centers = [];
-      for (let i = 0; i < pinCount; i++) {
-        const t = pinCount === 1 ? 0.5 : i / (pinCount - 1);
-        const cx = xMin + t * (xMax - xMin);
-        const cy =
-          shaftYs[i] !== undefined ? shaftYs[i] : shaftYs[shaftYs.length - 1];
-        centers.push({ x: cx, y: cy });
-      }
-
+      // per-part natural sizes
+      const shaftWidthNatural = 21.5; // approx 21-21.5px wide
       const springNaturalH = 121;
       const driverNaturalH = 93;
       const keyNaturalH = 76;
+
+      // vertical partition of shaft: upper (177) and lower (95)
+      const upperPortionH = 177;
+      const lowerPortionH = 95;
+
+      // derive shafts block height from upper+lower
+      const shaftsBlockHeight = upperPortionH + lowerPortionH;
+
+      // compute gap between shafts (natural px)
+      const gapsTotal = shaftsBlockWidth - pinCount * shaftWidthNatural;
+      const gapNatural = gapsTotal / (pinCount - 1);
+
+      // position shafts block vertically: center it within naturalH by default
+      const shaftsBlockTop = Math.round((naturalH - shaftsBlockHeight) / 2);
+
+      const centers = [];
+      for (let i = 0; i < pinCount; i++) {
+        const cx =
+          shaftsBlockLeft +
+          shaftWidthNatural / 2 +
+          i * (shaftWidthNatural + gapNatural);
+        const cy = shaftsBlockTop + shaftsBlockHeight / 2; // center of shafts block
+        centers.push({ x: cx, y: cy });
+      }
+
       const shaftInnerNatural =
-        springNaturalH + driverNaturalH + keyNaturalH + 20; // padding
-      const shaftWidthNatural = 23;
+        springNaturalH + driverNaturalH + keyNaturalH + 20; // pad
+      const shearNaturalY = shaftsBlockTop + upperPortionH; // natural Y of shear line
 
       const newShafts = centers.map((c) => ({
         x: (c.x / naturalW) * renderedW,
-        top: (c.y / naturalH) * renderedH,
+        // top of the shaft box (rendered) so innerLength fits inside
+        top:
+          (c.y / naturalH) * renderedH -
+          ((shaftInnerNatural / naturalH) * renderedH) / 2,
         innerLength: (shaftInnerNatural / naturalH) * renderedH,
         width: (shaftWidthNatural / naturalW) * renderedW,
-        shearX: (shearLineX / naturalW) * renderedW,
+        shearY: (shearNaturalY / naturalH) * renderedH,
       }));
 
       setShafts(newShafts);
