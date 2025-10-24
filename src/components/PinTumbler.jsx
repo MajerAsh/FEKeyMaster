@@ -178,8 +178,13 @@ export default function PinTumbler({
       {/* Render order inside .lock-scene: lockBody (base) → full springs.png (full-layer) → per-shaft pin layers (drivers & keys) → shackleClosed (top). */}
       <div className="lock-scene" ref={sceneRef}>
         {/* Base lock body + springs (full-layer) */}
-  <img src={lockBody} alt="Lock body" className="layer lock-body" ref={bodyRef} />
-  <img src={springs} alt="springs" className="layer springs-full" />
+        <img
+          src={lockBody}
+          alt="Lock body"
+          className="layer lock-body"
+          ref={bodyRef}
+        />
+        <img src={springs} alt="springs" className="layer springs-full" />
 
         {/* 🎯 Dynamic pins - each pin-layer is anchored to a computed shaft box */}
         {pins.map((height, i) => {
@@ -232,8 +237,12 @@ export default function PinTumbler({
             </div>
           );
         })}
-  {/* shackle should be on top of pins */}
-  <img src={shackleClosed} alt="Shackle closed" className="layer shackle" />
+        {/* shackle should be on top of pins */}
+        <img
+          src={shackleClosed}
+          alt="Shackle closed"
+          className="layer shackle"
+        />
       </div>
 
       {/* 🕹️ Sliders */}

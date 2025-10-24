@@ -62,9 +62,16 @@
 }
 
 /* explicit stacking for full-canvas layers */
-.lock-scene .layer.lock-body { z-index: 1; }
-.lock-scene .layer.springs-full { z-index: 2; pointer-events: none; }
-.lock-scene .layer.shackle { z-index: 4; }
+.lock-scene .layer.lock-body {
+  z-index: 1;
+}
+.lock-scene .layer.springs-full {
+  z-index: 2;
+  pointer-events: none;
+}
+.lock-scene .layer.shackle {
+  z-index: 4;
+}
 
 .pin-controls {
   display: flex;
