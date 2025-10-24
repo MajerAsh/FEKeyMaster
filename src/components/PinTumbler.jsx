@@ -16,7 +16,9 @@ export default function PinTumbler({
   pinCount = 5,
   solutionCode = [],
   onSubmit,
-  showGuides = true,
+  showGuides = true, //to toggle the tuning overlay/ grid
+  alignToGrid = true,
+  gridSize = 5,
 }) {
   const [pins, setPins] = useState(Array(pinCount).fill(0));
   const [setPinsStatus, setSetPinsStatus] = useState(
@@ -80,11 +82,26 @@ export default function PinTumbler({
       const body = bodyRef.current;
       const scene = sceneRef.current;
       if (!body || !scene) return;
-      const renderedW = body.clientWidth || body.getBoundingClientRect().width;
-      const renderedH = body.clientHeight || body.getBoundingClientRect().height;
+      let renderedW = body.clientWidth || body.getBoundingClientRect().width;
+      let renderedH = body.clientHeight || body.getBoundingClientRect().height;
 
       const naturalW = body.naturalWidth || 1332;
       const naturalH = body.naturalHeight || 552;
+
+      // Optionally snap rendered dimensions so they align to a grid (e.g. 5px)
+      if (alignToGrid && scene) {
+        const availableW = scene.clientWidth || renderedW;
+        const snappedW = Math.max(
+          gridSize,
+          Math.round(availableW / gridSize) * gridSize
+        );
+        const snappedH = Math.round((snappedW / naturalW) * naturalH);
+        // Apply snapped pixel-perfect size to the body image to keep coordinate math integer-aligned
+        body.style.width = `${snappedW}px`;
+        body.style.height = `${snappedH}px`;
+        renderedW = snappedW;
+        renderedH = snappedH;
+      }
 
       // choose scale based on width to keep horizontal placement stable
       const newScale = renderedW / naturalW;
@@ -101,7 +118,13 @@ export default function PinTumbler({
 
       // Y midpoints for shafts 1..5 (natural px)
       // shaft1 midpoint from earlier: (45+49.5)/2 = 47.25
-      const shaftYs = [47.25, (55 + 59) / 2, (64 + 68) / 2, (82 + 87) / 2, (92 + 96) / 2];
+      const shaftYs = [
+        47.25,
+        (55 + 59) / 2,
+        (64 + 68) / 2,
+        (82 + 87) / 2,
+        (92 + 96) / 2,
+      ];
 
       // shear line natural X (provided)
       const shearLineX = 73;
@@ -110,14 +133,16 @@ export default function PinTumbler({
       for (let i = 0; i < pinCount; i++) {
         const t = pinCount === 1 ? 0.5 : i / (pinCount - 1);
         const cx = xMin + t * (xMax - xMin);
-        const cy = shaftYs[i] !== undefined ? shaftYs[i] : shaftYs[shaftYs.length - 1];
+        const cy =
+          shaftYs[i] !== undefined ? shaftYs[i] : shaftYs[shaftYs.length - 1];
         centers.push({ x: cx, y: cy });
       }
 
       const springNaturalH = 121;
       const driverNaturalH = 93;
       const keyNaturalH = 76;
-      const shaftInnerNatural = springNaturalH + driverNaturalH + keyNaturalH + 20; // padding
+      const shaftInnerNatural =
+        springNaturalH + driverNaturalH + keyNaturalH + 20; // padding
       const shaftWidthNatural = 23;
 
       const newShafts = centers.map((c) => ({
@@ -139,7 +164,7 @@ export default function PinTumbler({
       ro.disconnect();
       window.removeEventListener("resize", update);
     };
-  }, [pinCount]);
+  }, [pinCount, alignToGrid, gridSize]);
 
   return (
     <div className="lock-container">
@@ -160,12 +185,21 @@ export default function PinTumbler({
           t = Math.max(0, Math.min(t, effectiveTravel));
 
           const springNaturalH = 121;
-          const springCompress = Math.max(0.35, 1 - t / (springNaturalH * scale));
+          const springCompress = Math.max(
+            0.35,
+            1 - t / (springNaturalH * scale)
+          );
           const springTranslate = -t * 0.5;
           const driverTranslate = -t * 0.6;
           const keyTranslate = -t * 0.4;
 
-          const shaft = shafts[i] || { x: 80, top: 40, innerLength: 200, width: 24, shearX: 73 };
+          const shaft = shafts[i] || {
+            x: 80,
+            top: 40,
+            innerLength: 200,
+            width: 24,
+            shearX: 73,
+          };
 
           const pinLayerStyle = {
             left: `${shaft.x - shaft.width / 2}px`,
@@ -176,13 +210,21 @@ export default function PinTumbler({
 
           return (
             <div key={i} className="pin-layer" style={pinLayerStyle}>
-              {showGuides && <div className="shaft-guide" style={{ width: "100%", height: "100%" }} />}
+              {showGuides && (
+                <div
+                  className="shaft-guide"
+                  style={{ width: "100%", height: "100%" }}
+                />
+              )}
 
               <img
                 src={spring}
                 alt={`spring ${i + 1}`}
                 className="pin-img spring"
-                style={{ transform: `translateY(${springTranslate}px) scaleY(${springCompress})`, transformOrigin: "top center" }}
+                style={{
+                  transform: `translateY(${springTranslate}px) scaleY(${springCompress})`,
+                  transformOrigin: "top center",
+                }}
               />
 
               <img
