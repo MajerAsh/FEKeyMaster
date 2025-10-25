@@ -4,6 +4,7 @@ import "../styles/PinTumbler.css";
 // 🗝️ Base lock parts
 import lockBody from "../assets/lockbody.png";
 import shackleClosed from "../assets/shackleClosed.png";
+import shackleOpen from "../assets/shackleOpen.png";
 //import shackleSpringClosed from "../assets/shackle-springClosed.png";
 
 // 🧩 Pin components (drivers, key pins, springs)
@@ -24,6 +25,7 @@ export default function PinTumbler({
   const [setPinsStatus, setSetPinsStatus] = useState(
     Array(pinCount).fill(false)
   );
+  const [unlocked, setUnlocked] = useState(false);
 
   // Reset pins when puzzle changes
   useEffect(() => {
@@ -58,10 +60,13 @@ export default function PinTumbler({
   function handleReset() {
     setPins(Array(pinCount).fill(0));
     setSetPinsStatus(Array(pinCount).fill(false));
+    setUnlocked(false);
   }
 
   function handleSubmit(e) {
     e.preventDefault();
+    // mark unlocked state so shackle can open visually, then call parent handler
+    setUnlocked(true);
     onSubmit(pins);
   }
 
@@ -269,8 +274,8 @@ export default function PinTumbler({
         })}
         {/* shackle should be on top of pins */}
         <img
-          src={shackleClosed}
-          alt="Shackle closed"
+          src={unlocked ? shackleOpen : shackleClosed}
+          alt={unlocked ? "Shackle open" : "Shackle closed"}
           className="layer shackle"
         />
       </div>
