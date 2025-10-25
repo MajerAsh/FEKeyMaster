@@ -145,6 +145,7 @@ export default function PinTumbler({
         centers.push({ x: cx, y: cy });
       }
 
+      // SHEAR LINE CALCULATED 📏📏📏📏📏
       // each shaft (natural) is 22px by 272px
       const shaftInnerNatural = 272;
       const shearNaturalY = shaftsBlockTop + upperPortionH; // natural Y of shear line
@@ -239,6 +240,28 @@ export default function PinTumbler({
                   src={keys[i]}
                   alt={`key ${i + 1}`}
                   className="pin-img key"
+                  style={{
+                    height: `${(() => {
+                      // Pin 4 (solution 20) works perfectly at 76px natural height
+                      const baselineHeight = 76; // keep pin 4 at 76px for solution 20
+                      const baselineSolution = 20; // pin 4's solution value
+                      const currentSolution = parseInt(solutionCode[i]) || 20;
+
+                      // Calculate natural height using inverse relationship
+                      let keyHeightNatural =
+                        (baselineHeight * baselineSolution) / currentSolution;
+
+                      // Apply shear line offset only to pins other than pin 4
+                      if (currentSolution !== 20) {
+                        keyHeightNatural += 20; // adjust for visual shear line alignment
+                      }
+
+                      // Convert to rendered pixels
+                      const naturalH = bodyRef.current?.naturalHeight || 552;
+                      const renderedH = bodyRef.current?.clientHeight || 400;
+                      return (keyHeightNatural / naturalH) * renderedH;
+                    })()}px`,
+                  }}
                 />
               </div>
             </div>
