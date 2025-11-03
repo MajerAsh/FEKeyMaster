@@ -21,9 +21,15 @@ export default function DialLock({
   // "message" stores feedback for the user, like “Number saved” or “Wrong code”
   //const [message, setMessage] = useState("");
   const [lastDirection, setLastDirection] = useState(null);
-  const [turnCount, setTurnCount] = useState(0);
+  const [, setTurnCount] = useState(0);
   const [step2CcwCount, setStep2CcwCount] = useState(0);
   const [step2FullRotation, setStep2FullRotation] = useState(false);
+  // angle tracks accumulated rotation in degrees to avoid large wrap jumps
+  const [angle, setAngle] = useState(0);
+  // refs for per-digit stiff-zone counting (step 2)
+  const step2StiffPosRef = useRef(null);
+  const step2StiffCountRef = useRef(0);
+  const STEP2_REQUIRED_CLICKS = 3; // require 3 presses per number in stiff zone
 
   //Audio Refs
   const clickAudio = useRef(null);
@@ -37,9 +43,8 @@ export default function DialLock({
   }, []);
 
   // helper to show overlay popup
-  function showOverlay(msg, type = "info", duration = 2500) {
+  function showOverlay(msg, type = "info") {
     setOverlay({ message: msg, type });
-    // OverlayMessage auto-hides itself after duration
   }
 
   // play sound safely
@@ -47,7 +52,9 @@ export default function DialLock({
     try {
       const snd = ref.current.cloneNode();
       void snd.play();
-    } catch {}
+    } catch {
+      /* ignore load errors */
+    }
   }
 
   // normalize value into 0..dialRange-1
@@ -62,6 +69,16 @@ export default function DialLock({
 
     const newValue = norm(value + direction);
 
+    // STEP 3 constraint: require clockwise movement for step 3 and beyond
+    if (step >= 2 && direction !== 1) {
+      // Block counter-clockwise moves during step 3 and show a hint
+      showOverlay(
+        "Only move clockwise to get the correct third number.",
+        "hint"
+      );
+      return;
+    }
+
     // STEP 1: Clockwise-only click detection (user hears click 5 before answer)
     if (step === 0) {
       const target = parseInt(solutionCode[0]) || 0;
@@ -72,7 +89,9 @@ export default function DialLock({
         playSound(clickAudio);
       }
 
+      // update display value and accumulated angle (avoid large CSS wrap jumps)
       setValue(newValue);
+      setAngle((a) => a - direction * 9);
       return;
     }
 
@@ -95,6 +114,7 @@ export default function DialLock({
         // allow visual movement regardless of direction while they complete the
         // required full CCW rotation
         setValue(newValue);
+        setAngle((a) => a - direction * 9);
         return;
       }
 
@@ -103,17 +123,34 @@ export default function DialLock({
       // confirmation will prompt a hint (we check on confirm)
       if (direction === 1) {
         setValue(newValue);
+        setAngle((a) => a - direction * 9);
+        // reset stiff counters when user moves clockwise out of the area
+        step2StiffPosRef.current = null;
+        step2StiffCountRef.current = 0;
         return;
       }
 
-      // Moving counter-clockwise: implement a "stiff" region where every
-      // other click is ignored to simulate resistance.
+      // Moving counter-clockwise: implement a per-digit "stiff" region where
+      // multiple presses are required to advance one visible step.
       // Determine CCW distance from newValue to target (0 means at target)
       const distToTargetCCW = (newValue - target + dialRange) % dialRange;
       if (distToTargetCCW > 0 && distToTargetCCW <= 5) {
-        // require two clicks per visible step in the stiff zone
-        if (turnCount % 2 === 0) {
-          return; // skip this click
+        // inside stiff zone: require multiple presses for each digit
+        const pos = newValue;
+        if (step2StiffPosRef.current !== pos) {
+          // starting to press into a new digit: set count=1 and do not move yet
+          step2StiffPosRef.current = pos;
+          step2StiffCountRef.current = 1;
+          return;
+        } else {
+          // same digit being pressed repeatedly
+          step2StiffCountRef.current += 1;
+          if (step2StiffCountRef.current < STEP2_REQUIRED_CLICKS) {
+            return; // require more presses
+          }
+          // enough presses: allow the move and reset counters
+          step2StiffPosRef.current = null;
+          step2StiffCountRef.current = 0;
         }
       }
 
@@ -121,12 +158,14 @@ export default function DialLock({
       if (newValue === norm(target - 1)) return;
 
       setValue(newValue);
+      setAngle((a) => a - direction * 9);
       return;
     }
 
     // STEP 3+ (and default behavior): for step 2 (index 2) we play subClick on
     // normal moves and click when landing on the target; allow movement both ways
     setValue(newValue);
+    setAngle((a) => a - direction * 9);
     if (step === 2) {
       const target = parseInt(solutionCode[2]) || 0;
       if (newValue === target) playSound(clickAudio);
@@ -140,6 +179,12 @@ export default function DialLock({
   function handleConfirmNumber() {
     const current = value;
     const dir = lastDirection || 0;
+
+    // Prevent confirming more numbers than the lock expects
+    if (step >= solutionCode.length) {
+      showOverlay("All numbers already entered.", "info");
+      return;
+    }
 
     // STEP 1: must have been turning clockwise to legitimately read the click
     if (step === 0) {
@@ -247,11 +292,18 @@ export default function DialLock({
     setAttempt([]);
     setStep(0);
     setValue(0);
+    setAngle(0);
     setTurnCount(0);
+    // clear step2 trackers
+    setStep2CcwCount(0);
+    setStep2FullRotation(false);
+    step2StiffPosRef.current = null;
+    step2StiffCountRef.current = 0;
     showOverlay("Reset. Start again.", "info");
   }
   // Each number represents 9° of rotation (360° / 40 numbers = 9°)
-  const rotationDegrees = -value * 9; // negative to go clockwise -value
+  // Use accumulated `angle` to avoid large wrap-around jumps when crossing 0
+  const rotationDegrees = angle;
 
   // ---------- RETURN  -------------------------------------------
   return (
