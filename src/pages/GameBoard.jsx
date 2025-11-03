@@ -16,7 +16,7 @@ export default function GameBoard() {
   const [puzzle, setPuzzle] = useState(null);
   const [message, setMessage] = useState("");
 
-  // hide the "Unlocked! overlay after a short delay (2.5s)
+  // hide the "Unlocked!" overlay after a short delay (2.5s)
   useEffect(() => {
     if (message === "✅ Unlocked!") {
       const t = setTimeout(() => setMessage(""), 2500);

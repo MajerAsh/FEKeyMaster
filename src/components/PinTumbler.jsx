@@ -27,6 +27,10 @@ export default function PinTumbler({
     Array(pinCount).fill(false)
   );
   const [unlocked, setUnlocked] = useState(false);
+  // audio for pin set click
+  const clickAudioRef = useRef(null);
+  // keep previous set status so we can detect transitions false->true
+  const prevSetRef = useRef(Array(pinCount).fill(false));
 
   // Reset pins when puzzle changes
   useEffect(() => {
@@ -178,6 +182,39 @@ export default function PinTumbler({
       window.removeEventListener("resize", update);
     };
   }, [pinCount, alignToGrid, gridSize]);
+
+  // initialize click Audio once
+  useEffect(() => {
+    try {
+      // public folder served at root: /sounds/click.wav
+      clickAudioRef.current = new Audio("/sounds/click.wav");
+      clickAudioRef.current.volume = 0.6;
+    } catch (err) {
+      console.warn("Failed to load click sound:", err);
+    }
+  }, []);
+
+  // Play click when any pin transitions from unset -> set
+  useEffect(() => {
+    const prev = prevSetRef.current;
+    for (let i = 0; i < setPinsStatus.length; i++) {
+      if (setPinsStatus[i] && !prev[i]) {
+        // play click
+        try {
+          const audio = clickAudioRef.current;
+          if (audio) {
+            // clone to allow overlapping clicks
+            const snd = audio.cloneNode();
+            void snd.play();
+          }
+        } catch {
+          // ignore play errors (autoplay policies)
+        }
+      }
+    }
+    // update prev
+    prevSetRef.current = [...setPinsStatus];
+  }, [setPinsStatus]);
 
   return (
     <div className="lock-container">
