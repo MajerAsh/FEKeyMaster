@@ -27,6 +27,7 @@ export default function DialLock({
   const [step2FullRotation, setStep2FullRotation] = useState(false);
   // angle tracks accumulated rotation in degrees to avoid large wrap jumps
   const [angle, setAngle] = useState(0);
+  const [step1AssistShown, setStep1AssistShown] = useState(false);
   // refs for per-digit stiff-zone counting (step 2)
   const step2StiffPosRef = useRef(null);
   const step2StiffCountRef = useRef(0);
@@ -47,6 +48,16 @@ export default function DialLock({
   function showOverlay(msg, type = "info") {
     setOverlay({ message: msg, type });
   }
+
+  // show the pre-step-1 assist once on mount (explains clockwise click + add 5)
+  useEffect(() => {
+    if (step1AssistShown) return;
+    showOverlay(
+      "Turn the dial clockwise and listen for a click — then add 5 to where you heard the click.",
+      "assist"
+    );
+    setStep1AssistShown(true);
+  }, [step1AssistShown]);
 
   // play sound safely
   function playSound(ref) {
@@ -300,6 +311,7 @@ export default function DialLock({
     setStep2FullRotation(false);
     step2StiffPosRef.current = null;
     step2StiffCountRef.current = 0;
+    setStep1AssistShown(false);
     showOverlay("Reset. Start again.", "info");
     if (typeof onReset === "function") onReset();
   }

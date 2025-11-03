@@ -23,6 +23,18 @@
   font-size: 1.5rem;
 }
 
+/* close button */
+.overlay-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
 /* Color themes */
 .overlay-success {
   background-color: #16a34a;
@@ -54,6 +66,12 @@
 
 .overlay-assist .overlay-emoji {
   font-size: 2rem;
+}
+
+.overlay-assist .overlay-close {
+  top: 12px;
+  right: 14px;
+  font-size: 1.25rem;
 }
 
 /* Simple fade animation */

@@ -3,17 +3,21 @@ import "../styles/OverlayMessage.css";
 
 export default function OverlayMessage({
   message,
-  type = "info", // 'success' | 'error' | 'info'
-  autoHide = true,
+  type = "info", // 'success' | 'error' | 'info' | 'assist' | 'hint'
+  autoHide, // default behavior depends on type
   duration = 2500,
   onClose,
 }) {
+  // assist overlays should remain until the user closes them
+  const shouldAutoHide =
+    type === "assist" ? false : autoHide === undefined ? true : !!autoHide;
+
   useEffect(() => {
     if (!message) return;
-    if (!autoHide) return;
+    if (!shouldAutoHide) return;
     const t = setTimeout(() => onClose && onClose(), duration);
     return () => clearTimeout(t);
-  }, [message, autoHide, duration, onClose]);
+  }, [message, shouldAutoHide, duration, onClose]);
 
   if (!message) return null;
 
@@ -34,6 +38,14 @@ export default function OverlayMessage({
       role="status"
       aria-live="polite"
     >
+      <button
+        className="overlay-close"
+        aria-label="Close"
+        onClick={() => onClose && onClose()}
+      >
+        ✕
+      </button>
+
       <div className="overlay-inner">
         <span className="overlay-emoji">{icon}</span>
         <span className="overlay-text">{message}</span>
