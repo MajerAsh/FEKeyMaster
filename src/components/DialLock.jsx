@@ -1,4 +1,5 @@
 import { useState } from "react"; //React's useState hook to handle dynamic data (state) in this component
+import OverlayMessage from "./OverlayMessage";
 import "../styles/DialLock.css";
 
 // Export the main React component for use in your app
@@ -14,7 +15,7 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
   const [step, setStep] = useState(0);
   // "message" stores feedback for the user, like “Number saved” or “Wrong code”
   const [message, setMessage] = useState("");
-  const clickSound = useRef(new Audio("/sounds/subClick.wav"));
+  // (click sound was removed from this component; overlay handles visuals/messages)
 
   // ---------- DIAL CONTROL HANDLERS ----------
   // This function moves the dial up or down when the user clicks the arrows
@@ -112,7 +113,27 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
         Unlock
       </button>
 
-      {message && <p className="dial-message">{message}</p>}
+      {/* Use the shared OverlayMessage component for animated, auto-hiding messages */}
+      <OverlayMessage
+        message={message}
+        type={getMessageType(message)}
+        autoHide={true}
+        duration={2500}
+        onClose={() => setMessage("")}
+      />
     </div>
   );
+}
+
+// Map simple message text to OverlayMessage types. Default to 'info'.
+function getMessageType(msg) {
+  if (!msg) return "info";
+  const lower = msg.toLowerCase();
+  if (
+    lower.includes("enter") ||
+    lower.includes("wrong") ||
+    lower.includes("incorrect")
+  )
+    return "error";
+  return "info";
 }

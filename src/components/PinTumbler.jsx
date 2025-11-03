@@ -21,12 +21,12 @@ export default function PinTumbler({
   showGuides = true, //to toggle the tuning overlay/ grid
   alignToGrid = true,
   gridSize = 5,
+  unlocked = false,
 }) {
   const [pins, setPins] = useState(Array(pinCount).fill(0));
   const [setPinsStatus, setSetPinsStatus] = useState(
     Array(pinCount).fill(false)
   );
-  const [unlocked, setUnlocked] = useState(false);
   // audio for pin set click
   const clickAudioRef = useRef(null);
   // keep previous set status so we can detect transitions false->true
@@ -65,14 +65,12 @@ export default function PinTumbler({
   function handleReset() {
     setPins(Array(pinCount).fill(0));
     setSetPinsStatus(Array(pinCount).fill(false));
-    setUnlocked(false);
     if (typeof onReset === "function") onReset();
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    // mark unlocked state so shackle can open visually, then call parent handler
-    setUnlocked(true);
+    // Submit the current pins to the parent — the parent will determine success
     onSubmit(pins);
   }
 

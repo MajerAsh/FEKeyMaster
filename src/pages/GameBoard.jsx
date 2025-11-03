@@ -16,6 +16,7 @@ export default function GameBoard() {
 
   const [puzzle, setPuzzle] = useState(null);
   const [message, setMessage] = useState("");
+  const [unlocked, setUnlocked] = useState(false);
 
   // NOTE: message auto-hide is handled by the reusable OverlayMessage component
 
@@ -37,6 +38,7 @@ export default function GameBoard() {
 
   async function handleAttempt(attemptArray) {
     setMessage("");
+    setUnlocked(false);
 
     try {
       const res = await fetch("http://localhost:3001/puzzles/solve", {
@@ -54,6 +56,7 @@ export default function GameBoard() {
       const data = await res.json();
       if (res.ok && data.success) {
         setMessage("✅ Unlocked!");
+        setUnlocked(true);
       } else {
         setMessage("❌ Incorrect. Try again.");
       }
@@ -89,7 +92,11 @@ export default function GameBoard() {
           pinCount={parsedCode.length}
           solutionCode={parsedCode}
           onSubmit={handleAttempt}
-          onReset={() => setMessage("")}
+          onReset={() => {
+            setMessage("");
+            setUnlocked(false);
+          }}
+          unlocked={unlocked}
         />
       )}
 
