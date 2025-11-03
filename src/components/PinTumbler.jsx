@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import "../styles/PinTumbler.css";
 
-// 🗝️ Base lock parts
+// Base lock parts
 import lockBody from "../assets/lockbody.png";
 import shackleClosed from "../assets/shackleClosed.png";
 import shackleOpen from "../assets/shackleOpen.png";
 //import shackleSpringClosed from "../assets/shackle-springClosed.png";
 
-// 🧩 Pin components (drivers, key pins, springs)
+// Pin components (drivers, key pins, springs)
 import driver from "../assets/driver.png";
 import driverGreen from "../assets/driverGreen.png";
 import key from "../assets/key.png";
@@ -231,7 +231,7 @@ export default function PinTumbler({
         />
         <img src={springs} alt="springs" className="layer springs-full" />
 
-        {/* 🎯 Dynamic pins - each pin-layer is anchored to a computed shaft box */}
+        {/* Dynamic pins - each pin-layer is anchored to a computed shaft box */}
         {pins.map((height, i) => {
           const target = parseInt(solutionCode[i]) || 0;
           const isSet = Math.abs(pins[i] - target) <= 2;
