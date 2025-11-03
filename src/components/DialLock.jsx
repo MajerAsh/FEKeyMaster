@@ -1,4 +1,4 @@
-import { useState } from "react"; //React's useState hook to handle dynamic data (state) in this component
+import { useState, useRef } from "react"; //React's useState hook to handle dynamic data (state) in this component
 import OverlayMessage from "./OverlayMessage";
 import "../styles/DialLock.css";
 
@@ -24,7 +24,7 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
     clickSound.current.play();
   };
 
-  // ---------- DIAL CONTROL HANDLERS ----------
+  // ------------ DIAL CONTROL HANDLERS -----------
   // dial up or down when the user clicks the arrows
   const handleChange = (direction) => {
     setValue((prev) => {
@@ -54,7 +54,7 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
     });
   };
 
-  // ---------- NUMBER CONFIRMATION ----------
+  // ---------- CONFIRM NUMBER ----------
   // When the user presses "Confirm Number", we save the current value
   const handleConfirmNumber = () => {
     // Only allow saving if there are still numbers left to enter
@@ -141,7 +141,12 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
       </div>
 
       <div className="attempt-display">
-        <p>Attempt: {attempt.join(" - ") || "None yet"}</p>
+        <p>
+          Attempt: {attempt.join(" - ") || "None yet"}{" "}
+          {attempt.length < solutionCode.length
+            ? `(Step ${step + 1} of ${solutionCode.length})`
+            : ""}
+        </p>
       </div>
 
       <button
