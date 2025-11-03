@@ -17,6 +17,7 @@ export default function PinTumbler({
   pinCount = 5,
   solutionCode = [],
   onSubmit,
+  onReset, // optional callback from parent to clear messages
   showGuides = true, //to toggle the tuning overlay/ grid
   alignToGrid = true,
   gridSize = 5,
@@ -61,6 +62,7 @@ export default function PinTumbler({
     setPins(Array(pinCount).fill(0));
     setSetPinsStatus(Array(pinCount).fill(false));
     setUnlocked(false);
+    if (typeof onReset === "function") onReset();
   }
 
   function handleSubmit(e) {
