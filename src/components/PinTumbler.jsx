@@ -29,6 +29,7 @@ export default function PinTumbler({
   );
   // audio for pin set click
   const clickAudioRef = useRef(null);
+  const lockOpenAudioRef = useRef(null);
   // keep previous set status so we can detect transitions false->true
   const prevSetRef = useRef(Array(pinCount).fill(false));
 
@@ -187,6 +188,9 @@ export default function PinTumbler({
       // public folder served at root: /sounds/click.wav
       clickAudioRef.current = new Audio("/sounds/click.wav");
       clickAudioRef.current.volume = 0.6;
+      // load lock open sound
+      lockOpenAudioRef.current = new Audio("/sounds/lockopen.wav");
+      lockOpenAudioRef.current.volume = 0.8;
     } catch (err) {
       console.warn("Failed to load click sound:", err);
     }
@@ -213,6 +217,20 @@ export default function PinTumbler({
     // update prev
     prevSetRef.current = [...setPinsStatus];
   }, [setPinsStatus]);
+
+  // Play lock open sound when unlocked prop becomes true
+  useEffect(() => {
+    if (!unlocked) return;
+    try {
+      const audio = lockOpenAudioRef.current;
+      if (audio) {
+        const snd = audio.cloneNode();
+        void snd.play();
+      }
+    } catch {
+      // ignore autoplay errors
+    }
+  }, [unlocked]);
 
   return (
     <div className="lock-container">

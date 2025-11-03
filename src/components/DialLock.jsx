@@ -28,10 +28,12 @@ export default function DialLock({
   //Audio Refs
   const clickAudio = useRef(null);
   const subClickAudio = useRef(null);
+  const lockOpenAudio = useRef(null);
 
   useEffect(() => {
     clickAudio.current = new Audio("/sounds/click.wav");
     subClickAudio.current = new Audio("/sounds/subClick.wav");
+    lockOpenAudio.current = new Audio("/sounds/lockopen.wav");
   }, []);
 
   // helper to show overlay popup
@@ -226,6 +228,19 @@ export default function DialLock({
     }
   }
 
+  // Play lock open sound when parent sets unlocked
+  useEffect(() => {
+    if (!unlocked) return;
+    try {
+      const audio = lockOpenAudio.current;
+      if (audio) {
+        const snd = audio.cloneNode();
+        void snd.play();
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [unlocked]);
   // RESET
   // ---------------------------------------
   function handleReset() {
