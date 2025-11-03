@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import "../styles/PinTumbler.css";
 
-// 🗝️ Base lock parts
+// Base lock parts
 import lockBody from "../assets/lockbody.png";
 import shackleClosed from "../assets/shackleClosed.png";
 import shackleOpen from "../assets/shackleOpen.png";
 //import shackleSpringClosed from "../assets/shackle-springClosed.png";
 
-// 🧩 Pin components (drivers, key pins, springs)
+// Pin components (drivers, key pins, springs)
 import driver from "../assets/driver.png";
 import driverGreen from "../assets/driverGreen.png";
 import key from "../assets/key.png";
@@ -17,15 +17,21 @@ export default function PinTumbler({
   pinCount = 5,
   solutionCode = [],
   onSubmit,
+  onReset, // optional callback from parent to clear messages
   showGuides = true, //to toggle the tuning overlay/ grid
   alignToGrid = true,
   gridSize = 5,
+  unlocked = false,
 }) {
   const [pins, setPins] = useState(Array(pinCount).fill(0));
   const [setPinsStatus, setSetPinsStatus] = useState(
     Array(pinCount).fill(false)
   );
-  const [unlocked, setUnlocked] = useState(false);
+  // audio for pin set click
+  const clickAudioRef = useRef(null);
+  const lockOpenAudioRef = useRef(null);
+  // keep previous set status so we can detect transitions false->true
+  const prevSetRef = useRef(Array(pinCount).fill(false));
 
   // Reset pins when puzzle changes
   useEffect(() => {
@@ -60,13 +66,12 @@ export default function PinTumbler({
   function handleReset() {
     setPins(Array(pinCount).fill(0));
     setSetPinsStatus(Array(pinCount).fill(false));
-    setUnlocked(false);
+    if (typeof onReset === "function") onReset();
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    // mark unlocked state so shackle can open visually, then call parent handler
-    setUnlocked(true);
+    // Submit the current pins to the parent — the parent will determine success
     onSubmit(pins);
   }
 
@@ -177,9 +182,59 @@ export default function PinTumbler({
     };
   }, [pinCount, alignToGrid, gridSize]);
 
+  // initialize click Audio once
+  useEffect(() => {
+    try {
+      // public folder served at root: /sounds/click.wav
+      clickAudioRef.current = new Audio("/sounds/click.wav");
+      clickAudioRef.current.volume = 0.6;
+      // load lock open sound
+      lockOpenAudioRef.current = new Audio("/sounds/lockopen.wav");
+      lockOpenAudioRef.current.volume = 0.8;
+    } catch (err) {
+      console.warn("Failed to load click sound:", err);
+    }
+  }, []);
+
+  // Play click when any pin transitions from unset -> set
+  useEffect(() => {
+    const prev = prevSetRef.current;
+    for (let i = 0; i < setPinsStatus.length; i++) {
+      if (setPinsStatus[i] && !prev[i]) {
+        // play click
+        try {
+          const audio = clickAudioRef.current;
+          if (audio) {
+            // clone to allow overlapping clicks
+            const snd = audio.cloneNode();
+            void snd.play();
+          }
+        } catch {
+          // ignore play errors (autoplay policies)
+        }
+      }
+    }
+    // update prev
+    prevSetRef.current = [...setPinsStatus];
+  }, [setPinsStatus]);
+
+  // Play lock open sound when unlocked prop becomes true
+  useEffect(() => {
+    if (!unlocked) return;
+    try {
+      const audio = lockOpenAudioRef.current;
+      if (audio) {
+        const snd = audio.cloneNode();
+        void snd.play();
+      }
+    } catch {
+      // ignore autoplay errors
+    }
+  }, [unlocked]);
+
   return (
     <div className="lock-container">
-      <h3>Pick the Lock</h3>
+      <h3>Slide the pins to the correct position to open the lock</h3>
 
       {/* Render order inside .lock-scene: lockBody (base) → full springs.png (full-layer) → per-shaft pin layers (drivers & keys) → shackleClosed (top). */}
       <div className="lock-scene" ref={sceneRef}>
@@ -192,7 +247,7 @@ export default function PinTumbler({
         />
         <img src={springs} alt="springs" className="layer springs-full" />
 
-        {/* 🎯 Dynamic pins - each pin-layer is anchored to a computed shaft box */}
+        {/* Dynamic pins - each pin-layer is anchored to a computed shaft box */}
         {pins.map((height, i) => {
           const target = parseInt(solutionCode[i]) || 0;
           const isSet = Math.abs(pins[i] - target) <= 2;

@@ -4,6 +4,8 @@ import { usePuzzles } from "../context/PuzzleContext";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import PinTumbler from "../components/PinTumbler";
+import "../styles/GameBoard.css";
+import OverlayMessage from "../components/OverlayMessage";
 import DialLock from "../components/DialLock";
 
 export default function GameBoard() {
@@ -14,6 +16,9 @@ export default function GameBoard() {
 
   const [puzzle, setPuzzle] = useState(null);
   const [message, setMessage] = useState("");
+  const [unlocked, setUnlocked] = useState(false);
+
+  // NOTE: message auto-hide is handled by the reusable OverlayMessage component
 
   console.log("GameBoard id:", id, "puzzles:", puzzles);
 
@@ -33,6 +38,7 @@ export default function GameBoard() {
 
   async function handleAttempt(attemptArray) {
     setMessage("");
+    setUnlocked(false);
 
     try {
       const res = await fetch("http://localhost:3001/puzzles/solve", {
@@ -50,6 +56,7 @@ export default function GameBoard() {
       const data = await res.json();
       if (res.ok && data.success) {
         setMessage("✅ Unlocked!");
+        setUnlocked(true);
       } else {
         setMessage("❌ Incorrect. Try again.");
       }
@@ -85,6 +92,11 @@ export default function GameBoard() {
           pinCount={parsedCode.length}
           solutionCode={parsedCode}
           onSubmit={handleAttempt}
+          onReset={() => {
+            setMessage("");
+            setUnlocked(false);
+          }}
+          unlocked={unlocked}
         />
       )}
 
@@ -93,10 +105,28 @@ export default function GameBoard() {
           dialCount={parsedCode.length}
           solutionCode={parsedCode}
           onSubmit={handleAttempt}
+          unlocked={unlocked}
+          onReset={() => {
+            setMessage("");
+            setUnlocked(false);
+          }}
         />
       )}
 
-      <div className="unlocked message">{message && <p>{message}</p>}</div>
+      {/* reusable overlay for any message */}
+      <OverlayMessage
+        message={message}
+        type={
+          message?.startsWith("✅")
+            ? "success"
+            : message?.startsWith("❌")
+            ? "error"
+            : "info"
+        }
+        autoHide={true}
+        duration={2500}
+        onClose={() => setMessage("")}
+      />
     </div>
   );
 }
