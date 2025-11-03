@@ -106,6 +106,10 @@ export default function GameBoard() {
           solutionCode={parsedCode}
           onSubmit={handleAttempt}
           unlocked={unlocked}
+          onReset={() => {
+            setMessage("");
+            setUnlocked(false);
+          }}
         />
       )}
 

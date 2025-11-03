@@ -7,6 +7,7 @@ export default function DialLock({
   solutionCode = [],
   onSubmit,
   unlocked = false,
+  onReset,
 }) {
   const dialRange = 40; // numbers 0–39
 
@@ -253,7 +254,7 @@ export default function DialLock({
       setStep2FullRotation(false);
       showOverlay(
         "Turn the lock counter clockwise one full rotation, then proceed to find the second number.",
-        "info"
+        "assist"
       );
     }
 
@@ -300,6 +301,7 @@ export default function DialLock({
     step2StiffPosRef.current = null;
     step2StiffCountRef.current = 0;
     showOverlay("Reset. Start again.", "info");
+    if (typeof onReset === "function") onReset();
   }
   // Each number represents 9° of rotation (360° / 40 numbers = 9°)
   // Use accumulated `angle` to avoid large wrap-around jumps when crossing 0
