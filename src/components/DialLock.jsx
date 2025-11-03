@@ -14,6 +14,7 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
   const [step, setStep] = useState(0);
   // "message" stores feedback for the user, like “Number saved” or “Wrong code”
   const [message, setMessage] = useState("");
+  const clickSound = useRef(new Audio("/sounds/subClick.wav"));
 
   // ---------- DIAL CONTROL HANDLERS ----------
   // This function moves the dial up or down when the user clicks the arrows

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import PinTumbler from "../components/PinTumbler";
 import "../styles/GameBoard.css";
+import OverlayMessage from "../components/OverlayMessage";
 import DialLock from "../components/DialLock";
 
 export default function GameBoard() {
@@ -16,13 +17,7 @@ export default function GameBoard() {
   const [puzzle, setPuzzle] = useState(null);
   const [message, setMessage] = useState("");
 
-  // hide the "Unlocked!" overlay after a short delay (2.5s)
-  useEffect(() => {
-    if (message === "✅ Unlocked!") {
-      const t = setTimeout(() => setMessage(""), 2500);
-      return () => clearTimeout(t);
-    }
-  }, [message]);
+  // NOTE: message auto-hide is handled by the reusable OverlayMessage component
 
   console.log("GameBoard id:", id, "puzzles:", puzzles);
 
@@ -106,18 +101,20 @@ export default function GameBoard() {
         />
       )}
 
-      {/* show centered overlay only for unlocked success */}
-      {message === "✅ Unlocked!" && (
-        <div className="unlocked-overlay" role="status" aria-live="polite">
-          <span className="emoji">🔓</span>
-          <span>Unlocked!</span>
-        </div>
-      )}
-
-      {/* fallback message area for other feedback */}
-      {message && message !== "✅ Unlocked!" && (
-        <div className="unlocked message">{<p>{message}</p>}</div>
-      )}
+      {/* reusable overlay for any message */}
+      <OverlayMessage
+        message={message}
+        type={
+          message?.startsWith("✅")
+            ? "success"
+            : message?.startsWith("❌")
+            ? "error"
+            : "info"
+        }
+        autoHide={true}
+        duration={2500}
+        onClose={() => setMessage("")}
+      />
     </div>
   );
 }
