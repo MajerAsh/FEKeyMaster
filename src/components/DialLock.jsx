@@ -3,7 +3,11 @@ import OverlayMessage from "./OverlayMessage";
 import "../styles/DialLock.css";
 
 // Export the main React component for use in your app
-export default function DialLock({ solutionCode = [], onSubmit }) {
+export default function DialLock({
+  solutionCode = [],
+  onSubmit,
+  unlocked = false,
+}) {
   const dialRange = 40; // numbers 0–39
 
   // ---------- STATE VARIABLES ----------
@@ -241,8 +245,8 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
 
       <div className="lock-stack">
         <img
-          src="/images/diallock.png"
-          alt="Lock body"
+          src={unlocked ? "/images/diallockopened.png" : "/images/diallock.png"}
+          alt={unlocked ? "Lock opened" : "Lock body"}
           className="lock-image"
         />
         <img

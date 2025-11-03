@@ -105,6 +105,7 @@ export default function GameBoard() {
           dialCount={parsedCode.length}
           solutionCode={parsedCode}
           onSubmit={handleAttempt}
+          unlocked={unlocked}
         />
       )}
 

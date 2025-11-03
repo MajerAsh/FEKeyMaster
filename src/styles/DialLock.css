@@ -39,6 +39,7 @@
   transform-origin: 185px 527px; /* adjust as needed for perfect spin center */
   transition: transform 0.3s ease;
   pointer-events: none;
+  z-index: 10; /* ensure the dial stays on top of the lock body */
 }
 
 /* 🎮 Dial Controls */
