@@ -16,26 +16,65 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
   // "message" stores feedback for the user, like “Number saved” or “Wrong code”
   const [message, setMessage] = useState("");
   // (click sound was removed from this component; overlay handles visuals/messages)
+  const clickSound = useRef(new Audio("/sounds/subClick.wav"));
+
+  // Helper to play the subtle click sound 🔊
+  const playClick = () => {
+    clickSound.current.currentTime = 0;
+    clickSound.current.play();
+  };
 
   // ---------- DIAL CONTROL HANDLERS ----------
-  // This function moves the dial up or down when the user clicks the arrows
+  // dial up or down when the user clicks the arrows
   const handleChange = (direction) => {
-    setValue((prev) => (prev + direction + dialRange) % dialRange);
+    setValue((prev) => {
+      const newVal = (prev + direction + dialRange) % dialRange;
+
+      //--------------COMBO LOCK PICK LOGIC (WikiHow)---------------------------------
+
+      // Step 1: clockwise -> hear a click near the correct first number
+      if (step === 0 && direction > 0 && newVal === solutionCode[0]) {
+        playClick();
+        setMessage(`🔊 Heard a click near ${newVal}. Add 5 → ${newVal + 5}.`);
+      }
+
+      // Step 2: counterclockwise -> “catch” when reaching second number
+      if (step === 1 && direction < 0 && newVal === solutionCode[1]) {
+        playClick();
+        setMessage(`💥 The dial catches at ${newVal}.`);
+      }
+
+      // Step 3: clockwise -> “test” each possible number
+      if (step === 2 && direction > 0) {
+        // optional: soft ticking to simulate trying numbers
+        if (newVal % 5 === 0) playClick();
+      }
+
+      return newVal;
+    });
   };
 
   // ---------- NUMBER CONFIRMATION ----------
   // When the user presses "Confirm Number", we save the current value
   const handleConfirmNumber = () => {
     // Only allow saving if there are still numbers left to enter
-    if (step < solutionCode.length) {
+    if (step < 3) {
       // Copy the existing attempt array and add the current dial value
       const newAttempt = [...attempt, value];
       setAttempt(newAttempt);
+      playClick();
+
+      if (step === 0)
+        setMessage(`First number found: ${value} → (${value + 5})`);
+      if (step === 1) setMessage(`Second number caught at: ${value}`);
+      if (step === 2) setMessage(`Final number tested: ${value}`);
+
       setStep(step + 1);
-      // Show a message to the user
-      setMessage(`Saved number ${value} (${step + 1}/${solutionCode.length})`);
+    } else {
+      setMessage("All numbers entered. Try unlocking!");
     }
   };
+  //setMessage(`Saved number ${value} (${step + 1}/${solutionCode.length})`);}};
 
   // ---------- SUBMIT ATTEMPT ----------
   // Called when the user clicks the "Unlock" button
@@ -46,9 +85,9 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
       // Send the attempt array to the parent component
       // The parent (e.g. GameController) will check if it matches the solution
       onSubmit(attempt);
-      setMessage("Attempt submitted!");
+      setMessage("Attempt submitted! Checking combination...");
     } else {
-      setMessage("Enter all numbers first.");
+      setMessage("Enter all 3 numbers first.");
     }
   };
 
@@ -56,14 +95,14 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
   const handleReset = () => {
     setAttempt([]);
     setStep(0);
-    setMessage("Reset. Start again.");
+    setMessage("Reset. Turn clockwise to start again.");
   };
 
   // ---------- VISUAL DIAL ROTATION ----------
   // Each number represents 9° of rotation (360° / 40 numbers = 9°)
   const rotationDegrees = -value * 9; // negative to go clockwise
 
-  // ---------- RETURN RENDER ---------------------
+  // ---------- RETURN RENDER ---------------------------------------------------------------
   return (
     <div className="dial-lock-container">
       <h3 className="text-xl font-semibold mb-4">Dial the Combination</h3>
