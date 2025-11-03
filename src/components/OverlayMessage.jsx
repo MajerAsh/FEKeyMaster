@@ -17,6 +17,12 @@ export default function OverlayMessage({
 
   if (!message) return null;
 
+    const icon =
+    type === "success" ? "🔓" :
+    type === "error"   ? "❌" :
+    type === "hint"    ? "💡" :
+                         "ℹ️";
+
   return (
     <div
       className={`overlay-message overlay-${type}`}
@@ -24,9 +30,7 @@ export default function OverlayMessage({
       aria-live="polite"
     >
       <div className="overlay-inner">
-        <span className="overlay-emoji">
-          {type === "success" ? "🔓" : type === "error" ? "❌" : "ℹ️"}
-        </span>
+        <span className="overlay-emoji">{icon}</span>
         <span className="overlay-text">{message}</span>
       </div>
     </div>

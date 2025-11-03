@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"; //React's useState hook to handle dynamic data (state) in this component
+import { useState, useEffect, useRef } from "react"; //React's useState hook to handle dynamic data (state) in this component
 import OverlayMessage from "./OverlayMessage";
 import "../styles/DialLock.css";
 
@@ -13,96 +13,196 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
   const [attempt, setAttempt] = useState([]);
   // "step" tracks how many numbers the user has entered in the sequence
   const [step, setStep] = useState(0);
+  const [overlay, setOverlay] = useState({ message: "", type: "info" }); //Set overlay?
   // "message" stores feedback for the user, like “Number saved” or “Wrong code”
-  const [message, setMessage] = useState("");
-  // (click sound was removed from this component; overlay handles visuals/messages)
-  const clickSound = useRef(new Audio("/sounds/subClick.wav"));
+  //const [message, setMessage] = useState("");
+  const [lastDirection, setLastDirection] = useState(null);
+  const [turnCount, setTurnCount] = useState(0);
 
-  // Helper to play the subtle click sound 🔊
-  const playClick = () => {
-    clickSound.current.currentTime = 0;
-    clickSound.current.play();
-  };
+  //Audio Refs
+  const clickAudio = useRef(null);
+  const subClickAudio = useRef(null);
 
-  // ------------ DIAL CONTROL HANDLERS -----------
-  // dial up or down when the user clicks the arrows
-  const handleChange = (direction) => {
-    setValue((prev) => {
-      const newVal = (prev + direction + dialRange) % dialRange;
+  useEffect(() => {
+    clickAudio.current = new Audio("/sounds/click.wav");
+    subClickAudio.current = new Audio("/sounds/subClick.wav");
+  }, []);
 
-      //--------------COMBO LOCK PICK LOGIC (WikiHow)---------------------------------
+  // helper to show overlay popup
+  function showOverlay(msg, type = "info", duration = 2500) {
+    setOverlay({ message: msg, type });
+    // OverlayMessage auto-hides itself after duration
+  }
 
-      // Step 1: clockwise -> hear a click near the correct first number
-      if (step === 0 && direction > 0 && newVal === solutionCode[0]) {
-        playClick();
-        setMessage(`🔊 Heard a click near ${newVal}. Add 5 → ${newVal + 5}.`);
+  // play sound safely
+  function playSound(ref) {
+    try {
+      const snd = ref.current.cloneNode();
+      void snd.play();
+    } catch {}
+  }
+
+  // normalize value into 0..dialRange-1
+  const norm = (n) => ((n % dialRange) + dialRange) % dialRange;
+
+  //--------------COMBO LOCK PICK LOGIC (WikiHow)---------------------------------
+  /*HANDLE ROTATION:
+  ---------------------------------------*/
+  function handleChange(direction) {
+    setLastDirection(direction);
+    setTurnCount((c) => c + 1);
+
+    const newValue = norm(value + direction);
+
+    // STEP 1: Clockwise-only click detection (user hears click 5 before answer)
+    if (step === 0) {
+      const target = parseInt(solutionCode[0]) || 0;
+      const clickPos = norm(target - 5);
+
+      // Only play the click when moving clockwise into the click position
+      if (direction === 1 && newValue === clickPos) {
+        playSound(clickAudio);
       }
 
-      // Step 2: counterclockwise -> “catch” when reaching second number
-      if (step === 1 && direction < 0 && newVal === solutionCode[1]) {
-        playClick();
-        setMessage(`💥 The dial catches at ${newVal}.`);
-      }
-
-      // Step 3: clockwise -> “test” each possible number
-      if (step === 2 && direction > 0) {
-        // optional: soft ticking to simulate trying numbers
-        if (newVal % 5 === 0) playClick();
-      }
-
-      return newVal;
-    });
-  };
-
-  // ---------- CONFIRM NUMBER ----------
-  // When the user presses "Confirm Number", we save the current value
-  const handleConfirmNumber = () => {
-    // Only allow saving if there are still numbers left to enter
-    if (step < 3) {
-      // Copy the existing attempt array and add the current dial value
-      const newAttempt = [...attempt, value];
-      setAttempt(newAttempt);
-      playClick();
-
-      if (step === 0)
-        setMessage(`First number found: ${value} → (${value + 5})`);
-      if (step === 1) setMessage(`Second number caught at: ${value}`);
-      if (step === 2) setMessage(`Final number tested: ${value}`);
-
-      setStep(step + 1);
-    } else {
-      setMessage("All numbers entered. Try unlocking!");
+      setValue(newValue);
+      return;
     }
-  };
-  //setMessage(`Saved number ${value} (${step + 1}/${solutionCode.length})`);}};
 
-  // ---------- SUBMIT ATTEMPT ----------
-  // Called when the user clicks the "Unlock" button
-  const handleSubmit = (e) => {
+    // STEP 2: Counter-clockwise with a "stiff" zone 5 before the target
+    if (step === 1) {
+      const target = parseInt(solutionCode[1]) || 0;
+
+      // If user turns clockwise during this step, allow visual movement but
+      // confirmation will prompt a hint (we check on confirm)
+      if (direction === 1) {
+        setValue(newValue);
+        return;
+      }
+
+      // Moving counter-clockwise: implement a "stiff" region where every
+      // other click is ignored to simulate resistance.
+      // Determine CCW distance from newValue to target (0 means at target)
+      const distToTargetCCW = (newValue - target + dialRange) % dialRange;
+      if (distToTargetCCW > 0 && distToTargetCCW <= 5) {
+        // require two clicks per visible step in the stiff zone
+        if (turnCount % 2 === 0) {
+          return; // skip this click
+        }
+      }
+
+      // Prevent moving beyond the correct number when turning CCW
+      if (newValue === norm(target - 1)) return;
+
+      setValue(newValue);
+      return;
+    }
+
+    // STEP 3+ (and default behavior): for step 2 (index 2) we play subClick on
+    // normal moves and click when landing on the target; allow movement both ways
+    setValue(newValue);
+    if (step === 2) {
+      const target = parseInt(solutionCode[2]) || 0;
+      if (newValue === target) playSound(clickAudio);
+      else playSound(subClickAudio);
+    }
+    return;
+  }
+
+  /*CONFIRM CURRENT NUMBER 
+  --------------------------------------------*/
+  function handleConfirmNumber() {
+    const current = value;
+    const dir = lastDirection || 0;
+
+    // STEP 1: must have been turning clockwise to legitimately read the click
+    if (step === 0) {
+      const target = parseInt(solutionCode[0]) || 0;
+      const clickPos = norm(target - 5);
+      const correctNumber = norm(clickPos + 5);
+
+      if (dir !== 1) {
+        showOverlay(
+          "Only move clockwise to get the correct first number.",
+          "hint"
+        );
+        return;
+      }
+
+      if (current === clickPos) {
+        playSound(subClickAudio);
+        showOverlay(
+          "Add 5 to where you heard the click — that’s your correct number.",
+          "info"
+        );
+        // allow recording the click position if the user confirms it
+      }
+
+      if (current === correctNumber) {
+        playSound(clickAudio);
+      }
+    }
+
+    // STEP 2: must be turning counter-clockwise to confirm
+    else if (step === 1) {
+      const target = parseInt(solutionCode[1]) || 0;
+      if (dir !== -1) {
+        showOverlay(
+          "Only move counter clockwise to get the correct second number.",
+          "hint"
+        );
+        return;
+      }
+
+      if (current === target) playSound(clickAudio);
+    }
+
+    // STEP 3 (index 2): must be clockwise; provide hints when incorrect
+    else if (step === 2) {
+      const target = parseInt(solutionCode[2]) || 0;
+      if (dir !== 1) {
+        showOverlay(
+          "Only move clockwise to get the correct third number.",
+          "hint"
+        );
+        return;
+      }
+
+      if (current === target) playSound(clickAudio);
+      else showOverlay("Listen for the loudest click.", "info");
+    }
+
+    // record the answered number and advance
+    const newAttempt = [...attempt, current];
+    setAttempt(newAttempt);
+    setStep(step + 1);
+  }
+
+  // SUBMIT ATTEMPT (unlock) ----------
+  function handleSubmit(e) {
     e.preventDefault();
-    // Only allow submitting if all required numbers have been entered
     if (attempt.length === solutionCode.length) {
-      // Send the attempt array to the parent component
-      // The parent (e.g. GameController) will check if it matches the solution
       onSubmit(attempt);
-      setMessage("Attempt submitted! Checking combination...");
+      const correct = JSON.stringify(attempt) === JSON.stringify(solutionCode);
+      if (correct) showOverlay("Unlocked!", "success");
+      else showOverlay("Incorrect combination.", "error");
     } else {
-      setMessage("Enter all 3 numbers first.");
+      showOverlay("Enter all numbers first.", "info");
     }
-  };
+  }
 
-  // ---------- RESET FUNCTION ----------
-  const handleReset = () => {
+  // RESET
+  // ---------------------------------------
+  function handleReset() {
     setAttempt([]);
     setStep(0);
-    setMessage("Reset. Turn clockwise to start again.");
-  };
-
-  // ---------- VISUAL DIAL ROTATION ----------
+    setValue(0);
+    setTurnCount(0);
+    showOverlay("Reset. Start again.", "info");
+  }
   // Each number represents 9° of rotation (360° / 40 numbers = 9°)
-  const rotationDegrees = -value * 9; // negative to go clockwise
+  const rotationDegrees = -value * 9; // negative to go clockwise -value
 
-  // ---------- RETURN RENDER ---------------------------------------------------------------
+  // ---------- RETURN  -------------------------------------------
   return (
     <div className="dial-lock-container">
       <h3 className="text-xl font-semibold mb-4">Dial the Combination</h3>
@@ -141,12 +241,7 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
       </div>
 
       <div className="attempt-display">
-        <p>
-          Attempt: {attempt.join(" - ") || "None yet"}{" "}
-          {attempt.length < solutionCode.length
-            ? `(Step ${step + 1} of ${solutionCode.length})`
-            : ""}
-        </p>
+        <p>Attempt: {attempt.join(" - ") || "None yet"}</p>
       </div>
 
       <button
@@ -157,27 +252,13 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
         Unlock
       </button>
 
-      {/* Use the shared OverlayMessage component for animated, auto-hiding messages */}
-      <OverlayMessage
-        message={message}
-        type={getMessageType(message)}
-        autoHide={true}
-        duration={2500}
-        onClose={() => setMessage("")}
-      />
+      {overlay.message && (
+        <OverlayMessage
+          message={overlay.message}
+          type={overlay.type}
+          onClose={() => setOverlay({ message: "", type: "info" })}
+        />
+      )}
     </div>
   );
-}
-
-// Map simple message text to OverlayMessage types. Default to 'info'.
-function getMessageType(msg) {
-  if (!msg) return "info";
-  const lower = msg.toLowerCase();
-  if (
-    lower.includes("enter") ||
-    lower.includes("wrong") ||
-    lower.includes("incorrect")
-  )
-    return "error";
-  return "info";
 }
