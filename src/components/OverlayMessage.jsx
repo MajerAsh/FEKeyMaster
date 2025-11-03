@@ -17,11 +17,16 @@ export default function OverlayMessage({
 
   if (!message) return null;
 
-    const icon =
-    type === "success" ? "🔓" :
-    type === "error"   ? "❌" :
-    type === "hint"    ? "💡" :
-                         "ℹ️";
+  const icon =
+    type === "success"
+      ? "🔓"
+      : type === "error"
+      ? "❌"
+      : type === "hint"
+      ? "💡"
+      : type === "assist"
+      ? "🛠️"
+      : "ℹ️";
 
   return (
     <div
