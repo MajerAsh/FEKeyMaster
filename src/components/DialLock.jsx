@@ -24,17 +24,25 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
   // ---------- NUMBER CONFIRMATION ----------
   // When the user presses "Confirm Number", we save the current value
   const handleConfirmNumber = () => {
+    // Only allow saving if there are still numbers left to enter
     if (step < solutionCode.length) {
+      // Copy the existing attempt array and add the current dial value
       const newAttempt = [...attempt, value];
       setAttempt(newAttempt);
       setStep(step + 1);
+      // Show a message to the user
       setMessage(`Saved number ${value} (${step + 1}/${solutionCode.length})`);
     }
   };
 
+  // ---------- SUBMIT ATTEMPT ----------
+  // Called when the user clicks the "Unlock" button
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Only allow submitting if all required numbers have been entered
     if (attempt.length === solutionCode.length) {
+      // Send the attempt array to the parent component
+      // The parent (e.g. GameController) will check if it matches the solution
       onSubmit(attempt);
       setMessage("Attempt submitted!");
     } else {
@@ -42,14 +50,18 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
     }
   };
 
+  // ---------- RESET FUNCTION ----------
   const handleReset = () => {
     setAttempt([]);
     setStep(0);
     setMessage("Reset. Start again.");
   };
 
-  const rotationDegrees = value * 9; // 40 numbers * 9° each
+  // ---------- VISUAL DIAL ROTATION ----------
+  // Each number represents 9° of rotation (360° / 40 numbers = 9°)
+  const rotationDegrees = -value * 9; // negative to go clockwise
 
+  // ---------- RETURN RENDER ---------------------
   return (
     <div className="dial-lock-container">
       <h3 className="text-xl font-semibold mb-4">Dial the Combination</h3>
