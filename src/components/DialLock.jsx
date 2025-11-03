@@ -18,6 +18,8 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
   //const [message, setMessage] = useState("");
   const [lastDirection, setLastDirection] = useState(null);
   const [turnCount, setTurnCount] = useState(0);
+  const [step2CcwCount, setStep2CcwCount] = useState(0);
+  const [step2FullRotation, setStep2FullRotation] = useState(false);
 
   //Audio Refs
   const clickAudio = useRef(null);
@@ -72,6 +74,25 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
     if (step === 1) {
       const target = parseInt(solutionCode[1]) || 0;
 
+      // If the user hasn't completed the required full CCW rotation yet,
+      // encourage them to do so and track CCW presses. We don't enforce the
+      // "stiff" region until they've done the full rotation.
+      if (!step2FullRotation) {
+        if (direction === -1) {
+          setStep2CcwCount((c) => {
+            const next = c + 1;
+            if (next >= dialRange) setStep2FullRotation(true);
+            return next;
+          });
+        }
+
+        // allow visual movement regardless of direction while they complete the
+        // required full CCW rotation
+        setValue(newValue);
+        return;
+      }
+
+      // After the full rotation is complete, apply the stiff-zone rules.
       // If user turns clockwise during this step, allow visual movement but
       // confirmation will prompt a hint (we check on confirm)
       if (direction === 1) {
@@ -174,6 +195,17 @@ export default function DialLock({ solutionCode = [], onSubmit }) {
     // record the answered number and advance
     const newAttempt = [...attempt, current];
     setAttempt(newAttempt);
+
+    // If we're moving into STEP 2, reset the step2 rotation trackers and show guidance
+    if (step === 0) {
+      setStep2CcwCount(0);
+      setStep2FullRotation(false);
+      showOverlay(
+        "Turn the lock counter clockwise one full rotation, then proceed to find the second number.",
+        "info"
+      );
+    }
+
     setStep(step + 1);
   }
 
