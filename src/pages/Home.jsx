@@ -44,8 +44,10 @@ export default function Home() {
         />
       )}
 
-      {/* small decorative cat sprite on top of the background */}
-      <img src="/images/SwatSprite.png" alt="cat" className="cat-sprite" />
+      {/* small decorative cat sprite on top of the background (hide when auth modal is open) */}
+      {!showAuth && (
+        <img src="/images/SwatSprite.png" alt="cat" className="cat-sprite" />
+      )}
     </div>
   );
 }

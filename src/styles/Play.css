@@ -2,16 +2,19 @@
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  width: 100vw;
 }
-.play-bg {
-  position: absolute;
-  inset: 0; /* prefer contain to avoid cropping */
+/* Scene keeps the background and UI together and scales responsively */
+.scene {
+  width: min(92vw, 1693px);
+  margin: 0 auto;
+  min-height: 60vh;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  filter: saturate(1.02);
-  background-color: #000;
-  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .play-panel {
   position: relative;

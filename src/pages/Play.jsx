@@ -31,44 +31,44 @@ export default function Play() {
   return (
     <div className="play-root">
       <div
-        className="play-bg"
+        className="scene"
         style={{
           backgroundImage: `url(/images/${
             bgSmile ? "ZoomSmile.png" : "ZoomIn.png"
           })`,
         }}
-      />
+      >
+        <div className="play-panel">
+          <h2>Select a Puzzle</h2>
+          <div className="play-grid">
+            <div className="tile">
+              <h3>Dial Lock</h3>
+              {dialPuzzle ? (
+                <button onClick={() => navigate(`/puzzle/${dialPuzzle.id}`)}>
+                  Play Dial Lock
+                </button>
+              ) : (
+                <p>Not available</p>
+              )}
+            </div>
 
-      <div className="play-panel">
-        <h2>Select a Puzzle</h2>
-        <div className="play-grid">
-          <div className="tile">
-            <h3>Dial Lock</h3>
-            {dialPuzzle ? (
-              <button onClick={() => navigate(`/puzzle/${dialPuzzle.id}`)}>
-                Play Dial Lock
-              </button>
-            ) : (
-              <p>Not available</p>
-            )}
-          </div>
+            <div className="tile">
+              <h3>Pin Tumbler Lock</h3>
+              {pinPuzzle ? (
+                <button onClick={() => navigate(`/puzzle/${pinPuzzle.id}`)}>
+                  Play Pin Tumbler
+                </button>
+              ) : (
+                <p>Not available</p>
+              )}
+            </div>
 
-          <div className="tile">
-            <h3>Pin Tumbler Lock</h3>
-            {pinPuzzle ? (
-              <button onClick={() => navigate(`/puzzle/${pinPuzzle.id}`)}>
-                Play Pin Tumbler
-              </button>
-            ) : (
-              <p>Not available</p>
-            )}
-          </div>
-
-          <div className="tile">
-            <h3>Leader Board</h3>
-            <Link to="/leaderboard">
-              <button>View Leader Board</button>
-            </Link>
+            <div className="tile">
+              <h3>Leader Board</h3>
+              <Link to="/leaderboard">
+                <button>View Leader Board</button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
