@@ -1,79 +1,77 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { usePuzzles } from "../context/PuzzleContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/Play.css";
 
 export default function Play() {
   const { token } = useAuth();
-  const { puzzles, selectedPuzzle, setSelectedPuzzle, fetchPuzzles } =
-    usePuzzles();
+  const { puzzles, fetchPuzzles } = usePuzzles();
+  const navigate = useNavigate();
 
-  const [attempt, setAttempt] = useState("");
-  const [message, setMessage] = useState("");
+  const [bgSmile, setBgSmile] = useState(false);
 
   useEffect(() => {
-    if (token && puzzles.length === 0) {
-      fetchPuzzles();
-    }
+    if (token && puzzles.length === 0) fetchPuzzles();
   }, [token, fetchPuzzles, puzzles.length]);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setMessage("");
-    try {
-      const res = await fetch("http://localhost:3001/puzzles/solve", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          puzzle_id: selectedPuzzle.id,
-          attempt: attempt.split(",").map((n) => parseInt(n.trim())),
-        }),
-      });
+  // every 20s toggle a smile for 2s
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBgSmile(true);
+      const t = setTimeout(() => setBgSmile(false), 2000);
+      return () => clearTimeout(t);
+    }, 20000);
+    return () => clearInterval(interval);
+  }, []);
 
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        setMessage("✅ Correct! Puzzle solved.");
-      } else {
-        setMessage("❌ Incorrect. Try again.");
-      }
-    } catch {
-      setMessage("Error submitting attempt.");
-    }
-  }
+  const dialPuzzle = puzzles.find((p) => p.type === "dial");
+  const pinPuzzle = puzzles.find((p) => p.type === "pin-tumbler");
 
   return (
-    <div>
-      <h2>🔐 Available Puzzles</h2>
-      <ul>
-        {puzzles.map((p) => (
-          <li key={p.id}>
-            <strong>{p.name}</strong>
-            <p>{p.prompt}</p>
-            <Link to={`/puzzle/${p.id}`}>
-              <button>Play</button>
+    <div className="play-root">
+      <div
+        className="play-bg"
+        style={{
+          backgroundImage: `url(/images/${
+            bgSmile ? "ZoomSmile.png" : "ZoomIn.png"
+          })`,
+        }}
+      />
+
+      <div className="play-panel">
+        <h2>Select a Puzzle</h2>
+        <div className="play-grid">
+          <div className="tile">
+            <h3>Dial Lock</h3>
+            {dialPuzzle ? (
+              <button onClick={() => navigate(`/puzzle/${dialPuzzle.id}`)}>
+                Play Dial Lock
+              </button>
+            ) : (
+              <p>Not available</p>
+            )}
+          </div>
+
+          <div className="tile">
+            <h3>Pin Tumbler Lock</h3>
+            {pinPuzzle ? (
+              <button onClick={() => navigate(`/puzzle/${pinPuzzle.id}`)}>
+                Play Pin Tumbler
+              </button>
+            ) : (
+              <p>Not available</p>
+            )}
+          </div>
+
+          <div className="tile">
+            <h3>Leader Board</h3>
+            <Link to="/leaderboard">
+              <button>View Leader Board</button>
             </Link>
-          </li>
-        ))}
-      </ul>
-
-      {selectedPuzzle && (
-        <form onSubmit={handleSubmit}>
-          <h3>{selectedPuzzle.name}</h3>
-          <input
-            type="text"
-            value={attempt}
-            onChange={(e) => setAttempt(e.target.value)}
-            placeholder="e.g. 40,30,50,20,60"
-          />
-          <button type="submit">Submit</button>
-        </form>
-      )}
-
-      {message && <p>{message}</p>}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

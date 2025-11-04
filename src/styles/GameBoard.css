@@ -1,3 +1,41 @@
-/* Overlay styles moved to src/styles/OverlayMessage.css
-   This file previously contained overlay styles for the unlocked message.
-   Keep this placeholder in case page-specific styling is required later. */
+.game-root {
+  position: relative;
+  min-height: 80vh;
+  padding: 1rem;
+}
+.game-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-color: #000;
+}
+/* The paws image is placed as an img inside .game-bg; ensure it scales without cropping */
+.game-paws {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  max-width: 1693px;
+  max-height: 1667px;
+  object-fit: contain;
+  object-position: center;
+  opacity: 0.95;
+  z-index: 0;
+}
+.game-content {
+  position: relative;
+  z-index: 2;
+}
+.game-actions {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}

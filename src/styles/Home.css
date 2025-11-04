@@ -1,0 +1,81 @@
+.home-root {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-bg {
+  position: absolute;
+  inset: 0;
+  /* show the full image without cropping where possible */
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #000; /* fallback for letterboxing */
+  transition: opacity 300ms ease;
+  min-height: 100vh;
+}
+.home-bg.bg-no-cat {
+  background-image: url("/images/KitchenNoCat.png");
+}
+.home-bg.bg-with-cat {
+  background-image: url("/images/KitchWCat.png");
+}
+
+.home-content {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  color: #fff;
+}
+
+.title {
+  font-size: 3rem;
+  margin: 0;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+.subtitle {
+  margin-top: 0.5rem;
+  opacity: 0.9;
+}
+
+.play-btn {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 999px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.cat-sprite {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  width: 128px;
+  height: auto;
+  z-index: 6;
+  animation: bob 4s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

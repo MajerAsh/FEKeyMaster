@@ -1,0 +1,44 @@
+.play-root {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+.play-bg {
+  position: absolute;
+  inset: 0; /* prefer contain to avoid cropping */
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: saturate(1.02);
+  background-color: #000;
+  min-height: 100vh;
+}
+.play-panel {
+  position: relative;
+  z-index: 5;
+  padding: 2rem;
+  color: #fff;
+  text-align: center;
+}
+.play-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  max-width: 900px;
+  margin: 1rem auto;
+}
+.tile {
+  background: rgba(0, 0, 0, 0.45);
+  padding: 1rem;
+  border-radius: 10px;
+}
+.tile h3 {
+  margin-top: 0;
+}
+.tile button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #0b74ff;
+  color: #fff;
+}

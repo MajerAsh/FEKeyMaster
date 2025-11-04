@@ -1,0 +1,63 @@
+.auth-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 50;
+}
+.auth-modal {
+  width: min(92%, 420px);
+  background: #fff;
+  padding: 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+  text-align: center;
+}
+.auth-close {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+}
+.auth-sub {
+  color: #666;
+  margin-top: 0;
+}
+.auth-switch {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 8px 0;
+}
+.auth-switch button {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: transparent;
+}
+.auth-switch button.active {
+  background: #111;
+  color: #fff;
+}
+.auth-modal input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+.auth-submit {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  background: #0b74ff;
+  color: #fff;
+  border: none;
+}
+.auth-error {
+  color: #b00020;
+}

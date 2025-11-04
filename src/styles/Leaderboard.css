@@ -1,0 +1,19 @@
+.leader-root {
+  min-height: 100vh;
+  position: relative;
+}
+.leader-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/KitchenNoCat.png");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #000;
+}
+.leader-panel {
+  position: relative;
+  z-index: 3;
+  padding: 2rem;
+  color: #fff;
+}
