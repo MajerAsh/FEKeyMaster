@@ -1,12 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <nav>
-      <Link to="/">Play</Link> | <Link to="/create">Create Puzzle</Link> |{" "}
+      <Link to="/play">Play</Link> |
       {!user ? (
         <>
           <Link to="/login">Login</Link> | <Link to="/signup">Signup</Link>
@@ -14,7 +15,14 @@ export default function Navbar() {
       ) : (
         <>
           <span>Welcome, {user.email}!</span>{" "}
-          <button onClick={logout}>Logout</button>
+          <button
+            onClick={() => {
+              logout();
+              navigate("/");
+            }}
+          >
+            Logout
+          </button>
         </>
       )}
     </nav>

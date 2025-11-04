@@ -1,3 +1,41 @@
-/* Overlay styles moved to src/styles/OverlayMessage.css
-   This file previously contained overlay styles for the unlocked message.
-   Keep this placeholder in case page-specific styling is required later. */
+.game-root {
+  position: relative;
+  min-height: 80vh;
+  padding: 1rem;
+  width: 100vw;
+}
+
+/* Scene centers the background and the lock UI so they scale together */
+.scene {
+  width: min(92vw, 1693px);
+  margin: 0 auto;
+  min-height: 60vh;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ensure any images or layered PNGs inside the scene scale down to fit */
+.scene img,
+.scene .layer {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.game-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.game-actions {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}

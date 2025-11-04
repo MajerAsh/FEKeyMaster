@@ -1,0 +1,23 @@
+.leader-root {
+  min-height: 100vh;
+  position: relative;
+  width: 100vw;
+}
+.scene {
+  width: min(92vw, 1693px);
+  margin: 0 auto;
+  aspect-ratio: 1693 / 1667;
+  max-height: min(92vh, 1667px);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.leader-panel {
+  position: relative;
+  z-index: 3;
+  padding: 2rem;
+  color: #fff;
+}

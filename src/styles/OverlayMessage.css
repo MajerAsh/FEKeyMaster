@@ -4,7 +4,8 @@
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 1rem 1.5rem;
+  /* make room on the right/top for the close button so it doesn't overlap text */
+  padding: 1rem 2.5rem 1rem 1.5rem;
   border-radius: 0.5rem;
   color: #fff;
   font-weight: 600;
@@ -21,6 +22,32 @@
 
 .overlay-emoji {
   font-size: 1.5rem;
+}
+
+/* close button */
+.overlay-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  color: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  z-index: 10001; /* ensure it sits above overlay content */
+}
+
+/* Prevent the close button from covering the text on narrow widths by
+   reserving space on the right and top via padding on the container. Also
+   ensure overlay text doesn't flow under the close button. */
+.overlay-text {
+  display: block;
+  padding-right: 0.5rem; /* small padding to avoid touching the close */
 }
 
 /* Color themes */
@@ -43,7 +70,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 1.25rem 1.75rem;
+  /* larger top/right padding so the X doesn't overlap wrapped text */
+  padding: 1.75rem 2.25rem 1.5rem 1.75rem;
   font-size: 1.15rem;
   border-radius: 0.75rem;
   max-width: 800px;
@@ -54,6 +82,12 @@
 
 .overlay-assist .overlay-emoji {
   font-size: 2rem;
+}
+
+.overlay-assist .overlay-close {
+  top: 12px;
+  right: 14px;
+  font-size: 1.25rem;
 }
 
 /* Simple fade animation */

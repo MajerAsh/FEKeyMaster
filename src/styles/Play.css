@@ -1,0 +1,61 @@
+.play-root {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+}
+/* Scene keeps the background and UI together and scales responsively */
+.scene {
+  /* follow the same responsive pattern as .lock-scene so the artwork
+     scales proportionally and matches the visual size of other pages */
+  position: relative;
+  width: 40vw; /* scales with viewport width */
+  min-width: 320px;
+  max-width: 920px;
+  aspect-ratio: 1693 / 1667; /* keep the natural artwork proportions */
+  margin: 0 auto;
+  transform-origin: center center;
+
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile fallback: use more of the viewport width on narrow screens */
+@media (max-width: 600px) {
+  .scene {
+    width: min(92vw, 480px);
+  }
+}
+.play-panel {
+  position: relative;
+  z-index: 5;
+  padding: 2rem;
+  color: #fff;
+  text-align: center;
+}
+.play-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  max-width: 900px;
+  margin: 1rem auto;
+}
+.tile {
+  background: rgba(0, 0, 0, 0.45);
+  padding: 1rem;
+  border-radius: 10px;
+}
+.tile h3 {
+  margin-top: 0;
+}
+.tile button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #0b74ff;
+  color: #fff;
+}

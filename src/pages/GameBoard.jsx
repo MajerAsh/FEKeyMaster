@@ -17,6 +17,7 @@ export default function GameBoard() {
   const [puzzle, setPuzzle] = useState(null);
   const [message, setMessage] = useState("");
   const [unlocked, setUnlocked] = useState(false);
+  const { logout } = useAuth();
 
   // NOTE: message auto-hide is handled by the reusable OverlayMessage component
 
@@ -81,52 +82,70 @@ export default function GameBoard() {
   );
 
   return (
-    <div>
-      <button onClick={() => navigate("/")}>← Back to Puzzles</button>
-      <h2>{puzzle.name}</h2>
-      <p>{puzzle.prompt}</p>
+    <div className="game-root">
+      <div
+        className="scene"
+        style={{ backgroundImage: `url(/images/Paws.png)` }}
+      >
+        <div className="game-content">
+          <div className="game-actions">
+            <button onClick={() => navigate("/play")}>← Back to Play</button>
+            <button
+              onClick={() => {
+                logout();
+                navigate("/");
+              }}
+            >
+              Log Out
+            </button>
+          </div>
 
-      {/* PUZZLE TYPE CONDITIONAL RENDERING */}
-      {puzzle.type === "pin-tumbler" && (
-        <PinTumbler
-          pinCount={parsedCode.length}
-          solutionCode={parsedCode}
-          onSubmit={handleAttempt}
-          onReset={() => {
-            setMessage("");
-            setUnlocked(false);
-          }}
-          unlocked={unlocked}
-        />
-      )}
+          <h2>{puzzle.name}</h2>
+          <p>{puzzle.prompt}</p>
 
-      {puzzle.type === "dial" && (
-        <DialLock
-          dialCount={parsedCode.length}
-          solutionCode={parsedCode}
-          onSubmit={handleAttempt}
-          unlocked={unlocked}
-          onReset={() => {
-            setMessage("");
-            setUnlocked(false);
-          }}
-        />
-      )}
+          {/* PUZZLE TYPE CONDITIONAL RENDERING */}
+          {puzzle.type === "pin-tumbler" && (
+            <PinTumbler
+              pinCount={parsedCode.length}
+              solutionCode={parsedCode}
+              onSubmit={handleAttempt}
+              onReset={() => {
+                setMessage("");
+                setUnlocked(false);
+              }}
+              unlocked={unlocked}
+            />
+          )}
 
-      {/* reusable overlay for any message */}
-      <OverlayMessage
-        message={message}
-        type={
-          message?.startsWith("✅")
-            ? "success"
-            : message?.startsWith("❌")
-            ? "error"
-            : "info"
-        }
-        autoHide={true}
-        duration={2500}
-        onClose={() => setMessage("")}
-      />
+          {puzzle.type === "dial" && (
+            <DialLock
+              dialCount={parsedCode.length}
+              solutionCode={parsedCode}
+              onSubmit={handleAttempt}
+              unlocked={unlocked}
+              onReset={() => {
+                setMessage("");
+                setUnlocked(false);
+              }}
+            />
+          )}
+
+          {/* reusable overlay for any message */}
+          <OverlayMessage
+            message={message}
+            type={
+              message?.startsWith("✅")
+                ? "success"
+                : message?.startsWith("❌")
+                ? "error"
+                : "info"
+            }
+            autoHide={true}
+            duration={2500}
+            onClose={() => setMessage("")}
+          />
+        </div>
+      </div>
     </div>
   );
 }
