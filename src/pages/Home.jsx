@@ -19,7 +19,11 @@ export default function Home() {
       <div
         className={`home-bg ${showAuth ? "bg-with-cat" : "bg-no-cat"}`}
         aria-hidden
-      />
+      >
+        {!showAuth && (
+          <div className="swat-sprite" aria-hidden data-frame={0} />
+        )}
+      </div>
 
       <div className="home-content">
         {!showAuth && (
@@ -44,10 +48,9 @@ export default function Home() {
         />
       )}
 
-      {/* small decorative cat sprite on top of the background (hide when auth modal is open) */}
-      {!showAuth && (
-        <img src="/images/SwatSprite.png" alt="cat" className="cat-sprite" />
-      )}
+      {/* decorative sprites are rendered inside the background (.swat-sprite)
+          The old standalone <img className="cat-sprite"> was removed to avoid
+          duplicate/bobbing overlays that interfered with placement. */}
     </div>
   );
 }
