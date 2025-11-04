@@ -28,6 +28,7 @@ export default function DialLock({
   // angle tracks accumulated rotation in degrees to avoid large wrap jumps
   const [angle, setAngle] = useState(0);
   const [step1AssistShown, setStep1AssistShown] = useState(false);
+  const [step3AssistShown, setStep3AssistShown] = useState(false);
   // refs for per-digit stiff-zone counting (step 2)
   const step2StiffPosRef = useRef(null);
   const step2StiffCountRef = useRef(0);
@@ -58,6 +59,17 @@ export default function DialLock({
     );
     setStep1AssistShown(true);
   }, [step1AssistShown]);
+
+  // show the pre-step-3 assist once when the user advances to step 2 (about to find the 3rd number)
+  useEffect(() => {
+    if (step !== 2) return;
+    if (step3AssistShown) return;
+    showOverlay(
+      "Turn clockwise — when you hear a louder click, that is the number.",
+      "assist"
+    );
+    setStep3AssistShown(true);
+  }, [step, step3AssistShown]);
 
   // play sound safely
   function playSound(ref) {
@@ -312,6 +324,7 @@ export default function DialLock({
     step2StiffPosRef.current = null;
     step2StiffCountRef.current = 0;
     setStep1AssistShown(false);
+    setStep3AssistShown(false);
     showOverlay("Reset. Start again.", "info");
     if (typeof onReset === "function") onReset();
   }
