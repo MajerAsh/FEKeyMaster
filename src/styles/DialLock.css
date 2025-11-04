@@ -9,34 +9,27 @@
 /* 🧱 Lock Stack (Dial + Body) */
 .lock-stack {
   position: relative;
-  width: 368px;
-  height: 734px;
+  /* size relative to the parent .scene so it scales with the background */
+  width: min(420px, 36%);
+  max-width: 420px;
 }
 
 .lock-image {
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: block; /* keep image in flow so it defines the stack height */
   width: 100%;
-  height: 100%;
+  height: auto;
   z-index: 0;
 }
 
-.dial-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 368px;
-  height: 734px;
-}
-
+/* overlay the dial on top of the lock body using absolute positioning */
 .dial-image {
   position: absolute;
   top: 0;
   left: 0;
-  width: 368px;
-  height: 734px;
-  transform-origin: 185px 527px; /* adjust as needed for perfect spin center */
+  width: 100%;
+  height: auto;
+  /* transform-origin converted from px to percentage so the pivot scales */
+  transform-origin: 50.3% 71.85%; /* ~185/368, 527/734 */
   transition: transform 0.3s ease;
   pointer-events: none;
   z-index: 10; /* ensure the dial stays on top of the lock body */
