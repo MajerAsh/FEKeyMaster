@@ -19,7 +19,7 @@ export default function Play() {
   useEffect(() => {
     const interval = setInterval(() => {
       setBgSmile(true);
-      const t = setTimeout(() => setBgSmile(false), 2000);
+      const t = setTimeout(() => setBgSmile(false), 1000);
       return () => clearTimeout(t);
     }, 20000);
     return () => clearInterval(interval);

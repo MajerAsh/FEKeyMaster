@@ -6,15 +6,29 @@
 }
 /* Scene keeps the background and UI together and scales responsively */
 .scene {
-  width: min(92vw, 1693px);
+  /* follow the same responsive pattern as .lock-scene so the artwork
+     scales proportionally and matches the visual size of other pages */
+  position: relative;
+  width: 40vw; /* scales with viewport width */
+  min-width: 320px;
+  max-width: 920px;
+  aspect-ratio: 1693 / 1667; /* keep the natural artwork proportions */
   margin: 0 auto;
-  min-height: 60vh;
+  transform-origin: center center;
+
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Mobile fallback: use more of the viewport width on narrow screens */
+@media (max-width: 600px) {
+  .scene {
+    width: min(92vw, 480px);
+  }
 }
 .play-panel {
   position: relative;
