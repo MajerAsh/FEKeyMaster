@@ -16,13 +16,19 @@ export default function Home() {
 
   return (
     <div className="home-root">
-      <div
-        className={`home-bg ${showAuth ? "bg-with-cat" : "bg-no-cat"}`}
-        aria-hidden
-      >
-        {!showAuth && (
-          <div className="swat-sprite" aria-hidden data-frame={0} />
-        )}
+      <div className="home-bg" aria-hidden>
+        <div className="home-artwork-wrapper" aria-hidden>
+          <img
+            src={
+              showAuth ? "/images/KitchWCat.png" : "/images/KitchenNoCat.png"
+            }
+            alt="kitchen"
+            className="home-artwork"
+          />
+          {!showAuth && (
+            <div className="swat-sprite" aria-hidden data-frame={0} />
+          )}
+        </div>
       </div>
 
       <div className="home-content">

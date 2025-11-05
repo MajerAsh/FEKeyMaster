@@ -9,65 +9,122 @@
 }
 
 .home-bg {
+  /* artwork is absolutely positioned so page content can overlay it */
   position: absolute;
   inset: 0;
-  /* show the full image without cropping where possible */
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
   background-color: #000; /* fallback for letterboxing */
-  transition: opacity 300ms ease;
-  min-height: 100vh;
-}
-.home-bg.bg-no-cat {
-  background-image: url("/images/KitchenNoCat.png");
-}
-.home-bg.bg-with-cat {
-  background-image: url("/images/KitchWCat.png");
+  pointer-events: none; /* let clicks go to overlays (play button, etc.) */
 }
 
-/* SwatSprite sprite frame box — positioned relative to the background so it scales with it */
-.home-bg {
-  position: absolute;
-}
-
+/* SwatSprite sprite frame box — positioned relative to the artwork wrapper so it scales with it */
 .swat-sprite {
-  /* frame width is 145px out of a 2165px sprite sheet (~6.7%) */
-  width: 6.7%;
+  width: var(--swat-width);
   aspect-ratio: 1 / 1;
   background-image: url("/images/SwatSprite.png");
   background-repeat: no-repeat;
-  /* Make each frame occupy 100% of the element's width by scaling the
-     full sprite width to (frames * 100%) horizontally */
-  background-size: 1500% 100%; /* 15 frames */
+  background-size: 1500% 100%; /* 15-frame horizontal strip */
   background-position: 0% 0%;
   position: absolute;
-  /* place the sprite where it belongs in the Kitchen artwork.
-    Vertical placement computed via pixel geometry:
-    image height = 1253px (above cat) + 68px (below cat) = 1321px;
-    bottom gap = 68 / 1321 ≈ 5.15% -> use this so the sprite aligns on the Y axis */
-  left: 22%;
-  bottom: 5.15%;
+  left: var(--swat-left);
+  bottom: var(--swat-bottom);
   z-index: 6;
   pointer-events: none;
+  max-width: 145px;
+}
+
+/* Small screens: allow slightly larger relative sprite so it's still visible
+     when the scene becomes narrow; tweak bottom if needed on very small viewports */
+@media (max-width: 600px) {
+  .swat-sprite {
+    width: 11%;
+    bottom: 4.5%;
+  }
+}
+
+/* If you prefer the sprite to exactly match the cat pixel box at high
+   resolutions, increase max-width to 315px and allow the element to scale
+   up. Note: upscaling may blur the sprite if the source frames are 145px
+   native — consider providing higher-res frames if you want crisp results. */
+@media (min-width: 1200px) {
+  .swat-sprite {
+    max-width: 315px;
+  }
 }
 
 /* simple frame-step animation (optional) — plays the 15-frame swat once */
 @keyframes swat-anim {
   from {
-    background-position: 0% 0%;
+    background-position-x: 0%;
   }
   to {
-    background-position: 100% 0%;
+    background-position-x: 100%;
   }
 }
-.swat-sprite.animate {
-  animation: swat-anim 600ms steps(15) forwards;
+.swat-sprite {
+  /* step animation: jump frames (no smooth scroll). Use `end` so each
+     frame holds until the next step. will-change helps the browser.
+  */
+  will-change: background-position;
+  animation: swat-anim 900ms steps(15, end) infinite;
+}
+
+/* artwork wrapper and image sizing - the sprite is absolutely positioned
+   inside the wrapper so percent offsets map to the rendered image size */
+.home-artwork-wrapper {
+  position: relative;
+  /* Default swat placement/size variables live on the wrapper so
+     they can be overridden per-breakpoint and inherited by the sprite.
+     Values are derived from Procreate canvas geometry:
+     - artwork canvas width: 1693px
+     - cat box width: 315px => --swat-width: 315/1693 ≈ 18.61%
+     - left whitespace: 380px => --swat-left: 380/1693 ≈ 22.45%
+     - bottom gap: 68px / artwork content height 1321px ≈ 5.15%
+  */
+  --swat-left: 22.45%;
+  --swat-width: 18.61%;
+  --swat-bottom: 5.15%;
+  /* preserve the artwork aspect ratio so image scales uniformly and the
+    sprite percentages map correctly to the rendered image box. Match
+    sizing behavior used on other pages (e.g. Leaderboard `.scene`) so
+    the artwork doesn't become larger than the viewport on very large
+    screens. */
+  aspect-ratio: 1693 / 1667;
+  width: min(92vw, 1693px);
+  max-width: 1693px;
+  margin: 0 auto;
+  /* Prevent the artwork from exceeding the viewport height on tall
+    or ultra-wide displays — keep it contained similar to `.scene`. */
+  max-height: min(92vh, 1667px);
+}
+.home-artwork {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+/*-------------------Target view: my large screen-----*/
+/* Tuning for target viewport (around 1377px wide): nudge the
+   sprite slightly to the right if it's visually too close to the left edge */
+@media (min-width: 1300px) and (max-width: 1400px) {
+  .home-artwork-wrapper {
+    --swat-left: 31%;
+  }
+}
+/* Additional breakpoint for large desktop where artwork may be closer to
+   max-width: keep default values but you can tweak as needed */
+@media (min-width: 1600px) {
+  .home-artwork-wrapper {
+    --swat-left: 27.46%;
+  }
 }
 
 .home-content {
   position: relative;
-  z-index: 5;
+  z-index: 30; /* above artwork */
   text-align: center;
   color: #fff;
 }
@@ -97,7 +154,3 @@
   align-items: center;
   cursor: pointer;
 }
-
-/* Removed legacy standalone cat-sprite element to avoid duplicate/bobbing overlays.
-   Decorative sprite animation is now handled by the in-background
-   `.swat-sprite` element so it scales with the scene. */
