@@ -40,6 +40,9 @@
      at large sizes (user requested ~144.5-144.7px). The element will
      scale by percentage up to this cap, then stop growing to avoid
      oversized/blurred frames while the kitchen remains contained. */
+  /* Keep the frame cap consistent at large sizes so frames don't
+     grow past the intended ~144.7px. Previously this media rule
+     increased the cap which caused oversized frames (235px, etc.). */
   max-width: 144.7px;
 }
 
@@ -56,18 +59,24 @@
    resolutions, increase max-width to 315px and allow the element to scale
    up.*/
 @media (min-width: 1200px) {
+  /* Keep large-screen cap consistent with the desired frame size
+     so each frame remains just under ~145px. Previously this media
+     rule raised the cap to 315px which caused oversized frames. */
   .swat-sprite {
-    max-width: 315px;
+    max-width: 144.7px;
   }
 }
 
 /* simple frame-step animation (optional) — plays the 15-frame swat once */
 @keyframes swat-anim {
+  /* Animate the full background-position (x,y) — using the shorthand
+     is more widely supported and works reliably with `steps()` to
+     produce discrete frame jumps instead of smooth interpolation. */
   from {
-    background-position-x: 0%;
+    background-position: 0% 0%;
   }
   to {
-    background-position-x: 100%;
+    background-position: 100% 0%;
   }
 }
 /* step animation: jump frames (no smooth scroll). Use `end` so each
