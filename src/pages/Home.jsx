@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import AuthModal from "../components/AuthModal";
@@ -8,6 +8,93 @@ export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showAuth, setShowAuth] = useState(false);
+  const wrapperRef = useRef(null);
+  const spriteRef = useRef(null);
+  const imgRef = useRef(null);
+
+  // Cat center (computed from Procreate measurements)
+  const CAT_CENTER_X = 0.3059; // 30.59% from left
+  const CAT_CENTER_Y = 0.854; // 85.40% from top
+
+  // Position the sprite in px inside the artwork wrapper so it remains
+  // locked to the image as it scales. We use a ResizeObserver so the
+  // sprite updates whenever the artwork box changes size.
+  useLayoutEffect(() => {
+    const wrapper = wrapperRef.current;
+    const sprite = spriteRef.current;
+    const img = imgRef.current;
+    if (!wrapper || !sprite || !img) return;
+
+    const FRAME_COUNT = 15;
+    const FRAME_NATIVE_W = 144; // each frame natural width in px
+    const FRAME_NATIVE_H = 145; // each frame natural height in px
+    const FRAME_DURATION_MS = 900 / FRAME_COUNT; // total animation 900ms
+
+    let frameIndex = 0;
+    let intervalId = null;
+
+    function update() {
+      const wrapperW = wrapper.clientWidth;
+      const wrapperH = wrapper.clientHeight;
+      // Use the image's natural size to compute the displayed image
+      // rectangle inside the wrapper (object-fit: contain behavior).
+      const natW = img.naturalWidth || 1693;
+      const natH = img.naturalHeight || 1667;
+      const scale = Math.min(wrapperW / natW, wrapperH / natH);
+      const dispW = natW * scale;
+      const dispH = natH * scale;
+      const offsetX = (wrapperW - dispW) / 2;
+      const offsetY = (wrapperH - dispH) / 2;
+
+      // Compute desired sprite size based on cat box ratio, cap at native
+      const CAT_BOX_RATIO = 364 / 1693; // cat box width relative to artwork
+      let spriteW = Math.round(dispW * CAT_BOX_RATIO);
+      const spriteH = Math.round((FRAME_NATIVE_H / FRAME_NATIVE_W) * spriteW);
+      // cap sprite width to native frame width to avoid upscaling blur
+      if (spriteW > FRAME_NATIVE_W) spriteW = FRAME_NATIVE_W;
+
+      const leftPx = Math.round(offsetX + dispW * CAT_CENTER_X);
+      const topPx = Math.round(offsetY + dispH * CAT_CENTER_Y);
+
+      // apply sizing and position in px so placement is pixel-perfect
+      sprite.style.width = spriteW + "px";
+      sprite.style.height = spriteH + "px";
+      sprite.style.left = leftPx + "px";
+      sprite.style.top = topPx + "px";
+      sprite.style.transform = "translate(-50%, -50%)";
+
+      // set precise background-size so JS frame stepping lands on integers
+      sprite.style.backgroundSize = `${spriteW * FRAME_COUNT}px ${spriteH}px`;
+      // ensure no CSS animation conflicts
+      sprite.style.animation = "none";
+
+      // restart interval if needed (spriteW may change on resize)
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+      frameIndex = 0;
+      sprite.style.backgroundPosition = `0px 0px`;
+      intervalId = setInterval(() => {
+        frameIndex = (frameIndex + 1) % FRAME_COUNT;
+        const x = -frameIndex * spriteW;
+        sprite.style.backgroundPosition = `${x}px 0px`;
+      }, FRAME_DURATION_MS);
+    }
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(wrapper);
+    window.addEventListener("resize", update);
+    // also update when the image loads (naturalWidth becomes available)
+    img.addEventListener("load", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+      img.removeEventListener("load", update);
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [showAuth]);
 
   function handlePlay() {
     if (user) return navigate("/play");
@@ -17,8 +104,9 @@ export default function Home() {
   return (
     <div className="home-root">
       <div className="home-bg" aria-hidden>
-        <div className="home-artwork-wrapper" aria-hidden>
+        <div className="home-artwork-wrapper" aria-hidden ref={wrapperRef}>
           <img
+            ref={imgRef}
             src={
               showAuth ? "/images/KitchWCat.png" : "/images/KitchenNoCat.png"
             }
@@ -26,7 +114,12 @@ export default function Home() {
             className="home-artwork"
           />
           {!showAuth && (
-            <div className="swat-sprite" aria-hidden data-frame={0} />
+            <div
+              className="swat-sprite"
+              aria-hidden
+              data-frame={0}
+              ref={spriteRef}
+            />
           )}
         </div>
       </div>
