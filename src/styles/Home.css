@@ -32,8 +32,13 @@
   background-size: 1500% 100%; /* 15-frame horizontal strip */
   background-position: 0% 0%;
   position: absolute;
-  left: var(--swat-left);
-  bottom: var(--swat-bottom);
+  /* center the sprite on the cat center so it remains stable when the
+    wrapper is centered or resized. Use translateX(-50%) so `left`
+    represents the visual center point. */
+  left: var(--swat-center, var(--swat-left));
+  /* top/left will be set by JS for pixel-accurate placement; keep
+    --swat-bottom as a CSS fallback but we avoid setting `bottom`
+    here to prevent conflicts when JS writes `top`. */
   z-index: 6;
   pointer-events: none;
   /* Cap the visible frame size so each frame stays just under 145px
@@ -99,6 +104,7 @@
      - bottom gap: 68px / artwork content height 1321px ≈ 5.15%
   */
   --swat-left: 22.45%;
+  --swat-center: 30.59%; /* cat center: 518px / 1693px */
   --swat-width: 18.61%;
   --swat-bottom: 5.15%;
   /* preserve the artwork aspect ratio so image scales uniformly and the
@@ -127,18 +133,9 @@
 /*-------------------Target view: my large screen-----*/
 /* Tuning for target viewport (around 1377px wide): nudge the
    sprite slightly to the right if it's visually too close to the left edge */
-@media (min-width: 1300px) and (max-width: 1400px) {
-  .home-artwork-wrapper {
-    --swat-left: 31%;
-  }
-}
-/* Additional breakpoint for large desktop where artwork may be closer to
-   max-width: keep default values but you can tweak as needed */
-@media (min-width: 1600px) {
-  .home-artwork-wrapper {
-    --swat-left: 27.46%;
-  }
-}
+/* Removed left-edge nudges; positioning now uses --swat-center (cat
+   center) with translateX(-50%). If you need tiny per-breakpoint
+   adjustments, add overrides for --swat-center here. */
 
 .home-content {
   position: relative;
