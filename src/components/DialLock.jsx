@@ -54,7 +54,7 @@ export default function DialLock({
   useEffect(() => {
     if (step1AssistShown) return;
     showOverlay(
-      "Turn the dial clockwise and listen for a click — then add 5 to where you heard the click.",
+      "Turn the dial counter clockwise and listen for a click — then add 5 to where you heard the click. That's the first number.",
       "assist"
     );
     setStep1AssistShown(true);
@@ -97,7 +97,7 @@ export default function DialLock({
     if (step >= 2 && direction !== 1) {
       // Block counter-clockwise moves during step 3 and show a hint
       showOverlay(
-        "Only move clockwise to get the correct third number.",
+        "Only move counter clockwise to get the correct third number.",
         "hint"
       );
       return;
@@ -218,7 +218,7 @@ export default function DialLock({
 
       if (dir !== 1) {
         showOverlay(
-          "Only move clockwise to get the correct first number.",
+          "Only move counter clockwise to get the correct first number.",
           "hint"
         );
         return;
@@ -264,7 +264,7 @@ export default function DialLock({
       }
 
       if (current === target) playSound(clickAudio);
-      else showOverlay("Listen for the loudest click.", "info");
+      else showOverlay("Listen for a different click.", "info");
     }
 
     // record the answered number and advance
@@ -276,7 +276,7 @@ export default function DialLock({
       setStep2CcwCount(0);
       setStep2FullRotation(false);
       showOverlay(
-        "Turn the lock counter clockwise one full rotation, then proceed to find the second number.",
+        "Turn the lock clockwise one full rotation, then proceed to find the second number.",
         "assist"
       );
     }
