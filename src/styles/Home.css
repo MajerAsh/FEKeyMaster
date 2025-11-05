@@ -47,8 +47,7 @@
 
 /* If you prefer the sprite to exactly match the cat pixel box at high
    resolutions, increase max-width to 315px and allow the element to scale
-   up. Note: upscaling may blur the sprite if the source frames are 145px
-   native — consider providing higher-res frames if you want crisp results. */
+   up.*/
 @media (min-width: 1200px) {
   .swat-sprite {
     max-width: 315px;
