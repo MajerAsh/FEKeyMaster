@@ -19,9 +19,12 @@
   background-color: #000; /* fallback for letterboxing */
   pointer-events: none; /* let clicks go to overlays (play button, etc.) */
 }
-
+/*--------------------SPRITE--------------------------*/
 /* SwatSprite sprite frame box — positioned relative to the artwork wrapper so it scales with it */
 .swat-sprite {
+  /* width is a percentage of the artwork wrapper so the sprite scales
+     in lock-step with the rendered kitchen image. Avoid absolute px
+     caps here so the element stays proportional to the artwork. */
   width: var(--swat-width);
   aspect-ratio: 1 / 1;
   background-image: url("/images/SwatSprite.png");
@@ -33,7 +36,11 @@
   bottom: var(--swat-bottom);
   z-index: 6;
   pointer-events: none;
-  max-width: 145px;
+  /* Cap the visible frame size so each frame stays just under 145px
+     at large sizes (user requested ~144.5-144.7px). The element will
+     scale by percentage up to this cap, then stop growing to avoid
+     oversized/blurred frames while the kitchen remains contained. */
+  max-width: 144.7px;
 }
 
 /* Small screens: allow slightly larger relative sprite so it's still visible
@@ -63,10 +70,9 @@
     background-position-x: 100%;
   }
 }
+/* step animation: jump frames (no smooth scroll). Use `end` so each
+     frame holds until the next step. will-change helps the browser.*/
 .swat-sprite {
-  /* step animation: jump frames (no smooth scroll). Use `end` so each
-     frame holds until the next step. will-change helps the browser.
-  */
   will-change: background-position;
   animation: swat-anim 900ms steps(15, end) infinite;
 }
@@ -100,6 +106,10 @@
   max-height: min(92vh, 1667px);
 }
 .home-artwork {
+  /* Make the <img> behave like `background-size: contain` inside the
+     wrapper so the rendered kitchen caps and scales the same way as
+     other pages that use a background image. This ensures the sprite
+     scales with the artwork's rendered box. */
   display: block;
   width: 100%;
   height: 100%;
