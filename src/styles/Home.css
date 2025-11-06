@@ -159,7 +159,7 @@
   right: 24px;
   bottom: 24px;
   z-index: 10;
-  background: rgba(0, 0, 0, 0.6);
+  background-color: #8d6186; /* brand primary for play/login/return */
   color: #fff;
   border: none;
   padding: 12px 18px;
@@ -168,4 +168,8 @@
   gap: 8px;
   align-items: center;
   cursor: pointer;
+}
+
+.play-btn:hover {
+  filter: brightness(0.95);
 }

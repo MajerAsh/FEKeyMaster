@@ -66,3 +66,20 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Primary action color for Play / Log In / Sign Up / Return buttons */
+.play-panel .tile button,
+.game-actions button,
+.leader-panel button,
+form button[type="submit"],
+.play-panel .play-grid .tile button {
+  background-color: #8d6186;
+  color: #fff;
+  border-color: transparent;
+}
+.play-panel .tile button:hover,
+.game-actions button:hover,
+.leader-panel button:hover,
+form button[type="submit"]:hover {
+  filter: brightness(0.95);
+}
