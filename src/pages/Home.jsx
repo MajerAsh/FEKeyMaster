@@ -28,10 +28,13 @@ export default function Home() {
     const FRAME_COUNT = 15;
     const FRAME_NATIVE_W = 144; // each frame natural width in px
     const FRAME_NATIVE_H = 145; // each frame natural height in px
-    const FRAME_DURATION_MS = 900 / FRAME_COUNT; // total animation 900ms
+    // Total animation duration (ms). Increase this to slow the loop.
+    const TOTAL_ANIMATION_MS = 1500; // was 900ms, increased for a slower loop
+    const FRAME_DURATION_MS = TOTAL_ANIMATION_MS / FRAME_COUNT;
 
     let frameIndex = 0;
     let intervalId = null;
+    const PAUSE_BETWEEN_LOOPS_MS = 3000; // pause 3s after the last frame
 
     function update() {
       const wrapperW = wrapper.clientWidth;
@@ -68,18 +71,27 @@ export default function Home() {
       // ensure no CSS animation conflicts
       sprite.style.animation = "none";
 
-      // restart interval if needed (spriteW may change on resize)
+      // restart frame stepping (spriteW may change on resize). Use recursive
+      // setTimeout so we can insert a longer pause after the final frame.
       if (intervalId) {
-        clearInterval(intervalId);
+        clearTimeout(intervalId);
         intervalId = null;
       }
       frameIndex = 0;
       sprite.style.backgroundPosition = `0px 0px`;
-      intervalId = setInterval(() => {
+
+      function step() {
         frameIndex = (frameIndex + 1) % FRAME_COUNT;
         const x = -frameIndex * spriteW;
         sprite.style.backgroundPosition = `${x}px 0px`;
-      }, FRAME_DURATION_MS);
+        const isLast = frameIndex === FRAME_COUNT - 1;
+        const delay = isLast
+          ? FRAME_DURATION_MS + PAUSE_BETWEEN_LOOPS_MS
+          : FRAME_DURATION_MS;
+        intervalId = setTimeout(step, delay);
+      }
+
+      intervalId = setTimeout(step, FRAME_DURATION_MS);
     }
 
     update();
@@ -92,7 +104,7 @@ export default function Home() {
       ro.disconnect();
       window.removeEventListener("resize", update);
       img.removeEventListener("load", update);
-      if (intervalId) clearInterval(intervalId);
+      if (intervalId) clearTimeout(intervalId);
     };
   }, [showAuth]);
 
