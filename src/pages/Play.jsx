@@ -17,12 +17,22 @@ export default function Play() {
 
   // every 20s toggle a smile for 2s
   useEffect(() => {
+    // configurable timings so we can easily speed/slow the effect
+    const SMILE_INTERVAL_MS = 5000; // how often to trigger the smile
+    const SMILE_DURATION_MS = 800; // how long the smile stays visible
+
+    let timeoutId = null;
     const interval = setInterval(() => {
       setBgSmile(true);
-      const t = setTimeout(() => setBgSmile(false), 1000);
-      return () => clearTimeout(t);
-    }, 20000);
-    return () => clearInterval(interval);
+      // ensure any previous timeout is cleared before creating a new one
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => setBgSmile(false), SMILE_DURATION_MS);
+    }, SMILE_INTERVAL_MS);
+
+    return () => {
+      clearInterval(interval);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, []);
 
   const dialPuzzle = puzzles.find((p) => p.type === "dial");
