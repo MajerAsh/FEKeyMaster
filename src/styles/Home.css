@@ -22,7 +22,7 @@
 /*--------------------SPRITE--------------------------*/
 /* SwatSprite sprite frame box — positioned relative to the artwork wrapper so it scales with it */
 .swat-sprite {
-  /* width is a percentage of the artwork wrapper so the sprite scales
+  /* width is a percentage of the art wrapper so the sprite scales
      in lock-step with the rendered kitchen image. Avoid absolute px
      caps here so the element stays proportional to the artwork. */
   width: var(--swat-width);
@@ -37,8 +37,7 @@
     represents the visual center point. */
   left: var(--swat-center, var(--swat-left));
   /* top/left will be set by JS for pixel-accurate placement; keep
-    --swat-bottom as a CSS fallback but we avoid setting `bottom`
-    here to prevent conflicts when JS writes `top`. */
+    --swat-bottom as a CSS fallback*/
   z-index: 6;
   pointer-events: none;
   /* Cap the visible frame size so each frame stays just under 145px
