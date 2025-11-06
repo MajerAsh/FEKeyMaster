@@ -15,6 +15,13 @@ export default function Play() {
     if (token && puzzles.length === 0) fetchPuzzles();
   }, [token, fetchPuzzles, puzzles.length]);
 
+  // Protect this route: if there's no token, send the user to login
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token, navigate]);
+
   // every 20s toggle a smile for 2s
   useEffect(() => {
     // configurable timings so we can easily speed/slow the effect

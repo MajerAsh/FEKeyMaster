@@ -98,7 +98,7 @@
   /* Default swat placement/size variables live on the wrapper so
      they can be overridden per-breakpoint and inherited by the sprite.
      Values are derived from Procreate canvas geometry:
-     - artwork canvas width: 1693px
+     - imgs canvas width: 1693px
      - cat box width: 315px => --swat-width: 315/1693 ≈ 18.61%
      - left whitespace: 380px => --swat-left: 380/1693 ≈ 22.45%
      - bottom gap: 68px / artwork content height 1321px ≈ 5.15%
@@ -107,7 +107,7 @@
   --swat-center: 30.59%; /* cat center: 518px / 1693px */
   --swat-width: 18.61%;
   --swat-bottom: 5.15%;
-  /* preserve the artwork aspect ratio so image scales uniformly and the
+  /* preserve the drawings aspect ratio so image scales uniformly and the
     sprite percentages map correctly to the rendered image box. Match
     sizing behavior used on other pages (e.g. Leaderboard `.scene`) so
     the artwork doesn't become larger than the viewport on very large
