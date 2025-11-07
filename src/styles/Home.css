@@ -133,6 +133,14 @@
   margin: 0;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
+.home-logo {
+  display: block;
+  max-width: min(60vw, 540px);
+  width: min(60vw, 540px);
+  height: auto;
+  margin: 0 auto;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.45));
+}
 .subtitle {
   margin-top: 0.5rem;
   opacity: 0.9;

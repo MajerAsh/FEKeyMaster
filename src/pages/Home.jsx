@@ -139,7 +139,7 @@ export default function Home() {
       <div className="home-content">
         {!showAuth && (
           <>
-            <h1 className="title">Key Master</h1>
+            <img src="/images/KeyPaw.png" alt="Key Paw" className="home-logo" />
             <p className="subtitle">
               Pick, turn, and unlock — prove your skill.
             </p>
