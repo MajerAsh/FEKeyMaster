@@ -43,6 +43,16 @@
   margin-top: 1.5rem;
 }
 
+/* ensure controls and text sit on top of lock artwork (paw PNG) */
+.dial-controls,
+.dial-actions,
+.attempt-display,
+.unlock-button,
+.dial-number {
+  position: relative;
+  z-index: 30;
+}
+
 .dial-button {
   padding: 0.5rem 1rem;
   background-color: #2563eb;

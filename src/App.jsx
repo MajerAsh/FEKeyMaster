@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
@@ -10,7 +9,6 @@ import GameBoard from "./pages/GameBoard";
 export default function App() {
   return (
     <>
-      <Navbar />
       <Routes>
         <Route path="/puzzle/:id" element={<GameBoard />} />
         <Route path="/play" element={<Play />} />

@@ -66,3 +66,33 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Primary action color for Play / Log In / Sign Up / Return buttons */
+.play-panel .tile button,
+.game-actions button,
+.leader-panel button,
+form button[type="submit"],
+.play-panel .play-grid .tile button {
+  background-color: #8d6186;
+  color: #fff;
+  border-color: transparent;
+  /* subtle depth using the provided light accent color */
+  box-shadow: 0 6px 0 #dcc8d6;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+.play-panel .tile button:hover,
+.game-actions button:hover,
+.leader-panel button:hover,
+form button[type="submit"]:hover {
+  filter: brightness(0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 #dcc8d6;
+}
+
+.play-panel .tile button:active,
+.game-actions button:active,
+.leader-panel button:active,
+form button[type="submit"]:active {
+  transform: translateY(2px);
+  box-shadow: 0 3px 0 #dcc8d6;
+}

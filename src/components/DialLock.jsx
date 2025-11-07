@@ -23,7 +23,7 @@ export default function DialLock({
   //const [message, setMessage] = useState("");
   const [lastDirection, setLastDirection] = useState(null);
   const [, setTurnCount] = useState(0);
-  const [step2CcwCount, setStep2CcwCount] = useState(0);
+  const [, setStep2CcwCount] = useState(0);
   const [step2FullRotation, setStep2FullRotation] = useState(false);
   // angle tracks accumulated rotation in degrees to avoid large wrap jumps
   const [angle, setAngle] = useState(0);
@@ -276,7 +276,7 @@ export default function DialLock({
       setStep2CcwCount(0);
       setStep2FullRotation(false);
       showOverlay(
-        "Turn the lock clockwise one full rotation, then proceed to find the second number.",
+        "Turn the lock counter clockwise one full rotation, then proceed to find the second number.",
         "assist"
       );
     }

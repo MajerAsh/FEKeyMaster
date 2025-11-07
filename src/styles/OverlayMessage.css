@@ -7,7 +7,7 @@
   /* make room on the right/top for the close button so it doesn't overlap text */
   padding: 1rem 2.5rem 1rem 1.5rem;
   border-radius: 0.5rem;
-  color: #fff;
+  color: #000000;
   font-weight: 600;
   z-index: 9999;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
@@ -39,11 +39,11 @@
   display: inline-grid;
   place-items: center;
   border-radius: 999px;
-  z-index: 10001; /* ensure it sits above overlay content */
+  z-index: 10001; /* it sits above overlay content */
 }
 
 /* Prevent the close button from covering the text on narrow widths by
-   reserving space on the right and top via padding on the container. Also
+   reserving space on the right and top via padding on the container.
    ensure overlay text doesn't flow under the close button. */
 .overlay-text {
   display: block;
@@ -101,64 +101,3 @@
     transform: translate(-50%, 0);
   }
 }
-
-/* OLD   Reusable overlay message 
-.overlay-message {
-  position: fixed;
-  left: 50%;
-  top: 20%;
-  transform: translateX(-50%) translateY(-10px) scale(0.95);
-  background: rgba(255, 255, 255, 0.98);
-  padding: 14px 20px;
-  border-radius: 10px;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
-  z-index: 1300;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 18px;
-  opacity: 0;
-  animation: om-pop-in 320ms cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
-}
-
-@keyframes om-pop-in {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px) scale(0.85);
-  }
-  60% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1.06);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-}
-
-.overlay-inner {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.overlay-emoji {
-  font-size: 22px;
-}
-.overlay-text {
-  font-weight: 600;
-}
-
-/* Types 
-.overlay-success {
-  border: 2px solid rgba(10, 160, 80, 0.12);
-  color: #0a6;
-}
-.overlay-error {
-  border: 2px solid rgba(200, 40, 40, 0.12);
-  color: #d22;
-}
-.overlay-info {
-  border: 2px solid rgba(20, 100, 200, 0.08);
-  color: #0a5;
-}
-*/
