@@ -140,9 +140,7 @@ export default function Home() {
         {!showAuth && (
           <>
             <img src="/images/KeyPaw.png" alt="Key Paw" className="home-logo" />
-            <p className="subtitle">
-              Pick, turn, and unlock — prove your skill.
-            </p>
+            <p className="subtitle">Pick, turn, and unlock — get the treats.</p>
           </>
         )}
 

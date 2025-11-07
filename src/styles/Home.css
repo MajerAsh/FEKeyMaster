@@ -7,6 +7,7 @@
   align-items: center;
   justify-content: center;
 }
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap");
 
 .home-bg {
   /* artwork is absolutely positioned so page content can overlay it */
@@ -16,7 +17,7 @@
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  background-color: #000; /* fallback for letterboxing */
+  background-color: #000000; /* fallback for letterboxing */
   pointer-events: none; /* let clicks go to overlays (play button, etc.) */
 }
 /*--------------------SPRITE--------------------------*/
@@ -125,7 +126,7 @@
   position: relative;
   z-index: 30; /* above bg img */
   text-align: center;
-  color: #fff;
+  color: #ffffff;
 }
 
 .title {
@@ -143,7 +144,22 @@
 }
 .subtitle {
   margin-top: 0.5rem;
-  opacity: 0.9;
+  opacity: 0.95;
+  font-weight: 1000; /* bold for Dancing Script */
+  font-size: 1.125rem;
+  letter-spacing: 0.2px;
+  text-shadow: 0 15px 18px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(0, 0, 0, 0.25);
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  margin-top: 0.75rem;
+  /* Solid blue tile */
+  background: #3cabec;
+  color: #ffffff;
+  border-radius: 0.5rem;
+  /* 3D layered shadow: a solid offset plus a soft drop for depth */
+  box-shadow: 0 8px 0 #075bb0, 0 14px 24px rgba(3, 22, 56, 0.35);
+  transform: translateZ(0);
+  font-family: "Dancing Script", Georgia, "Times New Roman", cursive;
 }
 
 .play-btn {
