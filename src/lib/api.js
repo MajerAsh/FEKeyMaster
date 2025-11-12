@@ -12,8 +12,8 @@ console.log("API_BASE ->", API_BASE);
  * headers, optionally injects a Bearer token, and throws on non-OK responses.
  *
  * @param {string} path - Path w '/' (e.g. '/puzzles') or a full URL
- * @param {object} options - fetch options (method, body, headers, etc.)
- * @param {string} [token] - optional Bearer token to include in Authorization header
+ * @param {object} options - fetch options (method, body, headers...+)
+ * @param {string} [token] - Bearer token to include in Authorization header (not required)
  */
 export async function apiFetch(path, options = {}, token) {
   const url = /^https?:\/\//i.test(path) ? path : `${API_BASE}${path}`;
@@ -32,7 +32,7 @@ export async function apiFetch(path, options = {}, token) {
   let data = null;
   try {
     data = text ? JSON.parse(text) : null;
-  } catch (e) {
+  } catch {
     // If body isn't JSON, keep raw text
     data = text;
   }
