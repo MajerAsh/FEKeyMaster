@@ -1,6 +1,6 @@
-// Small API helper for fetch calls.
-// Centralizes the base URL and small conveniences like JSON headers,
-// optional Authorization injection, and standardized error handling.
+/* Small API helper for VITE_API_URL fetch calls.
+Centralizes the base URL and small conveniences like JSON headers,
+ optional Authorization injection, and standardized error handling.*/
 
 export const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
@@ -35,7 +35,9 @@ export async function apiFetch(path, options = {}, token) {
   }
 
   if (!res.ok) {
-    const err = new Error((data && data.error) || `Request failed (${res.status})`);
+    const err = new Error(
+      (data && data.error) || `Request failed (${res.status})`
+    );
     err.status = res.status;
     err.body = data;
     throw err;
