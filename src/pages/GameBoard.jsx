@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { usePuzzles } from "../context/PuzzleContext";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../lib/api";
 import PinTumbler from "../components/PinTumbler";
 import "../styles/GameBoard.css";
 import OverlayMessage from "../components/OverlayMessage";
@@ -42,26 +43,26 @@ export default function GameBoard() {
     setUnlocked(false);
 
     try {
-      const res = await fetch("http://localhost:3001/puzzles/solve", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const data = await apiFetch(
+        "/puzzles/solve",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            puzzle_id: puzzle.id,
+            attempt: attemptArray,
+          }),
         },
-        body: JSON.stringify({
-          puzzle_id: puzzle.id,
-          attempt: attemptArray,
-        }),
-      });
+        token
+      );
 
-      const data = await res.json();
-      if (res.ok && data.success) {
+      if (data && data.success) {
         setMessage("✅ Unlocked!");
         setUnlocked(true);
       } else {
         setMessage("❌ Incorrect. Try again.");
       }
-    } catch {
+    } catch (err) {
+      console.error("Error submitting attempt:", err);
       setMessage("Something went wrong.");
     }
   }

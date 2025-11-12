@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../lib/api";
 import "../styles/AuthModal.css";
 
 export default function AuthModal({ onClose, onSuccess }) {
@@ -17,18 +18,10 @@ export default function AuthModal({ onClose, onSuccess }) {
   async function submit(endpoint) {
     setError(null);
     try {
-      const res = await fetch(`http://localhost:3001/auth/${endpoint}`, {
+      const data = await apiFetch(`/auth/${endpoint}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        // Mirror Login.jsx behavior for error handling
-        throw new Error(data.error || `${endpoint} failed`);
-      }
 
       // update auth context and navigate
       login(data.user, data.token);

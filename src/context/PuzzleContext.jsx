@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { useAuth } from "./AuthContext";
+import { apiFetch } from "../lib/api";
 
 const PuzzleContext = createContext();
 
@@ -9,13 +10,13 @@ export function PuzzleProvider({ children }) {
   const [selectedPuzzle, setSelectedPuzzle] = useState(null);
 
   const fetchPuzzles = async () => {
-    const res = await fetch("http://localhost:3001/puzzles", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    setPuzzles(data);
+    try {
+      const data = await apiFetch("/puzzles", {}, token);
+      setPuzzles(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to fetch puzzles:", err);
+      setPuzzles([]);
+    }
   };
 
   return (
