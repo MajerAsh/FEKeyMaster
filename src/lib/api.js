@@ -11,7 +11,7 @@ console.log("API_BASE ->", API_BASE);
  * apiFetch - wrapper around fetch that prefixes the API base, sets JSON
  * headers, optionally injects a Bearer token, and throws on non-OK responses.
  *
- * @param {string} path - Path starting with '/' (e.g. '/puzzles') or a full URL
+ * @param {string} path - Path w '/' (e.g. '/puzzles') or a full URL
  * @param {object} options - fetch options (method, body, headers, etc.)
  * @param {string} [token] - optional Bearer token to include in Authorization header
  */
