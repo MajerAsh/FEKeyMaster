@@ -4,6 +4,9 @@ Centralizes the base URL and small conveniences like JSON headers,
 
 export const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
+// show which API base the client will use
+console.log("API_BASE ->", API_BASE);
+
 /**
  * apiFetch - wrapper around fetch that prefixes the API base, sets JSON
  * headers, optionally injects a Bearer token, and throws on non-OK responses.
