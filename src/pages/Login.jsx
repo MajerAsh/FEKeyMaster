@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../lib/api";
 
 export default function Login() {
   const { login } = useAuth();
@@ -18,17 +19,10 @@ export default function Login() {
     setError(null);
 
     try {
-      const res = await fetch("http://localhost:3001/auth/login", {
+      const data = await apiFetch("/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Login failed");
-      }
 
       login(data.user, data.token); // update context
       navigate("/"); // go to play page
