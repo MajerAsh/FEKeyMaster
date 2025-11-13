@@ -10,7 +10,7 @@ export default function Navbar() {
       <Link to="/play">Play</Link> |
       {!user ? (
         <>
-          <Link to="/login">Login</Link> | <Link to="/signup">Signup</Link>
+          <Link to="/">Login</Link> | <Link to="/">Signup</Link>
         </>
       ) : (
         <>
