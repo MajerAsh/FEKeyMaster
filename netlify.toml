@@ -1,0 +1,21 @@
+# Netlify config for the frontend folder in this monorepo.
+# Placing this in FEKeyMaster ensures Netlify will build the frontend when
+# the site is configured to use that folder as the base (or when Netlify
+# inspects this folder specifically).
+
+[build]
+  base = "."
+  publish = "dist"
+  command = "npm ci && npm run build"
+
+[context.production.environment]
+  # Production API URL for the built frontend
+  VITE_API_URL = "https://keymaster-api.up.railway.app"
+
+# Optional proxy redirect (commented). Uncomment to proxy /api/* through Netlify
+# which avoids CORS on the client by keeping requests same-origin to Netlify.
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://keymaster-api.up.railway.app/:splat"
+#   status = 200
+#   force = true
