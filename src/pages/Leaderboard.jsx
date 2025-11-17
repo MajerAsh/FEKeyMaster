@@ -8,7 +8,7 @@ export default function Leaderboard() {
   const { token, logout } = useAuth();
   // protect leaderboard - require login
   useEffect(() => {
-    if (!token) navigate("/login");
+    if (!token) navigate("/");
   }, [token, navigate]);
 
   return (
