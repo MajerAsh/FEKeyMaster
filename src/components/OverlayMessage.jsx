@@ -23,7 +23,7 @@ export default function OverlayMessage({
 
   const icon =
     type === "success"
-      ? "🔓"
+      ? "🐟"
       : type === "error"
       ? "❌"
       : type === "hint"
