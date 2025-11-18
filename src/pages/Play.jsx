@@ -1,3 +1,5 @@
+// the page with game options and cat smile
+
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { usePuzzles } from "../context/PuzzleContext";
