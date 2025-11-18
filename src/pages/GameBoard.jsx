@@ -99,7 +99,7 @@ export default function GameBoard() {
       );
 
       if (data && data.success) {
-        setMessage("✅ Unlocked!");
+        setMessage("Unlocked!");
         setUnlocked(true);
       } else {
         setMessage("❌ Incorrect. Try again.");
@@ -178,7 +178,7 @@ export default function GameBoard() {
           <OverlayMessage
             message={message}
             type={
-              message?.startsWith("✅")
+              message?.startsWith("Unlocked!")
                 ? "success"
                 : message?.startsWith("❌")
                 ? "error"
