@@ -62,7 +62,7 @@ export default function GameBoard() {
 
     if (localMatch) {
       // Immediately show success in the UI
-      setMessage("✅ Unlocked!");
+      setMessage("Unlocked!");
       setUnlocked(true);
       // Persist result but don't block UI; log any server-side errors
       apiFetch(
@@ -77,12 +77,12 @@ export default function GameBoard() {
           if (!data || !data.success) {
             console.warn("Server did not accept attempt:", data);
             // If server rejects, inform the user but do not revert the UI abruptly
-            setMessage("✅ Unlocked! (local) — server did not persist result");
+            setMessage("Unlocked! (local) — server did not persist result");
           }
         })
         .catch((err) => {
           console.error("Error persisting attempt:", err);
-          setMessage("✅ Unlocked! (local) — save failed");
+          setMessage("Unlocked! (local) — save failed");
         });
       return;
     }
