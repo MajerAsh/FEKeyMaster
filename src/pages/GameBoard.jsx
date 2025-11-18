@@ -38,19 +38,62 @@ export default function GameBoard() {
 
   if (!puzzle) return <p>Loading puzzle...</p>;
 
+  // Optimistic attempt handling: check locally first so UI is instant,
+  // then persist to the server in the background. This avoids waiting for
+  // a network round-trip to show the unlock feedback.
   async function handleAttempt(attemptArray) {
     setMessage("");
-    setUnlocked(false);
 
+    // parse solution locally
+    let localCode = [];
+    try {
+      if (puzzle?.solution_code) localCode = JSON.parse(puzzle.solution_code);
+    } catch (err) {
+      console.error(
+        "Failed to parse puzzle.solution_code for local check:",
+        err
+      );
+    }
+
+    const localMatch =
+      Array.isArray(attemptArray) &&
+      attemptArray.length === localCode.length &&
+      attemptArray.every((val, i) => Math.abs(val - localCode[i]) <= 2);
+
+    if (localMatch) {
+      // Immediately show success in the UI
+      setMessage("✅ Unlocked!");
+      setUnlocked(true);
+      // Persist result but don't block UI; log any server-side errors
+      apiFetch(
+        "/puzzles/solve",
+        {
+          method: "POST",
+          body: JSON.stringify({ puzzle_id: puzzle.id, attempt: attemptArray }),
+        },
+        token
+      )
+        .then((data) => {
+          if (!data || !data.success) {
+            console.warn("Server did not accept attempt:", data);
+            // If server rejects, inform the user but do not revert the UI abruptly
+            setMessage("✅ Unlocked! (local) — server did not persist result");
+          }
+        })
+        .catch((err) => {
+          console.error("Error persisting attempt:", err);
+          setMessage("✅ Unlocked! (local) — save failed");
+        });
+      return;
+    }
+
+    // Not a local match: submit to server and wait for official response
     try {
       const data = await apiFetch(
         "/puzzles/solve",
         {
           method: "POST",
-          body: JSON.stringify({
-            puzzle_id: puzzle.id,
-            attempt: attemptArray,
-          }),
+          body: JSON.stringify({ puzzle_id: puzzle.id, attempt: attemptArray }),
         },
         token
       );
