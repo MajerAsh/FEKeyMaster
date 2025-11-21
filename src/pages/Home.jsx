@@ -27,7 +27,7 @@ export default function Home() {
 
     const FRAME_COUNT = 15;
     const FRAME_NATIVE_W = 144; // each frame natural width in px
-    const FRAME_NATIVE_H = 145; // each frame natural height in px
+    const FRAME_NATIVE_H = 145; // " " natural height in px
     // Total animation duration (ms). Increase this to slow the loop.
     const TOTAL_ANIMATION_MS = 1500; // was 900ms, increased for a slower loop
     const FRAME_DURATION_MS = TOTAL_ANIMATION_MS / FRAME_COUNT;
