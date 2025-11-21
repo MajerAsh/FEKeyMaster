@@ -49,7 +49,7 @@ cd KeyMaster
 
 2. Backend setup (run in `BEKeyMaster`)
 
-- Create a `.env` in `BEKeyMaster` (do not commit) containing at minimum:
+- Create a `.env` in `BEKeyMaster` containing at minimum:
 
 ```ini
 PORT=3001

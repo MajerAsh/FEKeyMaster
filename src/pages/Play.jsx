@@ -13,6 +13,16 @@ export default function Play() {
 
   const [bgSmile, setBgSmile] = useState(false);
 
+  // preload background images to avoid flicker when swapping
+  useEffect(() => {
+    const names = ["ZoomSmile.png", "ZoomIn.png"];
+    const imgs = names.map((n) => {
+      const i = new Image();
+      i.src = `/images/${n}`;
+      return i;
+    });
+    return () => imgs.forEach((i) => (i.src = ""));
+  }, []);
   useEffect(() => {
     if (token && puzzles.length === 0) fetchPuzzles();
   }, [token, fetchPuzzles, puzzles.length]);
