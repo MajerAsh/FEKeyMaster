@@ -43,7 +43,7 @@ export default function Play() {
     let timeoutId = null;
     const interval = setInterval(() => {
       setBgSmile(true);
-      // ensure any previous timeout is cleared before creating a new one
+      // any previous timeout is cleared before creating a new one
       if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(() => setBgSmile(false), SMILE_DURATION_MS);
     }, SMILE_INTERVAL_MS);
