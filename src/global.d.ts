@@ -9,7 +9,7 @@ declare module "*.wav";
 
 interface ImportMetaEnv {
   readonly VITE_API_URL?: string;
-  // add other VITE_ env names you rely on here as readonly strings
+  // add other VITE_ env names here as readonly strings
   readonly NODE_ENV?: "development" | "production" | "test";
 }
 
