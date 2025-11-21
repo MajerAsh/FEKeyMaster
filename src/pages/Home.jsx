@@ -12,7 +12,7 @@ export default function Home() {
   const spriteRef = useRef(null);
   const imgRef = useRef(null);
 
-  // Cat center (computed from Procreate measurements)
+  // Cat center (from Procreate measurements)
   const CAT_CENTER_X = 0.3059; // 30.59% from left
   const CAT_CENTER_Y = 0.854; // 85.40% from top
 
