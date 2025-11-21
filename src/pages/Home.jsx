@@ -16,9 +16,9 @@ export default function Home() {
   const CAT_CENTER_X = 0.3059; // 30.59% from left
   const CAT_CENTER_Y = 0.854; // 85.40% from top
 
-  // Position the sprite in px inside the artwork wrapper so it remains
-  // locked to the image as it scales. We use a ResizeObserver so the
-  // sprite updates whenever the artwork box changes size.
+  /* Position the sprite in px inside the artwork wrapper so it remains
+  locked to the image as it scales. We use a ResizeObserver so the
+ sprite updates whenever the artwork box changes size.*/
   useLayoutEffect(() => {
     const wrapper = wrapperRef.current;
     const sprite = spriteRef.current;
