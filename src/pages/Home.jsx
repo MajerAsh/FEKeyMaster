@@ -12,13 +12,13 @@ export default function Home() {
   const spriteRef = useRef(null);
   const imgRef = useRef(null);
 
-  // Cat center (computed from Procreate measurements)
+  // Cat center (from Procreate measurements)
   const CAT_CENTER_X = 0.3059; // 30.59% from left
   const CAT_CENTER_Y = 0.854; // 85.40% from top
 
-  // Position the sprite in px inside the artwork wrapper so it remains
-  // locked to the image as it scales. We use a ResizeObserver so the
-  // sprite updates whenever the artwork box changes size.
+  /* Position the sprite in px inside the artwork wrapper so it remains
+  locked to the image as it scales. We use a ResizeObserver so the
+ sprite updates whenever the artwork box changes size.*/
   useLayoutEffect(() => {
     const wrapper = wrapperRef.current;
     const sprite = spriteRef.current;
@@ -27,7 +27,7 @@ export default function Home() {
 
     const FRAME_COUNT = 15;
     const FRAME_NATIVE_W = 144; // each frame natural width in px
-    const FRAME_NATIVE_H = 145; // each frame natural height in px
+    const FRAME_NATIVE_H = 145; // " " natural height in px
     // Total animation duration (ms). Increase this to slow the loop.
     const TOTAL_ANIMATION_MS = 1500; // was 900ms, increased for a slower loop
     const FRAME_DURATION_MS = TOTAL_ANIMATION_MS / FRAME_COUNT;
@@ -156,10 +156,6 @@ export default function Home() {
           onSuccess={() => navigate("/play")}
         />
       )}
-
-      {/* decorative sprites are rendered inside the background (.swat-sprite)
-          The old standalone <img className="cat-sprite"> was removed to avoid
-          duplicate/bobbing overlays that interfered with placement. */}
     </div>
   );
 }

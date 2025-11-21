@@ -36,14 +36,14 @@ export default function Play() {
 
   // every 20s toggle a smile for 2s
   useEffect(() => {
-    // configurable timings so we can easily speed/slow the effect
+    // speed/slow the smile effect
     const SMILE_INTERVAL_MS = 5000; // how often to trigger the smile
-    const SMILE_DURATION_MS = 800; // how long the smile stays visible
+    const SMILE_DURATION_MS = 800; // how long the smile stays
 
     let timeoutId = null;
     const interval = setInterval(() => {
       setBgSmile(true);
-      // ensure any previous timeout is cleared before creating a new one
+      // any previous timeout is cleared before creating a new one
       if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(() => setBgSmile(false), SMILE_DURATION_MS);
     }, SMILE_INTERVAL_MS);
