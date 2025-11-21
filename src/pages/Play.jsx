@@ -38,7 +38,7 @@ export default function Play() {
   useEffect(() => {
     // speed/slow the smile effect
     const SMILE_INTERVAL_MS = 5000; // how often to trigger the smile
-    const SMILE_DURATION_MS = 800; // how long the smile stays visible
+    const SMILE_DURATION_MS = 800; // how long the smile stays
 
     let timeoutId = null;
     const interval = setInterval(() => {
