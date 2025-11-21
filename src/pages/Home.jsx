@@ -156,10 +156,6 @@ export default function Home() {
           onSuccess={() => navigate("/play")}
         />
       )}
-
-      {/* decorative sprites are rendered inside the background (.swat-sprite)
-          The old standalone <img className="cat-sprite"> was removed to avoid
-          duplicate/bobbing overlays that interfered with placement. */}
     </div>
   );
 }
