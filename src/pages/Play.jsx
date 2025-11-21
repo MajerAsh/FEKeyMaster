@@ -36,7 +36,7 @@ export default function Play() {
 
   // every 20s toggle a smile for 2s
   useEffect(() => {
-    // configurable timings so we can easily speed/slow the effect
+    // speed/slow the smile effect
     const SMILE_INTERVAL_MS = 5000; // how often to trigger the smile
     const SMILE_DURATION_MS = 800; // how long the smile stays visible
 
