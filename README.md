@@ -2,9 +2,6 @@
 
 KeyPaw is a browser-based, image-driven lock‑picking puzzle game. This frontend is built with React + Vite and demonstrates interactive UI, responsive image-driven layout, audio feedback, optimistic UI patterns, and JWT-backed authentication.
 
-> > > > > > > > > > > > > > > > > > > insert image of hero gameplay here
-
-<!-- Hero image: inserted from src/assets by assistant -->
 <p align="center">
 	<img src="./src/assets/KeyPawHome.png" alt="KeyPaw home / Play page" style="max-width:100%;height:auto;" />
 </p>
