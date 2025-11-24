@@ -1,156 +1,90 @@
-# KeyPaw (frontend)
+# KeyPaw — Frontend (FEKeyMaster)
 
-KeyPaw (public name) — a browser-based lock-picking puzzle game (repo: Keymaster). This repository contains a Vite + React frontend (`FEKeyMaster`) and a Node/Express backend (`BEKeyMaster`).
+KeyPaw is a browser-based, image-driven lock‑picking puzzle game. This frontend is built with React + Vite and demonstrates interactive UI, responsive image-driven layout, audio feedback, optimistic UI patterns, and JWT-backed authentication.
 
-This README documents how to run the frontend, how it talks to the backend API, environment variables required for local development and production, and links to useful backend instructions.
+<p align="center">
+	<img src="./src/assets/KeyPawHome.png" alt="KeyPaw home / Play page" style="max-width:100%;height:auto;" />
+</p>
 
-If you landed here as a hiring manager or reviewer: the project demonstrates component architecture, responsive interactive UI, image-driven layout math, audio playback, authentication with JWT, and a small API-backed persistence layer for puzzles and completions.
+Quick overview
 
-—
+- Tech: React (Vite), JavaScript (JSX), plain CSS, Web Audio API
+- Demonstrates: responsive artwork-driven layout, stateful puzzle components, optimistic updates, and secure API integration using JWT
 
-## Quick links
+- Real-world app architecture: client + API + relational DB with authentication
+- Attention to UX: instant feedback (optimistic UI), accessible overlays, and small micro-interactions (unlock treat)
+- Deploy-ready: Vite build, Netlify-friendly configuration, and environment-driven API base URL
 
-- Frontend folder: `FEKeyMaster`
-- Backend folder: `BEKeyMaster`
-- Live demo: (if deployed, insert demo URL here)
-- License: MIT (see `BEKeyMaster/LICENSE`)
+Getting started (development)
 
-## Features
-
-- Interactive puzzles: Pin Tumbler and Dial Lock implementations
-- Responsive, pixel-aligned layout that reads image natural sizes to compute coordinates
-- Auth (signup/login) using JWT, persisted in PostgreSQL
-- Puzzle persistence and completion tracking (Postgres)
-- Deployed-ready: Vite build for Netlify, Express API for Railway/Supabase or similar
-
-## Tech stack
-
-- Frontend: React, Vite, plain CSS
-- Backend: Node.js, Express, pg (node-postgres)
-- Database: PostgreSQL
-- Auth: bcrypt + jsonwebtoken (JWT)
-
-## Getting started (development)
-
-Prerequisites
+Prereqs
 
 - Node.js 18+ and npm
-- PostgreSQL (local) or a remote database (Railway, Supabase)
-- Optional: psql CLI for running quick queries
+- A running PostgreSQL (local) or remote DB (Railway, Supabase)
 
-Steps
+Run locally
 
-1. Clone the repo and change into the project root:
-
-```bash
-git clone <repo-url>
-cd KeyMaster
-```
-
-2. Backend setup (run in `BEKeyMaster`)
-
-- Create a `.env` in `BEKeyMaster` containing at minimum:
-
-```ini
-PORT=3001
-DATABASE_URL=postgres://user:pass@host:5432/dbname
-JWT_SECRET=your-jwt-secret
-CLIENT_ORIGIN=http://localhost:5173   # or your frontend origin
-```
-
-- Install and run the backend:
+1. Start the backend (BEKeyMaster) and seed demo data (only on local/dev):
 
 ```bash
 cd BEKeyMaster
 npm ci
-# Start in dev (nodemon/watch) or production
-npm run dev   # if script exists, otherwise: NODE_ENV=development node server.js
+# create .env with DATABASE_URL, JWT_SECRET, CLIENT_ORIGIN
+node db/seed.js   # WARNING: this deletes and recreates demo puzzles
+npm run dev
 ```
 
-- If you're using a fresh DB, seed demo puzzles (careful: seed script may DELETE existing puzzles):
-
-```bash
-node db/seed.js
-```
-
-3. Frontend setup (run in `FEKeyMaster`)
-
-- Create a `.env` in `FEKeyMaster` with the API base URL for development or production:
-
-```ini
-VITE_API_URL=http://localhost:3001
-```
-
-- Install and run the frontend:
+2. Start the frontend
 
 ```bash
 cd FEKeyMaster
 npm ci
+# set VITE_API_URL in FEKeyMaster/.env if different than default
 npm run dev
 ```
 
-Open the site at the Vite dev server URL (usually http://localhost:5173). The frontend will use `VITE_API_URL` as the API base; if that variable is not present it falls back to `http://localhost:3001`.
+Open the site at the Vite dev server URL (usually http://localhost:5173). The frontend reads `VITE_API_URL` for the API base; it falls back to `http://localhost:3001` if unset.
 
-## Persisting / Editing puzzle prompts
+Demo & screenshots
 
-- You can update prompts directly in the database via SQL (psql, Supabase SQL editor, or Railway SQL). Recommended: use `UPDATE puzzles SET prompt = '...' WHERE id = <id>;` to change a prompt without reseeding.
-- Alternatively, the backend exposes puzzle management routes (see `BEKeyMaster/routes/puzzles.js`) that accept POST for creating puzzles and can be extended with PATCH for edits.
+Include screenshots and a short GIF to help reviewers quickly understand the product. Suggested assets (place under `FEKeyMaster/docs/images/`):
 
-## Deployment notes
+- `hero-play.png` — wide hero image (1200×600) showing game landing or Play page
+- `gameboard.png` — gameplay screenshot showing a lock (960×640)
+- `unlock.gif` — short 1–2s GIF showing an unlock animation and overlay treat (400–800px wide)
 
-- Frontend: Netlify or any static host. The repository includes `FEKeyMaster/netlify.toml` with an example production `VITE_API_URL`.
-- Backend: Host on Railway, Render, or similar. Ensure `CLIENT_ORIGIN` is set to your frontend origin and `DATABASE_URL` points to the production Postgres.
-- DB SSL: the backend conditionally enables ssl for remote DBs — when using a local DB, ensure `DATABASE_URL` contains `localhost` so SSL isn't forced.
+Insert images in this README where you see the placeholder line above. Example markdown to embed a screenshot:
 
-## Troubleshooting
+```md
+![Gameplay screenshot](./docs/images/gameboard.png)
 
-- CORS / Preflight 404: ensure the backend sets Access-Control-Allow-Origin to the exact origin of the frontend (including https://) and that the backend responds to OPTIONS preflight with 204 and the required headers.
-- ENETUNREACH / IPv6: some cloud containers lack IPv6 egress. If you see ENETUNREACH to a DB IPv6 address, ensure your DB provides an IPv4 address or update the backend to resolve and prefer IPv4.
-- Missing JWT_SECRET: if login/signup fail with 500, set `JWT_SECRET` in backend env.
+<img src="./docs/images/unlock.gif" width="600" alt="Unlock animation" />
+```
 
-## Project structure
+What to look for in the code (for technical reviewers)
 
-Top-level contains `FEKeyMaster/` (frontend) and `BEKeyMaster/` (backend). Key backend files:
+- Component layout: `src/components/*` (PinTumbler, DialLock)
+- State + context: `src/context/*` (AuthContext, PuzzleContext)
+- API client: `src/lib/api.js` (reads `import.meta.env.VITE_API_URL`)
+- UX details: `src/styles/*` and `src/components/OverlayMessage.jsx` (treat SVG & micro animations)
 
-- `BEKeyMaster/app.js` — Express app and CORS handling
-- `BEKeyMaster/server.js` — server launcher
-- `BEKeyMaster/db/index.js` — postgres pool wrapper
-- `BEKeyMaster/routes/*` — auth and puzzles routes
-- `BEKeyMaster/db/seed.js` — demo data insertion (careful: deletes puzzles on run)
+Deployment notes
 
-Frontend highlights under `FEKeyMaster/src`:
+- There is a `FEKeyMaster/netlify.toml` for Netlify builds; set `VITE_API_URL` in Netlify environment variables for production.
 
-- `src/lib/api.js` — central API helper using `import.meta.env.VITE_API_URL`
-- `src/context/*` — Auth and Puzzle contexts
-- `src/components/*` — puzzle components (PinTumbler, DialLock) and UI
-- `src/pages/*` — app pages (Home, Play, GameBoard, Login/Signup)
+Security & production notes
 
-## Contributing
+- Do NOT run `node db/seed.js` against a production DB — it deletes puzzles.
+- Keep `JWT_SECRET` private and use HTTPS for production deployments.
 
-- If you plan to contribute, create a branch, open a clear PR with the changes, and include screenshots or short GIFs for visual changes.
-- For backend changes that affect schema, include migration notes or update `schema.sql`.
+Contributing
 
-## License
+- Create a branch, run `npm ci` in `FEKeyMaster`, and open a PR with screenshots or short GIFs for visual changes.
 
-This project is licensed under the MIT License. See `BEKeyMaster/LICENSE` for details.
+License
 
-## Contact
+This project is MIT licensed — see `../BEKeyMaster/LICENSE`.
 
-If you want help with setup, deployment, or edits, open an issue or reach out via the repo's contact info.
+Contact
 
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Open an issue or PR in this repository for questions or suggested improvements.
