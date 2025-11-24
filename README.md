@@ -4,6 +4,11 @@ KeyPaw is a browser-based, image-driven lock‑picking puzzle game. This fronten
 
 > > > > > > > > > > > > > > > > > > > insert image of hero gameplay here
 
+<!-- Hero image: inserted from src/assets by assistant -->
+<p align="center">
+	<img src="./src/assets/KeyPawHome.png" alt="KeyPaw home / Play page" style="max-width:100%;height:auto;" />
+</p>
+
 Quick overview
 
 - Tech: React (Vite), JavaScript (JSX), plain CSS, Web Audio API
