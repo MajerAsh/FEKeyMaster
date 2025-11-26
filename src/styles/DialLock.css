@@ -85,6 +85,42 @@
   gap: 10px;
 }
 
+/* Layout grid for Confirm / Reset / Unlock buttons
+   - Confirm and Reset sit side-by-side on the first row
+   - Unlock spans both columns on the second row and is centered
+   - Stacks to a single column on narrow screens */
+.dial-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.dial-actions-grid .confirm-button {
+  grid-column: 1;
+}
+.dial-actions-grid .reset-button {
+  grid-column: 2;
+}
+.dial-actions-grid .unlock-button {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: min(320px, 80%);
+}
+
+@media (max-width: 520px) {
+  .dial-actions-grid {
+    grid-template-columns: 1fr;
+  }
+  .dial-actions-grid .confirm-button,
+  .dial-actions-grid .reset-button,
+  .dial-actions-grid .unlock-button {
+    grid-column: auto;
+    width: 100%;
+  }
+}
+
 .confirm-button,
 .reset-button,
 .unlock-button {
@@ -97,10 +133,25 @@
 }
 
 .confirm-button {
-  background-color: #9333ea;
+  /* Purple gradient + tactile shadow to visually match other buttons */
+  background: linear-gradient(180deg, #a46ff6 0%, #9333ea 60%, #7e22ce 100%);
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: 0 4px 0 rgba(126, 34, 206, 0.95),
+    0 8px 16px rgba(126, 34, 206, 0.12);
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
 }
 .confirm-button:hover {
-  background-color: #7e22ce;
+  filter: brightness(1.03);
+}
+.confirm-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 rgba(126, 34, 206, 0.95),
+    0 4px 8px rgba(126, 34, 206, 0.08);
 }
 
 .reset-button {

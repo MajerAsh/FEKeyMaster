@@ -68,10 +68,9 @@ export default function Play() {
         }}
       >
         <div className="play-panel">
-          <h2>Select a Puzzle</h2>
+          <h2 className="subtitle">Select a Puzzle</h2>
           <div className="play-grid">
             <div className="tile">
-              <h3>Dial Lock</h3>
               {dialPuzzle ? (
                 <button onClick={() => navigate(`/puzzle/${dialPuzzle.id}`)}>
                   Play Dial Lock
@@ -82,7 +81,6 @@ export default function Play() {
             </div>
 
             <div className="tile">
-              <h3>Pin Tumbler Lock</h3>
               {pinPuzzle ? (
                 <button onClick={() => navigate(`/puzzle/${pinPuzzle.id}`)}>
                   Play Pin Tumbler
@@ -93,7 +91,6 @@ export default function Play() {
             </div>
 
             <div className="tile">
-              <h3>Leader Board</h3>
               <Link to="/leaderboard">
                 <button>View Leader Board</button>
               </Link>

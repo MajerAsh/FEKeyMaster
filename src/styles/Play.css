@@ -46,6 +46,7 @@
   padding: 0.4rem 0.85rem;
   border-radius: 8px;
   margin: 0 0 1rem 0;
+  box-shadow: none;
 }
 .play-grid {
   display: grid;
@@ -66,6 +67,5 @@
   padding: 8px 12px;
   border-radius: 8px;
   border: none;
-  background: #0b74ff;
   color: #fff;
 }
