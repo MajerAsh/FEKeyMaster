@@ -276,7 +276,7 @@ export default function DialLock({
       setStep2CcwCount(0);
       setStep2FullRotation(false);
       showOverlay(
-        "Turn the lock counter clockwise one full rotation, then proceed to find the second number.",
+        "Only turn the lock clockwise for the second number. Make one full rotation, then feel for the resistance to find the second number.",
         "assist"
       );
     }
