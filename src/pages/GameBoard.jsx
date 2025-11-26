@@ -144,8 +144,8 @@ export default function GameBoard() {
             </button>
           </div>
 
-          <h2>{puzzle.name}</h2>
-          <p>{puzzle.prompt}</p>
+          {/*<h2>{puzzle.name}</h2>
+          <p>{puzzle.prompt}</p>*/}
 
           {/* PUZZLE TYPE CONDITIONAL RENDERING */}
           {puzzle.type === "pin-tumbler" && (

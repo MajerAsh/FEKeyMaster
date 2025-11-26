@@ -37,6 +37,16 @@
   color: #fff;
   text-align: center;
 }
+
+/* Improve heading readability with a semi-transparent dark purple panel */
+.play-panel h2 {
+  display: inline-block;
+  background: rgba(64, 4, 64, 0.85);
+  color: #fff;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  margin: 0 0 1rem 0;
+}
 .play-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -45,7 +55,7 @@
   margin: 1rem auto;
 }
 .tile {
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(97, 55, 4, 0.75);
   padding: 1rem;
   border-radius: 10px;
 }

@@ -97,24 +97,57 @@
 }
 
 .confirm-button {
-  background-color: #9333ea; /* purple */
+  background-color: #9333ea;
 }
 .confirm-button:hover {
   background-color: #7e22ce;
 }
 
 .reset-button {
-  background-color: #dc2626; /* red */
+  /* warm muted rose gradient using the requested colors */
+  background: linear-gradient(180deg, #ad5e60 0%, #e4b5af 100%);
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+  /* subtle tactile shadow using the darker tone as the slab */
+  box-shadow: 0 4px 0 rgba(173, 94, 96, 0.95),
+    0 8px 16px rgba(164, 110, 112, 0.12);
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
 }
 .reset-button:hover {
-  background-color: #b91c1c;
+  filter: brightness(1.03);
+}
+.reset-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 rgba(173, 94, 96, 0.95),
+    0 4px 8px rgba(164, 110, 112, 0.08);
 }
 
 .unlock-button {
-  background-color: #16a34a; /* green */
+  /* green gradient to match the reset-button's gradient aesthetic */
+  background: linear-gradient(180deg, #6fc083 0%, #16a34a 100%);
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+  /* match reset-button depth: slightly shallower, tactile slab + soft blur */
+  box-shadow: 0 4px 0 rgba(111, 192, 131, 0.95),
+    0 8px 16px rgba(111, 192, 131, 0.12);
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
 }
 .unlock-button:hover {
-  background-color: #15803d;
+  filter: brightness(1.03);
+}
+
+.unlock-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 rgba(111, 192, 131, 0.95),
+    0 4px 8px rgba(111, 192, 131, 0.08);
 }
 
 /* 🧩 Attempt Tracker */
@@ -127,4 +160,34 @@
   margin-top: 10px;
   color: #555;
   font-size: 0.9rem;
+}
+
+/* Center small explanatory text under the h3 heading and remove extra top margin
+   so the paragraph visually sits under the heading on the y-axis. Support an
+   optional `h3.subtle` variant. */
+.dial-lock-container h3.subtle {
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.dial-lock-container h3 {
+  /* ensure reasonable spacing if h3 is used without .subtle */
+  margin-bottom: 0.35rem;
+}
+
+.dial-lock-container .dial-message,
+.dial-lock-container .attempt-display,
+.dial-lock-container p {
+  text-align: center;
+  margin-top: 0.25rem;
+}
+
+/* Improve heading readability in the DialLock component */
+.dial-lock-container h3 {
+  display: inline-block;
+  background: rgba(64, 4, 64, 0.75);
+  color: #fff;
+  padding: 0.35rem 0.8rem;
+  border-radius: 6px;
+  margin: 0.5rem 0 0.75rem 0;
 }

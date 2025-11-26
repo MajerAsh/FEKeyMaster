@@ -276,7 +276,7 @@ export default function DialLock({
       setStep2CcwCount(0);
       setStep2FullRotation(false);
       showOverlay(
-        "Turn the lock counter clockwise one full rotation, then proceed to find the second number.",
+        "Only turn the lock clockwise for the second number. Make one full rotation, then feel for the resistance to find the second number.",
         "assist"
       );
     }
@@ -310,6 +310,16 @@ export default function DialLock({
       /* ignore */
     }
   }, [unlocked]);
+
+  // Dismiss overlay when the user clicks/taps anywhere in the document.
+  // This makes overlays more transient and lets the user clear hints by
+  // interacting with the UI instead of only using the close button.
+  useEffect(() => {
+    if (!overlay.message) return;
+    const onDocPointer = () => setOverlay({ message: "", type: "info" });
+    document.addEventListener("pointerdown", onDocPointer);
+    return () => document.removeEventListener("pointerdown", onDocPointer);
+  }, [overlay.message]);
   // RESET
   // ---------------------------------------
   function handleReset() {
@@ -335,7 +345,7 @@ export default function DialLock({
   // ---------- RETURN  -------------------------------------------
   return (
     <div className="dial-lock-container">
-      <h3 className="text-xl font-semibold mb-4">Dial the Combination</h3>
+      {/* if i get rid of the above, the header displays! */}
 
       <div className="lock-stack">
         <img
