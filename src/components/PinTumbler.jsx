@@ -357,7 +357,11 @@ export default function PinTumbler({
         <button className="unlock-button" onClick={handleSubmit}>
           Unlock
         </button>
-        <button onClick={handleReset} style={{ marginLeft: "10px" }}>
+        <button
+          className="reset-button"
+          onClick={handleReset}
+          style={{ marginLeft: "10px" }}
+        >
           Reset Pins
         </button>
       </div>
