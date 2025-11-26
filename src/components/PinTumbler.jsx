@@ -234,7 +234,10 @@ export default function PinTumbler({
 
   return (
     <div className="lock-container">
-      <h3>Slide the pins to the correct position to open the lock</h3>
+      <h3>
+        Align all 5 pins to the correct height to unlock the cabinet and get the
+        treat.
+      </h3>
 
       {/* Render order inside .lock-scene: lockBody (base) → full springs.png (full-layer) → per-shaft pin layers (drivers & keys) → shackleClosed (top). */}
       <div className="lock-scene" ref={sceneRef}>

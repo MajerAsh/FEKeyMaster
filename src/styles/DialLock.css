@@ -129,6 +129,26 @@
   font-size: 0.9rem;
 }
 
+/* Center small explanatory text under the h3 heading and remove extra top margin
+   so the paragraph visually sits under the heading on the y-axis. Support an
+   optional `h3.subtle` variant. */
+.dial-lock-container h3.subtle {
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.dial-lock-container h3 {
+  /* ensure reasonable spacing if h3 is used without .subtle */
+  margin-bottom: 0.35rem;
+}
+
+.dial-lock-container .dial-message,
+.dial-lock-container .attempt-display,
+.dial-lock-container p {
+  text-align: center;
+  margin-top: 0.25rem;
+}
+
 /* Improve heading readability in the DialLock component */
 .dial-lock-container h3 {
   display: inline-block;
