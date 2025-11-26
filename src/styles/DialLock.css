@@ -112,9 +112,17 @@
 
 .unlock-button {
   background-color: #16a34a;
+  /* 3D drop shadow using the requested green (6fc083) for a tactile look */
+  box-shadow: 0 6px 0 #6fc083, 0 10px 20px rgba(111, 192, 131, 0.18);
+  transition: transform 120ms ease, box-shadow 120ms ease;
 }
 .unlock-button:hover {
-  background-color: #15803d;
+  background-color: #22aa54;
+}
+
+.unlock-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 #6fc083, 0 6px 12px rgba(111, 192, 131, 0.12);
 }
 
 /* 🧩 Attempt Tracker */
