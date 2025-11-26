@@ -38,14 +38,6 @@ export default function OverlayMessage({
       role="status"
       aria-live="polite"
     >
-      <button
-        className="overlay-close"
-        aria-label="Close"
-        onClick={() => onClose && onClose()}
-      >
-        ✕
-      </button>
-
       <div className="overlay-inner">
         <span className="overlay-emoji">{icon}</span>
         <span className="overlay-text">{message}</span>

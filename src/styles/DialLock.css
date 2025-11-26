@@ -97,21 +97,21 @@
 }
 
 .confirm-button {
-  background-color: #9333ea; /* purple */
+  background-color: #9333ea;
 }
 .confirm-button:hover {
   background-color: #7e22ce;
 }
 
 .reset-button {
-  background-color: #dc2626; /* red */
+  background-color: #dc2626;
 }
 .reset-button:hover {
   background-color: #b91c1c;
 }
 
 .unlock-button {
-  background-color: #16a34a; /* green */
+  background-color: #16a34a;
 }
 .unlock-button:hover {
   background-color: #15803d;
