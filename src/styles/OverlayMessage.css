@@ -7,10 +7,10 @@
   /* make room on the right/top for the close button so it doesn't overlap text */
   padding: 1rem 2.5rem 1rem 1.5rem;
   border-radius: 0.5rem;
-  color: #000000;
+  color: #ffffff;
   font-weight: 600;
   z-index: 9999;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.95);
   animation: fadeInOut 0.3s ease;
   background: rgba(64, 4, 64, 0.85);
   border-radius: 10px;
