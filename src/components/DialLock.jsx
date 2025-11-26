@@ -335,8 +335,6 @@ export default function DialLock({
   // ---------- RETURN  -------------------------------------------
   return (
     <div className="dial-lock-container">
-      <h3 className="text-xl font-semibold mb-4">Dial the Combination</h3>
-
       <div className="lock-stack">
         <img
           src={unlocked ? "/images/diallockopened.png" : "/images/diallock.png"}
@@ -370,9 +368,7 @@ export default function DialLock({
         </button>
       </div>
 
-      <div className="attempt-display">
-        <p>Attempt: {attempt.join(" - ") || "None yet"}</p>
-      </div>
+      {/* Attempt display removed per request */}
 
       <button
         onClick={handleSubmit}
