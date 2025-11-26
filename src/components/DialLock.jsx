@@ -310,6 +310,16 @@ export default function DialLock({
       /* ignore */
     }
   }, [unlocked]);
+
+  // Dismiss overlay when the user clicks/taps anywhere in the document.
+  // This makes overlays more transient and lets the user clear hints by
+  // interacting with the UI instead of only using the close button.
+  useEffect(() => {
+    if (!overlay.message) return;
+    const onDocPointer = () => setOverlay({ message: "", type: "info" });
+    document.addEventListener("pointerdown", onDocPointer);
+    return () => document.removeEventListener("pointerdown", onDocPointer);
+  }, [overlay.message]);
   // RESET
   // ---------------------------------------
   function handleReset() {
