@@ -99,6 +99,16 @@
   margin-top: 1rem;
   gap: 10px;
 }
+
+/* Heading readability for PinTumbler sections */
+.lock-container h3 {
+  display: inline-block;
+  background: rgba(64, 4, 64, 0.75);
+  color: #fff;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  margin: 0.5rem 0 0.75rem 0;
+}
 /* attempts to tweak springs and fitting 
 .layer {
   transition: transform 0.25s ease;

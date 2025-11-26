@@ -21,3 +21,13 @@
   padding: 2rem;
   color: #fff;
 }
+
+/* Make leaderboard headings more readable over background artwork */
+.leader-panel h2 {
+  display: inline-block;
+  background: rgba(64, 4, 64, 0.75);
+  color: #fff;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  margin: 0 0 1rem 0;
+}

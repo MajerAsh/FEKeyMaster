@@ -128,3 +128,13 @@
   color: #555;
   font-size: 0.9rem;
 }
+
+/* Improve heading readability in the DialLock component */
+.dial-lock-container h3 {
+  display: inline-block;
+  background: rgba(64, 4, 64, 0.75);
+  color: #fff;
+  padding: 0.35rem 0.8rem;
+  border-radius: 6px;
+  margin: 0.5rem 0 0.75rem 0;
+}
