@@ -371,26 +371,27 @@ export default function DialLock({
         </button>
       </div>
 
-      <div className="dial-actions">
+      <div className="attempt-display">
+        <p>Selected: {attempt.join(" - ") || "None yet"}</p>
+      </div>
+
+      <div className="dial-actions-grid">
         <button onClick={handleConfirmNumber} className="confirm-button">
-          Confirm Number
+          Select Number
         </button>
+
         <button onClick={handleReset} className="reset-button">
           Reset
         </button>
-      </div>
 
-      <div className="attempt-display">
-        <p>Attempt: {attempt.join(" - ") || "None yet"}</p>
+        <button
+          onClick={handleSubmit}
+          className="unlock-button"
+          disabled={attempt.length < solutionCode.length}
+        >
+          Unlock
+        </button>
       </div>
-
-      <button
-        onClick={handleSubmit}
-        className="unlock-button"
-        disabled={attempt.length < solutionCode.length}
-      >
-        Unlock
-      </button>
 
       {overlay.message && (
         <OverlayMessage
