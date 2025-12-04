@@ -67,7 +67,7 @@ used a ResizeObserver so the
       sprite.style.top = topPx + "px";
       sprite.style.transform = "translate(-50%, -50%)";
 
-      // set precise background-size so JS frame stepping lands on integers
+      // set background-size so JS frame stepping lands on integers
       sprite.style.backgroundSize = `${spriteW * FRAME_COUNT}px ${spriteH}px`;
       // ensure no CSS animation conflicts
       sprite.style.animation = "none";
