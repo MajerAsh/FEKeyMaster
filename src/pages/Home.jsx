@@ -16,8 +16,9 @@ export default function Home() {
   const CAT_CENTER_X = 0.3059; // 30.59% from left
   const CAT_CENTER_Y = 0.854; // 85.40% from top
 
-  /* Position the sprite in px inside the artwork wrapper so it remains
-  locked to the image as it scales. We use a ResizeObserver so the
+  /* Position the sprite in px inside the procreate img wrapper so it remains
+  locked to the image as it scales. 
+used a ResizeObserver so the
  sprite updates whenever the artwork box changes size.*/
   useLayoutEffect(() => {
     const wrapper = wrapperRef.current;
@@ -66,7 +67,7 @@ export default function Home() {
       sprite.style.top = topPx + "px";
       sprite.style.transform = "translate(-50%, -50%)";
 
-      // set precise background-size so JS frame stepping lands on integers
+      // set background-size so JS frame stepping lands on integers
       sprite.style.backgroundSize = `${spriteW * FRAME_COUNT}px ${spriteH}px`;
       // ensure no CSS animation conflicts
       sprite.style.animation = "none";
