@@ -149,7 +149,15 @@ export default function GameBoard() {
   let parsedCode = [];
   try {
     if (puzzle?.solution_code) {
+      // NOTE: solution_code should NOT be returned from the server for deployed DBs.
+      // If present (local dev), parse it. Otherwise fall back to a sensible
+      // default length per puzzle type so the UI can render without revealing answers.
       parsedCode = JSON.parse(puzzle.solution_code);
+    } else {
+      // fallback defaults (do not reveal solutions)
+      if (puzzle.type === "pin-tumbler") parsedCode = Array(5).fill(0);
+      else if (puzzle.type === "dial") parsedCode = Array(3).fill(0);
+      else parsedCode = [];
     }
   } catch (err) {
     console.error("Failed to parse puzzle.solution_code:", err);
