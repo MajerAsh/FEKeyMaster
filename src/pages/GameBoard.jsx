@@ -8,6 +8,7 @@ import PinTumbler from "../components/PinTumbler";
 import "../styles/GameBoard.css";
 import OverlayMessage from "../components/OverlayMessage";
 import DialLock from "../components/DialLock";
+import Timer from "../components/Timer";
 
 export default function GameBoard() {
   const { id } = useParams();
@@ -18,6 +19,9 @@ export default function GameBoard() {
   const [puzzle, setPuzzle] = useState(null);
   const [message, setMessage] = useState("");
   const [unlocked, setUnlocked] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const [elapsedSeconds, setElapsedSeconds] = useState(null);
+  const [timerKey, setTimerKey] = useState(0);
   const { logout } = useAuth();
 
   // NOTE: message auto-hide is handled by the reusable OverlayMessage component
@@ -42,6 +46,8 @@ export default function GameBoard() {
   // then persist to the server in the background. This avoids waiting for
   // a network round-trip to show the unlock feedback.
   async function handleAttempt(attemptArray) {
+    // increment attempts each time Unlock is pressed
+    setAttempts((a) => a + 1);
     setMessage("");
 
     // parse solution locally
@@ -110,6 +116,36 @@ export default function GameBoard() {
     }
   }
 
+  // Submit the score to backend when puzzle is unlocked and timer stops
+  async function submitScore(finalElapsedSeconds) {
+    // guard: only submit once
+    if (finalElapsedSeconds == null) return;
+    setElapsedSeconds(finalElapsedSeconds);
+    const gameName = puzzle.type === "dial" ? "DialLock" : "PinTumbler";
+    try {
+      const res = await apiFetch(
+        "/scores",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            game: gameName,
+            puzzleId: puzzle.id,
+            elapsedSeconds: finalElapsedSeconds,
+            attempts,
+          }),
+        },
+        token
+      );
+      if (res && res.awardedBadge) {
+        setMessage(
+          (m) => (m ? m + " " : "") + `Badge: ${res.awardedBadge.name}`
+        );
+      }
+    } catch (err) {
+      console.error("Failed to submit score:", err);
+    }
+  }
+
   let parsedCode = [];
   try {
     if (puzzle?.solution_code) {
@@ -156,6 +192,9 @@ export default function GameBoard() {
               onReset={() => {
                 setMessage("");
                 setUnlocked(false);
+                setAttempts(0);
+                setElapsedSeconds(null);
+                setTimerKey((k) => k + 1);
               }}
               unlocked={unlocked}
             />
@@ -170,9 +209,22 @@ export default function GameBoard() {
               onReset={() => {
                 setMessage("");
                 setUnlocked(false);
+                setAttempts(0);
+                setElapsedSeconds(null);
+                setTimerKey((k) => k + 1);
               }}
             />
           )}
+
+          {/* Timer — invisible. Starts when puzzle loads, stops when `unlocked` becomes true. */}
+          <Timer
+            key={timerKey}
+            running={!unlocked}
+            onStop={(secs) => {
+              // when timer stops because unlocked is true, submit score
+              if (unlocked) submitScore(secs);
+            }}
+          />
 
           {/* reusable overlay for any message */}
           <OverlayMessage
