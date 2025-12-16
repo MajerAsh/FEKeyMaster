@@ -51,7 +51,7 @@ export default function Leaderboard() {
                   </tr>
                 ) : (
                   rows.map((r) => (
-                    <tr key={r.player_id || r.id || r.email}>
+                    <tr key={r.user_id || r.id || r.email}>
                       <td>{r.username || r.email || "-"}</td>
                       <td>{r.dial_points ?? r.dialPoints ?? 0}</td>
                       <td>{r.pin_points ?? r.pinPoints ?? 0}</td>
