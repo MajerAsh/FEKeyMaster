@@ -1,5 +1,5 @@
 //Puzzle fetch & set,Token usage, Error/message handling,handleAttempt integration, PinTumbler rendering
-import { useSearchParams } from "react-router-dom";
+
 import { useParams, useNavigate } from "react-router-dom";
 import { usePuzzles } from "../context/PuzzleContext";
 import { useEffect, useState } from "react";
@@ -24,8 +24,8 @@ export default function GameBoard() {
   const [elapsedSeconds, setElapsedSeconds] = useState(null);
   const [timerKey, setTimerKey] = useState(0);
   const { logout } = useAuth();
-  const [searchParams] = useSearchParams();
-  const demoMode = searchParams.get("demo");
+
+  // NOTE: message auto-hide is handled by the reusable OverlayMessage component
 
   console.log("GameBoard id:", id, "puzzles:", puzzles);
 
