@@ -1,33 +1,165 @@
-.leader-root {
-  min-height: 100vh;
-  position: relative;
-  width: 100vw;
-}
-.scene {
-  width: min(92vw, 1693px);
+.leader-root .leader-panel {
+  max-width: 980px;
   margin: 0 auto;
-  aspect-ratio: 1693 / 1667;
-  max-height: min(92vh, 1667px);
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.leader-panel {
-  position: relative;
-  z-index: 3;
-  padding: 2rem;
-  color: #fff;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
 }
 
-/* Make leaderboard headings more readable over background artwork */
-.leader-panel h2 {
+.leader-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.leader-title {
+  margin: 0;
+}
+
+.leader-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.leader-tabs {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 18px;
+}
+
+.leader-tabs button {
+  border-radius: 999px;
+  padding: 8px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+}
+
+.leader-tabs button.active {
+  border-color: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.06);
+  font-weight: 700;
+}
+
+.leader-empty {
+  margin: 16px 0 0;
+}
+
+.podium {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.podium-card {
+  border-radius: 16px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+  position: relative;
+}
+
+.podium-card.rank-1 {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+}
+
+.podium-rank {
+  font-weight: 800;
+  opacity: 0.9;
+  margin-bottom: 6px;
+}
+
+.podium-name {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.podium-points {
+  font-size: 20px;
+  font-weight: 900;
+  margin: 6px 0 8px;
+}
+
+.podium-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.muted {
+  opacity: 0.7;
+}
+
+.tag {
   display: inline-block;
-  background: rgba(64, 4, 64, 0.75);
-  color: #fff;
-  padding: 0.4rem 0.85rem;
-  border-radius: 8px;
-  margin: 0 0 1rem 0;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.leader-list {
+  display: grid;
+  gap: 8px;
+}
+
+.leader-row {
+  display: grid;
+  grid-template-columns: 70px 1.2fr 140px 120px 120px 80px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.leader-row .rank {
+  font-weight: 900;
+}
+
+.leader-row .name {
+  font-weight: 800;
+}
+
+.mini .label {
+  font-size: 11px;
+  opacity: 0.65;
+}
+
+.mini .value {
+  font-weight: 800;
+}
+
+.right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 860px) {
+  .podium {
+    grid-template-columns: 1fr;
+  }
+  .leader-row {
+    grid-template-columns: 60px 1fr 1fr;
+    grid-template-areas:
+      "rank name name"
+      "total treats best";
+  }
+  .leader-row .rank {
+    grid-area: rank;
+  }
+  .leader-row .name {
+    grid-area: name;
+  }
 }

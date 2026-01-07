@@ -1,10 +1,11 @@
 //Puzzle fetch & set,Token usage, Error/message handling,handleAttempt integration, PinTumbler rendering
 
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { usePuzzles } from "../context/PuzzleContext";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { apiFetch } from "../lib/api";
+import { getDemoPuzzle } from "../demo/demoPuzzles";
 import PinTumbler from "../components/PinTumbler";
 import "../styles/GameBoard.css";
 import OverlayMessage from "../components/OverlayMessage";
@@ -25,12 +26,31 @@ export default function GameBoard() {
   const [timerKey, setTimerKey] = useState(0);
   const { logout } = useAuth();
 
-  // NOTE: message auto-hide is handled by the reusable OverlayMessage component
+  const [searchParams] = useSearchParams();
+  const demo = searchParams.get("demo");
+  const isDemo = demo === "dial" || demo === "pin" || demo === "1";
 
   console.log("GameBoard id:", id, "puzzles:", puzzles);
 
   useEffect(() => {
     async function load() {
+      // ✅ ADDED: demo mode loads puzzle locally (no login required)
+      if (isDemo) {
+        const demoType =
+          demo === "pin" ? "pin" : demo === "dial" ? "dial" : null;
+        const pid = Number.parseInt(id, 10);
+        const p = getDemoPuzzle(Number.isFinite(pid) ? pid : null, demoType);
+        setPuzzle(p);
+        console.log("Found DEMO puzzle:", p);
+        return;
+      }
+
+      // ✅ ADDED: normal mode should require token (optional but recommended)
+      if (!token) {
+        navigate("/");
+        return;
+      }
+
       if (puzzles.length === 0) {
         await fetchPuzzles();
       }
@@ -71,6 +91,8 @@ export default function GameBoard() {
       // Immediately show success in the UI
       setMessage("Unlocked!");
       setUnlocked(true);
+
+      if (isDemo) return;
       // Persist result but don't block UI; log any server-side errors
       apiFetch(
         "/puzzles/solve",
@@ -83,7 +105,6 @@ export default function GameBoard() {
         .then((data) => {
           if (!data || !data.success) {
             console.warn("Server did not accept attempt:", data);
-            // If server rejects, inform the user but do not revert the UI abruptly
             setMessage("Unlocked! (local) — server did not persist result");
           }
         })
@@ -91,6 +112,12 @@ export default function GameBoard() {
           console.error("Error persisting attempt:", err);
           setMessage("Unlocked! (local) — save failed");
         });
+      return;
+    }
+
+    // ✅ ADDED: demo mode should not call backend if incorrect
+    if (isDemo) {
+      setMessage("❌ Incorrect. Try again.");
       return;
     }
 
@@ -189,8 +216,12 @@ export default function GameBoard() {
             </button>
           </div>
 
-          {/*<h2>{puzzle.name}</h2>
-          <p>{puzzle.prompt}</p>*/}
+          {/* ✅ ADDED: optional visual indicator */}
+          {isDemo && (
+            <div style={{ marginBottom: "0.5rem", fontSize: "0.9rem" }}>
+              Demo Mode — deep link preview
+            </div>
+          )}
 
           {/* PUZZLE TYPE CONDITIONAL RENDERING */}
           {puzzle.type === "pin-tumbler" && (
