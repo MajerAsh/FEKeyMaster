@@ -8,6 +8,11 @@
   publish = "dist"
   command = "npm ci && npm run build"
 
+  [[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
 [context.production.environment]
   # Production API URL for the built frontend
   VITE_API_URL = "https://keymaster-api.up.railway.app"
