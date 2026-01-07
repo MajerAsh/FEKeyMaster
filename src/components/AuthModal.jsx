@@ -42,7 +42,7 @@ export default function AuthModal({ onClose, onSuccess }) {
           ✕
         </button>
 
-        <h2>Key Master</h2>
+        <h2>KeyPaw</h2>
         <p className="auth-sub">Log in or sign up to play</p>
 
         <div className="auth-switch">
