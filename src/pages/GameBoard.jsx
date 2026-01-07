@@ -24,8 +24,8 @@ export default function GameBoard() {
   const [elapsedSeconds, setElapsedSeconds] = useState(null);
   const [timerKey, setTimerKey] = useState(0);
   const { logout } = useAuth();
-
-  // NOTE: message auto-hide is handled by the reusable OverlayMessage component
+  const [searchParams] = useSearchParams();
+  const demoMode = searchParams.get("demo");
 
   console.log("GameBoard id:", id, "puzzles:", puzzles);
 
