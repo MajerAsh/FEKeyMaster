@@ -1,4 +1,5 @@
 //Puzzle fetch & set,Token usage, Error/message handling,handleAttempt integration, PinTumbler rendering
+import { useSearchParams } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import { usePuzzles } from "../context/PuzzleContext";
 import { useEffect, useState } from "react";
