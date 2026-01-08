@@ -1,5 +1,4 @@
-//Puzzle fetch & set,Token usage, Error/message handling,handleAttempt integration, PinTumbler rendering
-
+//Puzzle fetch & set,Token usage,Demo mode, Error/message handling,handleAttempt integration, PinTumbler rendering
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { usePuzzles } from "../context/PuzzleContext";
 import { useEffect, useState } from "react";
@@ -34,7 +33,6 @@ export default function GameBoard() {
 
   useEffect(() => {
     async function load() {
-      // ✅ ADDED: demo mode loads puzzle locally (no login required)
       if (isDemo) {
         const demoType =
           demo === "pin" ? "pin" : demo === "dial" ? "dial" : null;
@@ -45,7 +43,7 @@ export default function GameBoard() {
         return;
       }
 
-      // ✅ ADDED: normal mode should require token (optional but recommended)
+      // Non-demo token
       if (!token) {
         navigate("/");
         return;
@@ -63,9 +61,6 @@ export default function GameBoard() {
 
   if (!puzzle) return <p>Loading puzzle...</p>;
 
-  // Optimistic attempt handling: check locally first so UI is instant,
-  // then persist to the server in the background. This avoids waiting for
-  // a network round-trip to show the unlock feedback.
   async function handleAttempt(attemptArray) {
     // increment attempts each time Unlock is pressed
     setAttempts((a) => a + 1);
@@ -88,7 +83,6 @@ export default function GameBoard() {
       attemptArray.every((val, i) => Math.abs(val - localCode[i]) <= 2);
 
     if (localMatch) {
-      // Immediately show success in the UI
       setMessage("Unlocked!");
       setUnlocked(true);
 
@@ -115,9 +109,9 @@ export default function GameBoard() {
       return;
     }
 
-    // ✅ ADDED: demo mode should not call backend if incorrect
+    // Demo mode for deep link
     if (isDemo) {
-      setMessage("❌ Incorrect. Try again.");
+      setMessage("Incorrect. Try again.");
       return;
     }
 
@@ -136,7 +130,7 @@ export default function GameBoard() {
         setMessage("Unlocked!");
         setUnlocked(true);
       } else {
-        setMessage("❌ Incorrect. Try again.");
+        setMessage("Incorrect. Try again.");
       }
     } catch (err) {
       console.error("Error submitting attempt:", err);
@@ -177,12 +171,11 @@ export default function GameBoard() {
   let parsedCode = [];
   try {
     if (puzzle?.solution_code) {
-      // NOTE: solution_code should NOT be returned from the server for deployed DBs.
-      // If present (local dev), parse it. Otherwise fall back to a sensible
-      // default length per puzzle type so the UI can render without revealing answers.
+      /* NOTE: solution_code should NOT be returned from the server for deployed DBs.
+       If present (local dev), parse it. Otherwise fall back to a sensible
+     default length per puzzle type so the UI can render without revealing answers.*/
       parsedCode = JSON.parse(puzzle.solution_code);
     } else {
-      // fallback defaults (do not reveal solutions)
       if (puzzle.type === "pin-tumbler") parsedCode = Array(5).fill(0);
       else if (puzzle.type === "dial") parsedCode = Array(3).fill(0);
       else parsedCode = [];
@@ -215,15 +208,19 @@ export default function GameBoard() {
               Log Out
             </button>
           </div>
-
-          {/* ✅ ADDED: optional visual indicator */}
+          {/*elapsedSeconds != null && (
+            <div style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
+              Time: {elapsedSeconds}s • Attempts: {attempts}
+            </div>
+          )*/}
+          {/* Demo mode: text indicator */}
           {isDemo && (
             <div style={{ marginBottom: "0.5rem", fontSize: "0.9rem" }}>
               Demo Mode — deep link preview
             </div>
           )}
 
-          {/* PUZZLE TYPE CONDITIONAL RENDERING */}
+          {/* Puzzle type conditionally rendered */}
           {puzzle.type === "pin-tumbler" && (
             <PinTumbler
               pinCount={parsedCode.length}
@@ -256,7 +253,7 @@ export default function GameBoard() {
             />
           )}
 
-          {/* Timer — invisible. Starts when puzzle loads, stops when `unlocked` becomes true. */}
+          {/* Timer (not displayed) Starts when puzzle loads, stops when `unlocked`*/}
           <Timer
             key={timerKey}
             running={!unlocked}
@@ -265,8 +262,6 @@ export default function GameBoard() {
               if (unlocked) submitScore(secs);
             }}
           />
-
-          {/* reusable overlay for any message */}
           <OverlayMessage
             message={message}
             type={

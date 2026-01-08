@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 80vh;
 }
 
 .pin-row {
@@ -21,15 +23,7 @@
   margin: 0 auto;
 }
 
-/***************added below after custom imgs:****************/
-
-.lock-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 80vh;
-}
+/* added below after custom imgs */
 
 .lock-scene {
   position: relative;
