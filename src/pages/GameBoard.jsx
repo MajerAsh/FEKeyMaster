@@ -177,12 +177,11 @@ export default function GameBoard() {
   let parsedCode = [];
   try {
     if (puzzle?.solution_code) {
-      // NOTE: solution_code should NOT be returned from the server for deployed DBs.
-      // If present (local dev), parse it. Otherwise fall back to a sensible
-      // default length per puzzle type so the UI can render without revealing answers.
+      /* NOTE: solution_code should NOT be returned from the server for deployed DBs.
+       If present (local dev), parse it. Otherwise fall back to a sensible
+     default length per puzzle type so the UI can render without revealing answers.*/
       parsedCode = JSON.parse(puzzle.solution_code);
     } else {
-      // fallback defaults (do not reveal solutions)
       if (puzzle.type === "pin-tumbler") parsedCode = Array(5).fill(0);
       else if (puzzle.type === "dial") parsedCode = Array(3).fill(0);
       else parsedCode = [];
@@ -216,14 +215,14 @@ export default function GameBoard() {
             </button>
           </div>
 
-          {/* ✅ ADDED: optional visual indicator */}
+          {/* Demo mode: text indicator */}
           {isDemo && (
             <div style={{ marginBottom: "0.5rem", fontSize: "0.9rem" }}>
               Demo Mode — deep link preview
             </div>
           )}
 
-          {/* PUZZLE TYPE CONDITIONAL RENDERING */}
+          {/* Puzzle type conditionally rendered */}
           {puzzle.type === "pin-tumbler" && (
             <PinTumbler
               pinCount={parsedCode.length}
@@ -256,7 +255,7 @@ export default function GameBoard() {
             />
           )}
 
-          {/* Timer — invisible. Starts when puzzle loads, stops when `unlocked`*/}
+          {/* Timer (not displayed) Starts when puzzle loads, stops when `unlocked`*/}
           <Timer
             key={timerKey}
             running={!unlocked}
