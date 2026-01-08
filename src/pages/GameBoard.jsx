@@ -265,8 +265,6 @@ export default function GameBoard() {
               if (unlocked) submitScore(secs);
             }}
           />
-
-          {/* reusable overlay for any message */}
           <OverlayMessage
             message={message}
             type={
