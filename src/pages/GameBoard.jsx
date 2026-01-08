@@ -111,7 +111,7 @@ export default function GameBoard() {
 
     // Demo mode for deep link
     if (isDemo) {
-      setMessage("❌ Incorrect. Try again.");
+      setMessage("Incorrect. Try again.");
       return;
     }
 
@@ -130,7 +130,7 @@ export default function GameBoard() {
         setMessage("Unlocked!");
         setUnlocked(true);
       } else {
-        setMessage("❌ Incorrect. Try again.");
+        setMessage("Incorrect. Try again.");
       }
     } catch (err) {
       console.error("Error submitting attempt:", err);
@@ -208,7 +208,11 @@ export default function GameBoard() {
               Log Out
             </button>
           </div>
-
+          {/*elapsedSeconds != null && (
+            <div style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
+              Time: {elapsedSeconds}s • Attempts: {attempts}
+            </div>
+          )*/}
           {/* Demo mode: text indicator */}
           {isDemo && (
             <div style={{ marginBottom: "0.5rem", fontSize: "0.9rem" }}>
