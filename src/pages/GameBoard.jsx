@@ -63,9 +63,6 @@ export default function GameBoard() {
 
   if (!puzzle) return <p>Loading puzzle...</p>;
 
-  // Optimistic attempt handling: check locally first so UI is instant,
-  // then persist to the server in the background. This avoids waiting for
-  // a network round-trip to show the unlock feedback.
   async function handleAttempt(attemptArray) {
     // increment attempts each time Unlock is pressed
     setAttempts((a) => a + 1);
@@ -88,7 +85,6 @@ export default function GameBoard() {
       attemptArray.every((val, i) => Math.abs(val - localCode[i]) <= 2);
 
     if (localMatch) {
-      // Immediately show success in the UI
       setMessage("Unlocked!");
       setUnlocked(true);
 
@@ -115,7 +111,7 @@ export default function GameBoard() {
       return;
     }
 
-    // ✅ ADDED: demo mode should not call backend if incorrect
+    // Demo mode for deep link
     if (isDemo) {
       setMessage("❌ Incorrect. Try again.");
       return;
