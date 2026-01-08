@@ -1,5 +1,4 @@
-//Puzzle fetch & set,Token usage, Error/message handling,handleAttempt integration, PinTumbler rendering
-
+//Puzzle fetch & set,Token usage,Demo mode, Error/message handling,handleAttempt integration, PinTumbler rendering
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { usePuzzles } from "../context/PuzzleContext";
 import { useEffect, useState } from "react";
@@ -34,7 +33,6 @@ export default function GameBoard() {
 
   useEffect(() => {
     async function load() {
-      // ✅ ADDED: demo mode loads puzzle locally (no login required)
       if (isDemo) {
         const demoType =
           demo === "pin" ? "pin" : demo === "dial" ? "dial" : null;
@@ -45,7 +43,7 @@ export default function GameBoard() {
         return;
       }
 
-      // ✅ ADDED: normal mode should require token (optional but recommended)
+      // Non-demo token
       if (!token) {
         navigate("/");
         return;
