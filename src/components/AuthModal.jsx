@@ -9,7 +9,12 @@ export default function AuthModal({ onClose, onSuccess }) {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [mode, setMode] = useState("login");
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({
+    email: "",
+    username: "",
+    login: "",
+    password: "",
+  });
   const [error, setError] = useState(null);
 
   const handleChange = (e) =>
@@ -18,9 +23,18 @@ export default function AuthModal({ onClose, onSuccess }) {
   async function submit(endpoint) {
     setError(null);
     try {
+      const payload =
+        endpoint === "signup"
+          ? {
+              email: form.email,
+              username: form.username,
+              password: form.password,
+            }
+          : { login: form.login, password: form.password };
+
       const data = await apiFetch(`/auth/${endpoint}`, {
         method: "POST",
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       // update auth context and navigate
@@ -48,13 +62,21 @@ export default function AuthModal({ onClose, onSuccess }) {
         <div className="auth-switch">
           <button
             className={mode === "login" ? "active" : ""}
-            onClick={() => setMode("login")}
+            onClick={() => {
+              setMode("login");
+              setError(null);
+              setForm((f) => ({ ...f, login: "", password: "" }));
+            }}
           >
             Log In
           </button>
           <button
             className={mode === "signup" ? "active" : ""}
-            onClick={() => setMode("signup")}
+            onClick={() => {
+              setMode("signup");
+              setError(null);
+              setForm((f) => ({ ...f, email: "", username: "", password: "" }));
+            }}
           >
             Sign Up
           </button>
@@ -66,14 +88,35 @@ export default function AuthModal({ onClose, onSuccess }) {
             submit(mode === "login" ? "login" : "signup");
           }}
         >
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            required
-            value={form.email}
-            onChange={handleChange}
-          />
+          {mode === "signup" ? (
+            <>
+              <input
+                name="username"
+                type="text"
+                placeholder="Username"
+                required
+                value={form.username}
+                onChange={handleChange}
+              />
+              <input
+                name="email"
+                type="email"
+                placeholder="Email"
+                required
+                value={form.email}
+                onChange={handleChange}
+              />
+            </>
+          ) : (
+            <input
+              name="login"
+              type="text"
+              placeholder="Username or Email"
+              required
+              value={form.login}
+              onChange={handleChange}
+            />
+          )}
           <input
             name="password"
             type="password"
