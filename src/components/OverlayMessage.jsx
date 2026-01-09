@@ -4,6 +4,7 @@ import "../styles/OverlayMessage.css";
 export default function OverlayMessage({
   message,
   type = "info", // 'success' | 'error' | 'info' | 'assist' | 'hint'
+  successIcon,
   autoHide, // default behavior depends on type
   duration = 2500,
   onClose,
@@ -23,7 +24,7 @@ export default function OverlayMessage({
 
   const icon =
     type === "success"
-      ? "🐟"
+      ? successIcon || "🐟"
       : type === "error"
       ? "❌"
       : type === "hint"

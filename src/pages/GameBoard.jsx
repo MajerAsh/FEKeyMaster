@@ -271,6 +271,7 @@ export default function GameBoard() {
                 ? "error"
                 : "info"
             }
+            successIcon={puzzle?.type === "dial" ? "🧶" : "🐟"}
             autoHide={true}
             duration={2500}
             onClose={() => setMessage("")}

@@ -39,7 +39,7 @@ export default function Leaderboard() {
 
   useEffect(() => {
     if (!token) return;
-    apiFetch("/scores/leaderboard?limit=20", {}, token)
+    apiFetch("/scores/leaderboard?limit=5", {}, token)
       .then((data) => setRows(Array.isArray(data) ? data : data?.rows || []))
       .catch((err) => console.error("Failed to load leaderboard:", err));
   }, [token]);
@@ -176,7 +176,7 @@ export default function Leaderboard() {
                       <div className="mini">
                         <div className="label">Treats</div>
                         <div className="value">
-                          {icons.dial ? "🍬" : "-"} {icons.pin ? "🐟" : "-"}
+                          {icons.dial ? "🧶" : "-"} {icons.pin ? "🐟" : "-"}
                         </div>
                       </div>
 
