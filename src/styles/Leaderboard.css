@@ -1,3 +1,8 @@
+.leader-root,
+.leader-root .leader-panel {
+  color: #2c0041;
+}
+
 .leader-root .leader-panel {
   max-width: 980px;
   margin: 0 auto;

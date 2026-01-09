@@ -133,7 +133,7 @@ export default function Leaderboard() {
 
                       <div className="podium-meta">
                         <span className="treats">
-                          {icons.dial ? "🧶" : "⬜"} {icons.pin ? "🐟" : "⬜"}{" "}
+                          {icons.dial ? "🧶" : "-"} {icons.pin ? "🐟" : "-"}{" "}
                           <span className="muted">({icons.count})</span>
                         </span>
                         <span className="muted">Best: {formatTime(best)}</span>
@@ -176,7 +176,7 @@ export default function Leaderboard() {
                       <div className="mini">
                         <div className="label">Treats</div>
                         <div className="value">
-                          {icons.dial ? "🍬" : "⬜"} {icons.pin ? "🐟" : "⬜"}
+                          {icons.dial ? "🍬" : "-"} {icons.pin ? "🐟" : "-"}
                         </div>
                       </div>
 

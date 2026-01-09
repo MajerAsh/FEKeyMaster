@@ -38,6 +38,7 @@
   border-radius: 8px;
   border: 1px solid #ddd;
   background: transparent;
+  color: #111;
 }
 .auth-switch button.active {
   background: #111;

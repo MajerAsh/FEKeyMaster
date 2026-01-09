@@ -7,7 +7,7 @@ export default function Signup() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", username: "", password: "" });
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
@@ -19,9 +19,16 @@ export default function Signup() {
     setError(null);
 
     try {
+      const payload = {
+        email: String(form.email || "").trim(),
+        username: String(form.username || "")
+          .trim()
+          .toLowerCase(),
+        password: form.password,
+      };
       const data = await apiFetch("/auth/signup", {
         method: "POST",
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       login(data.user, data.token); // update context
@@ -37,6 +44,19 @@ export default function Signup() {
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       <form onSubmit={handleSubmit}>
+        <input
+          name="username"
+          type="text"
+          value={form.username}
+          onChange={handleChange}
+          placeholder="Username"
+          minLength={3}
+          maxLength={20}
+          pattern="[a-z0-9_]{3,20}"
+          title="3–20 chars. Lowercase letters, numbers, underscore only."
+          required
+        />
+        <br />
         <input
           name="email"
           type="email"
