@@ -1,4 +1,4 @@
-/* 🎯 Overall Layout */
+/* Overall Layout */
 .dial-lock-container {
   display: flex;
   flex-direction: column;
@@ -6,7 +6,7 @@
   text-align: center;
 }
 
-/* 🧱 Lock Stack (Dial + Body) */
+/* Lock Stack (Dial + Body) */
 .lock-stack {
   position: relative;
   /* size relative to the parent .scene so it scales with the background */
@@ -35,7 +35,7 @@
   z-index: 10; /* ensure the dial stays on top of the lock body */
 }
 
-/* 🎮 Dial Controls */
+/* Dial Controls */
 .dial-controls {
   display: flex;
   align-items: center;
@@ -67,7 +67,7 @@
   background-color: #1d4ed8;
 }
 
-/* 📟 Display Current Number */
+/* Display Current Number */
 .dial-number {
   font-size: 2rem;
   font-weight: bold;
@@ -78,7 +78,7 @@
   padding: 0.25rem 0.5rem;
 }
 
-/* ⚙️ Action Buttons */
+/* Action Buttons */
 .dial-actions {
   margin-top: 1rem;
   display: flex;
@@ -155,7 +155,6 @@
 }
 
 .reset-button {
-  /* warm muted rose gradient using the requested colors */
   background: linear-gradient(180deg, #ad5e60 0%, #e4b5af 100%);
   color: #ffffff;
   border: none;
@@ -163,7 +162,6 @@
   border-radius: 0.375rem;
   cursor: pointer;
   font-weight: 500;
-  /* subtle tactile shadow using the darker tone as the slab */
   box-shadow: 0 4px 0 rgba(173, 94, 96, 0.95),
     0 8px 16px rgba(164, 110, 112, 0.12);
   transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
