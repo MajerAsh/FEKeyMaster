@@ -7,7 +7,7 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ login: "", password: "" });
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
@@ -38,11 +38,11 @@ export default function Login() {
 
       <form onSubmit={handleSubmit}>
         <input
-          name="email"
-          type="email"
-          value={form.email}
+          name="login"
+          type="text"
+          value={form.login}
           onChange={handleChange}
-          placeholder="Email"
+          placeholder="Username or Email"
           required
         />
         <br />
