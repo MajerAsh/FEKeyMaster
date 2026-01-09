@@ -26,11 +26,13 @@ export default function AuthModal({ onClose, onSuccess }) {
       const payload =
         endpoint === "signup"
           ? {
-              email: form.email,
-              username: form.username,
+              email: String(form.email || "").trim(),
+              username: String(form.username || "")
+                .trim()
+                .toLowerCase(),
               password: form.password,
             }
-          : { login: form.login, password: form.password };
+          : { login: String(form.login || "").trim(), password: form.password };
 
       const data = await apiFetch(`/auth/${endpoint}`, {
         method: "POST",
