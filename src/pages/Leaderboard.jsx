@@ -176,7 +176,7 @@ export default function Leaderboard() {
                       <div className="mini">
                         <div className="label">Treats</div>
                         <div className="value">
-                          {icons.dial ? "🍬" : "-"} {icons.pin ? "🐟" : "-"}
+                          {icons.dial ? "🧶" : "-"} {icons.pin ? "🐟" : "-"}
                         </div>
                       </div>
 

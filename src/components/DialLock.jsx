@@ -397,6 +397,7 @@ export default function DialLock({
         <OverlayMessage
           message={overlay.message}
           type={overlay.type}
+          successIcon="🧶"
           onClose={() => setOverlay({ message: "", type: "info" })}
         />
       )}
