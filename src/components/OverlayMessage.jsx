@@ -5,7 +5,7 @@ export default function OverlayMessage({
   message,
   type = "info", // 'success' | 'error' | 'info' | 'assist' | 'hint'
   successIcon,
-  autoHide, // default behavior depends on type
+  autoHide,
   duration = 2500,
   onClose,
 }) {
