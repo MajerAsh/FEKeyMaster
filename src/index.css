@@ -28,6 +28,10 @@ body {
   min-height: 100vh;
 }
 
+body.no-scroll {
+  overflow: hidden;
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
@@ -76,7 +80,10 @@ form button[type="submit"],
   border-color: transparent;
   /* subtle depth using the provided light accent color */
   box-shadow: 0 6px 0 #dcc8d6;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    filter 0.12s ease;
 }
 .play-panel .tile button:hover,
 .game-actions button:hover,
