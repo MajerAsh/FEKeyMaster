@@ -274,11 +274,7 @@ export default function GameBoard() {
           />
           <OverlayMessage
             message={message}
-            type={
-              message?.startsWith("Unlocked!")
-                ? "success"
-                : "error"
-            }
+            type={message?.startsWith("Unlocked!") ? "success" : "error"}
             successIcon={puzzle?.type === "dial" ? "🧶" : "🐟"}
             autoHide={true}
             duration={2500}
