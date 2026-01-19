@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import OverlayMessage from "../components/OverlayMessage";
 import "../styles/DialLock.css";
 
-// Export the main React component for use in your app
 export default function DialLock({
   solutionCode = [],
   onSubmit,
