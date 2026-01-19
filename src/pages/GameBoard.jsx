@@ -42,7 +42,6 @@ export default function GameBoard() {
         console.log("Found DEMO puzzle:", p);
         return;
       }
-
       // Non-demo token
       if (!token) {
         navigate("/");
@@ -58,6 +57,16 @@ export default function GameBoard() {
     }
     load();
   }, [id, puzzles, fetchPuzzles]);
+
+  useEffect(() => {
+    if (puzzle?.type === "dial") {
+      document.body.classList.add("no-scroll");
+    }
+
+    return () => {
+      document.body.classList.remove("no-scroll");
+    };
+  }, [puzzle?.type]);
 
   if (!puzzle) return <p>Loading puzzle...</p>;
 
@@ -208,7 +217,8 @@ export default function GameBoard() {
               Log Out
             </button>
           </div>
-          {/*elapsedSeconds != null && (
+          {/*If/when time will be displayed:
+          elapsedSeconds != null && (
             <div style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
               Time: {elapsedSeconds}s • Attempts: {attempts}
             </div>
@@ -268,8 +278,8 @@ export default function GameBoard() {
               message?.startsWith("Unlocked!")
                 ? "success"
                 : message?.startsWith("❌")
-                ? "error"
-                : "info"
+                  ? "error"
+                  : "info"
             }
             successIcon={puzzle?.type === "dial" ? "🧶" : "🐟"}
             autoHide={true}
