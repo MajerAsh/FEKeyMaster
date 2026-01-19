@@ -277,9 +277,7 @@ export default function GameBoard() {
             type={
               message?.startsWith("Unlocked!")
                 ? "success"
-                : message?.startsWith("❌")
-                  ? "error"
-                  : "info"
+                : "error"
             }
             successIcon={puzzle?.type === "dial" ? "🧶" : "🐟"}
             autoHide={true}
