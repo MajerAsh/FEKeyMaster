@@ -12,11 +12,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.game-root,
-.scene {
-  height: 100vh;
-  overflow: hidden;
-}
 
 a {
   font-weight: 500;
