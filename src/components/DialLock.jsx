@@ -69,16 +69,15 @@ export default function DialLock({
       const snd = ref.current.cloneNode();
       void snd.play();
     } catch {
-      // ignore audio errors (autoplay restrictions, missing file)
+      // ignore audio errors
     }
   }
 
   // normalize value into 0..dialRange-1
   const norm = (n) => ((n % dialRange) + dialRange) % dialRange;
 
-  //--------------COMBO LOCK PICK LOGIC (WikiHow)---------------------------------
-  /*HANDLE ROTATION:
-  ---------------------------------------*/
+  //--------------COMBO LOCK PICK LOGIC (translated into code)---------------------------------
+  //Handle Rotations:
   function handleChange(direction) {
     setLastDirection(direction);
     setTurnCount((c) => c + 1);
