@@ -286,7 +286,7 @@ export default function DialLock({
 
   // SUBMIT ATTEMPT (unlock) ----------
   function handleSubmit(e) {
-    e.preventDefault();
+    e?.preventDefault?.();
     if (attempt.length === solutionCode.length) {
       onSubmit(attempt);
       const correct = JSON.stringify(attempt) === JSON.stringify(solutionCode);

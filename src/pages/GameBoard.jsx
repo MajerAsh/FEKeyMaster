@@ -58,7 +58,7 @@ export default function GameBoard() {
     load();
   }, [id, puzzles, fetchPuzzles, token, isDemo, demo, navigate]);
 
-  /* useEffect(() => {
+  useEffect(() => {
     if (puzzle?.type === "dial") {
       document.body.classList.add("no-scroll");
     }
@@ -66,7 +66,7 @@ export default function GameBoard() {
     return () => {
       document.body.classList.remove("no-scroll");
     };
-  }, [puzzle?.type]);*/
+  }, [puzzle?.type]);
 
   if (!puzzle) return <p>Loading puzzle...</p>;
 
