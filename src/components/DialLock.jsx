@@ -18,16 +18,17 @@ export default function DialLock({
   const [, setTurnCount] = useState(0);
   const [, setStep2CcwCount] = useState(0);
   const [step2FullRotation, setStep2FullRotation] = useState(false);
+
   // angle tracks accumulated rotation in degrees to avoid large wrap jumps
   const [angle, setAngle] = useState(0);
   const [step1AssistShown, setStep1AssistShown] = useState(false);
   const [step3AssistShown, setStep3AssistShown] = useState(false);
-  // refs for per-digit stiff-zone counting (step 2)
+
+  // Step 2 mechanics
   const step2StiffPosRef = useRef(null);
   const step2StiffCountRef = useRef(0);
-  const STEP2_REQUIRED_CLICKS = 3; // require 3 presses per number in stiff zone
+  const STEP2_REQUIRED_CLICKS = 3; //Resistance zone
 
-  //Audio Refs
   const clickAudio = useRef(null);
   const subClickAudio = useRef(null);
   const lockOpenAudio = useRef(null);
@@ -38,7 +39,6 @@ export default function DialLock({
     lockOpenAudio.current = new Audio("/sounds/lockopen.wav");
   }, []);
 
-  // helper to show overlay popup
   function showOverlay(msg, type = "info") {
     setOverlay({ message: msg, type });
   }
