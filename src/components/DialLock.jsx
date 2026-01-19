@@ -8,12 +8,9 @@ export default function DialLock({
   unlocked = false,
   onReset,
 }) {
-  const dialRange = 40; // numbers 0–39
-
-  // ---------- STATE VARIABLES ----------
-  // "value" is the current number showing on the dial (starts at 0)
+  const dialRange = 40;
   const [value, setValue] = useState(0);
-  //track of all numbers the user has confirmed so far
+
   const [attempt, setAttempt] = useState([]);
   // "step" tracks how many numbers the user has entered in the sequence
   const [step, setStep] = useState(0);
