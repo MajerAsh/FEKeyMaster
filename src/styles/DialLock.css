@@ -5,6 +5,11 @@
   align-items: center;
   text-align: center;
 }
+.dial-actions-grid .unlock-button {
+  width: min(340px, 92%);
+  font-size: 1.05rem;
+  padding: 0.75rem 1rem;
+}
 
 /* Lock Stack (Dial + Body) */
 .lock-stack {
