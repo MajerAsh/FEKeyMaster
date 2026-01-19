@@ -1,6 +1,17 @@
-import { useState, useEffect, useRef } from "react";
-import OverlayMessage from "../components/OverlayMessage";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "../styles/DialLock.css";
+import OverlayMessage from "./OverlayMessage"; // adjust path if needed
+
+const DIAL_RANGE = 40;
+const DEGREES_PER_TICK = 360 / DIAL_RANGE; // 9
+const STEP2_REQUIRED_CLICKS = 3;
+
+const norm = (n) => ((n % DIAL_RANGE) + DIAL_RANGE) % DIAL_RANGE;
+
+function safeInt(n, fallback = 0) {
+  const v = Number.parseInt(n, 10);
+  return Number.isFinite(v) ? v : fallback;
+}
 
 export default function DialLock({
   solutionCode = [],
@@ -8,27 +19,29 @@ export default function DialLock({
   unlocked = false,
   onReset,
 }) {
-  const dialRange = 40;
+  const comboLength = solutionCode.length || 3;
+
   const [value, setValue] = useState(0);
   const [attempt, setAttempt] = useState([]);
   const [step, setStep] = useState(0);
-  const [overlay, setOverlay] = useState({ message: "", type: "info" }); //Set overlay?
-
-  const [lastDirection, setLastDirection] = useState(null);
-  const [, setTurnCount] = useState(0);
-  const [, setStep2CcwCount] = useState(0);
-  const [step2FullRotation, setStep2FullRotation] = useState(false);
-
-  // angle tracks accumulated rotation in degrees to avoid large wrap jumps
   const [angle, setAngle] = useState(0);
-  const [step1AssistShown, setStep1AssistShown] = useState(false);
-  const [step3AssistShown, setStep3AssistShown] = useState(false);
+  const [lastDirection, setLastDirection] = useState(null);
 
-  // Step 2 mechanics
+  const [overlay, setOverlay] = useState({ message: "", type: "info" });
+  const closeOverlay = () => setOverlay({ message: "", type: "info" });
+  const showOverlay = (message, type = "info") => setOverlay({ message, type });
+
+  // Step-2 mechanics
+  const step2FullRotationRef = useRef(false);
+  const step2CcwCountRef = useRef(0);
   const step2StiffPosRef = useRef(null);
   const step2StiffCountRef = useRef(0);
-  const STEP2_REQUIRED_CLICKS = 3; //Resistance zone
 
+  // Assist flags (useRef so we don't trigger re-renders)
+  const step1AssistShownRef = useRef(false);
+  const step3AssistShownRef = useRef(false);
+
+  // Audio
   const clickAudio = useRef(null);
   const subClickAudio = useRef(null);
   const lockOpenAudio = useRef(null);
@@ -39,298 +52,238 @@ export default function DialLock({
     lockOpenAudio.current = new Audio("/sounds/lockopen.wav");
   }, []);
 
-  function showOverlay(msg, type = "info") {
-    setOverlay({ message: msg, type });
-  }
-
-  // Step-1 assist on mount
-  useEffect(() => {
-    if (step1AssistShown) return;
-    showOverlay(
-      "Turn the dial counter clockwise and listen for a click — then add 5 to where you heard the click. That's the first number.",
-      "assist"
-    );
-    setStep1AssistShown(true);
-  }, [step1AssistShown]);
-
-  // Pre-step-3 assist once when the user advances to step 2 (about to find the 3rd number)
-  useEffect(() => {
-    if (step !== 2) return;
-    if (step3AssistShown) return;
-    showOverlay(
-      "Turn clockwise — when you hear a louder click, that is the number.",
-      "assist"
-    );
-    setStep3AssistShown(true);
-  }, [step, step3AssistShown]);
-
   function playSound(ref) {
     try {
-      const snd = ref.current.cloneNode();
-      void snd.play();
+      const snd = ref.current?.cloneNode();
+      if (snd) void snd.play();
     } catch {
-      // ignore audio errors
+      // ignore audio errors (autoplay restrictions, missing file)
     }
   }
 
-  // normalize value into 0..dialRange-1
-  const norm = (n) => ((n % dialRange) + dialRange) % dialRange;
+  // Assist text: show once at start, and once when entering step 3
+  useEffect(() => {
+    if (!step1AssistShownRef.current) {
+      showOverlay(
+        "Turn counter-clockwise and listen for a click — then add 5. That’s the first number.",
+        "assist"
+      );
+      step1AssistShownRef.current = true;
+    }
+  }, []);
 
-  //--------------COMBO LOCK PICK LOGIC (translated into code)---------------------------------
-  //Handle Rotations:
+  useEffect(() => {
+    if (step === 2 && !step3AssistShownRef.current) {
+      showOverlay(
+        "Turn clockwise — when you hear a louder click, that's the number.",
+        "assist"
+      );
+      step3AssistShownRef.current = true;
+    }
+  }, [step]);
+
+  // Close overlays when the user interacts anywhere
+  useEffect(() => {
+    if (!overlay.message) return;
+    const onDocPointer = () => closeOverlay();
+    document.addEventListener("pointerdown", onDocPointer);
+    return () => document.removeEventListener("pointerdown", onDocPointer);
+  }, [overlay.message]);
+
+  // Play lock sound when unlocked
+  useEffect(() => {
+    if (unlocked) playSound(lockOpenAudio);
+  }, [unlocked]);
+
+  const targets = useMemo(() => {
+    return [
+      safeInt(solutionCode[0], 0),
+      safeInt(solutionCode[1], 0),
+      safeInt(solutionCode[2], 0),
+    ];
+  }, [solutionCode]);
+
+  function applyTurn(direction, newValue) {
+    setValue(newValue);
+    setAngle((a) => a - direction * DEGREES_PER_TICK);
+  }
+
+  function handleStep1Turn(direction, newValue) {
+    const target = targets[0];
+    const clickPos = norm(target - 5);
+
+    if (direction === 1 && newValue === clickPos) playSound(clickAudio);
+    applyTurn(direction, newValue);
+  }
+
+  function handleStep2Turn(direction, newValue) {
+    const target = targets[1];
+
+    // Require a full CCW rotation before stiff-zone behavior applies
+    if (!step2FullRotationRef.current) {
+      if (direction === -1) {
+        step2CcwCountRef.current += 1;
+        if (step2CcwCountRef.current >= DIAL_RANGE)
+          step2FullRotationRef.current = true;
+      }
+      applyTurn(direction, newValue);
+      return;
+    }
+
+    // Clockwise allowed, but it resets stiff-zone counters
+    if (direction === 1) {
+      step2StiffPosRef.current = null;
+      step2StiffCountRef.current = 0;
+      applyTurn(direction, newValue);
+      return;
+    }
+
+    // CCW stiff zone: last 5 numbers before target
+    const distToTargetCCW = (newValue - target + DIAL_RANGE) % DIAL_RANGE;
+    if (distToTargetCCW > 0 && distToTargetCCW <= 5) {
+      const pos = newValue;
+
+      if (step2StiffPosRef.current !== pos) {
+        step2StiffPosRef.current = pos;
+        step2StiffCountRef.current = 1;
+        return;
+      }
+
+      step2StiffCountRef.current += 1;
+      if (step2StiffCountRef.current < STEP2_REQUIRED_CLICKS) return;
+
+      step2StiffPosRef.current = null;
+      step2StiffCountRef.current = 0;
+    }
+
+    // Prevent moving past the target CCW
+    if (newValue === norm(target - 1)) return;
+
+    applyTurn(direction, newValue);
+  }
+
+  function handleStep3Turn(direction, newValue) {
+    // Step 3 requires clockwise movement
+    if (direction !== 1) {
+      showOverlay("Turn clockwise to find the third number.", "hint");
+      return;
+    }
+
+    applyTurn(direction, newValue);
+
+    const target = targets[2];
+    if (newValue === target) playSound(clickAudio);
+    else playSound(subClickAudio);
+  }
+
   function handleChange(direction) {
     setLastDirection(direction);
-    setTurnCount((c) => c + 1);
 
     const newValue = norm(value + direction);
 
-    // STEP 3 constraint: require clockwise movement for step 3 and beyond
-    if (step >= 2 && direction !== 1) {
-      showOverlay(
-        "Only move counter clockwise to get the correct third number.",
-        "hint"
-      );
-      return;
-    }
+    if (step === 0) return handleStep1Turn(direction, newValue);
+    if (step === 1) return handleStep2Turn(direction, newValue);
+    if (step === 2) return handleStep3Turn(direction, newValue);
 
-    // STEP 1: Clockwise-only click detection + user hears click 5 before answer)
-    if (step === 0) {
-      const target = parseInt(solutionCode[0]) || 0;
-      const clickPos = norm(target - 5);
-
-      // Only play the click when moving clockwise into the click position
-      if (direction === 1 && newValue === clickPos) {
-        playSound(clickAudio);
-      }
-
-      // update display value and accumulated angle (avoid large CSS wrap jumps)
-      setValue(newValue);
-      setAngle((a) => a - direction * 9);
-      return;
-    }
-
-    // STEP 2: Counter-clockwise with a "stiff" zone 5 before the target
-    if (step === 1) {
-      const target = parseInt(solutionCode[1]) || 0;
-
-      // If the user hasn't completed the required full CCW rotation yet,
-      // encourage them to do so and track CCW presses. We don't enforce the
-      // "stiff" region until they've done the full rotation.
-      if (!step2FullRotation) {
-        if (direction === -1) {
-          setStep2CcwCount((c) => {
-            const next = c + 1;
-            if (next >= dialRange) setStep2FullRotation(true);
-            return next;
-          });
-        }
-
-        // allow visual movement regardless of direction while they complete the
-        // required full CCW rotation
-        setValue(newValue);
-        setAngle((a) => a - direction * 9);
-        return;
-      }
-
-      // After the full rotation is complete, apply the stiff-zone rules.
-      // If user turns clockwise during this step, allow visual movement but
-      // confirmation will prompt a hint (we check on confirm)
-      if (direction === 1) {
-        setValue(newValue);
-        setAngle((a) => a - direction * 9);
-        // reset stiff counters when user moves clockwise out of the area
-        step2StiffPosRef.current = null;
-        step2StiffCountRef.current = 0;
-        return;
-      }
-
-      // Moving counter-clockwise: implement a per-digit "stiff" region where
-      // multiple presses are required to advance one visible step.
-      // Determine CCW distance from newValue to target (0 means at target)
-      const distToTargetCCW = (newValue - target + dialRange) % dialRange;
-      if (distToTargetCCW > 0 && distToTargetCCW <= 5) {
-        // inside stiff zone: require multiple presses for each digit
-        const pos = newValue;
-        if (step2StiffPosRef.current !== pos) {
-          // starting to press into a new digit: set count=1 and do not move yet
-          step2StiffPosRef.current = pos;
-          step2StiffCountRef.current = 1;
-          return;
-        } else {
-          // same digit being pressed repeatedly
-          step2StiffCountRef.current += 1;
-          if (step2StiffCountRef.current < STEP2_REQUIRED_CLICKS) {
-            return; // require more presses
-          }
-          // enough presses: allow the move and reset counters
-          step2StiffPosRef.current = null;
-          step2StiffCountRef.current = 0;
-        }
-      }
-
-      // Prevent moving beyond the correct number when turning CCW
-      if (newValue === norm(target - 1)) return;
-
-      setValue(newValue);
-      setAngle((a) => a - direction * 9);
-      return;
-    }
-
-    // STEP 3+ (and default behavior): for step 2 (index 2) we play subClick on
-    // normal moves and click when landing on the target; allow movement both ways
-    setValue(newValue);
-    setAngle((a) => a - direction * 9);
-    if (step === 2) {
-      const target = parseInt(solutionCode[2]) || 0;
-      if (newValue === target) playSound(clickAudio);
-      else playSound(subClickAudio);
-    }
-    return;
+    // Beyond expected steps: allow turning but no extra logic
+    applyTurn(direction, newValue);
   }
 
-  /*CONFIRM CURRENT NUMBER 
-  --------------------------------------------*/
   function handleConfirmNumber() {
-    const current = value;
-    const dir = lastDirection || 0;
-
-    // Prevent confirming more numbers than the lock expects
-    if (step >= solutionCode.length) {
-      showOverlay("All numbers already entered.", "info");
+    if (step >= comboLength) {
+      // showOverlay("All numbers already entered.", "info");
       return;
     }
 
-    // STEP 1: must have been turning clockwise to legitimately read the click
-    if (step === 0) {
-      const target = parseInt(solutionCode[0]) || 0;
-      const clickPos = norm(target - 5);
-      const correctNumber = norm(clickPos + 5);
+    const current = value;
+    const dir = lastDirection ?? 0;
 
-      if (dir !== 1) {
-        showOverlay(
-          "Only move counter clockwise to get the correct first number.",
-          "hint"
-        );
-        return;
-      }
+    if (step === 0) {
+      if (dir !== 1)
+        return showOverlay("Turn clockwise to find the first number.", "hint");
+      const clickPos = norm(targets[0] - 5);
+      const correctNumber = norm(clickPos + 5);
 
       if (current === clickPos) {
         playSound(subClickAudio);
         showOverlay(
-          "Add 5 to where you heard the click — that’s your correct number.",
+          "Add 5 to the click position — that’s the first number.",
           "info"
         );
-        // allow recording the click position if the user confirms it
       }
+      if (current === correctNumber) playSound(clickAudio);
 
-      if (current === correctNumber) {
-        playSound(clickAudio);
-      }
-    }
-
-    // STEP 2: must be turning counter-clockwise to confirm
-    else if (step === 1) {
-      const target = parseInt(solutionCode[1]) || 0;
-      if (dir !== -1) {
-        showOverlay(
-          "Only move counter clockwise to get the correct second number.",
-          "hint"
-        );
-        return;
-      }
-
-      if (current === target) playSound(clickAudio);
-    }
-
-    // STEP 3 (index 2): must be clockwise; provide hints when incorrect
-    else if (step === 2) {
-      const target = parseInt(solutionCode[2]) || 0;
-      if (dir !== 1) {
-        showOverlay(
-          "Only move clockwise to get the correct third number.",
-          "hint"
-        );
-        return;
-      }
-
-      if (current === target) playSound(clickAudio);
-      else showOverlay("Listen for a different click.", "info");
-    }
-
-    // record the answered number and advance
-    const newAttempt = [...attempt, current];
-    setAttempt(newAttempt);
-
-    // If we're moving into STEP 2, reset the step2 rotation trackers and show guidance
-    if (step === 0) {
-      setStep2CcwCount(0);
-      setStep2FullRotation(false);
+      // entering step 2: reset rotation tracking
+      step2CcwCountRef.current = 0;
+      step2FullRotationRef.current = false;
       showOverlay(
-        "Only turn the lock clockwise for the second number. Make one full rotation, then feel for the resistance to find the second number.",
+        "Second number: turn counter-clockwise one full rotation, then feel for resistance.",
         "assist"
       );
     }
 
-    setStep(step + 1);
+    if (step === 1) {
+      if (dir !== -1)
+        return showOverlay(
+          "Turn counter-clockwise to confirm the second number.",
+          "hint"
+        );
+      if (current === targets[1]) playSound(clickAudio);
+    }
+
+    if (step === 2) {
+      if (dir !== 1)
+        return showOverlay(
+          "Turn clockwise to confirm the third number.",
+          "hint"
+        );
+      if (current === targets[2]) playSound(clickAudio);
+      else showOverlay("Listen for a different click.", "info");
+    }
+
+    setAttempt((prev) => [...prev, current]);
+    setStep((s) => s + 1);
   }
 
-  // SUBMIT ATTEMPT (unlock) ----------
   function handleSubmit(e) {
-    e?.preventDefault?.();
-    if (attempt.length === solutionCode.length) {
-      onSubmit(attempt);
-      const correct = JSON.stringify(attempt) === JSON.stringify(solutionCode);
-      if (correct) showOverlay("Unlocked!", "success");
-      else showOverlay("Incorrect combination.", "error");
-    } else {
+    e.preventDefault();
+
+    if (attempt.length !== comboLength) {
       showOverlay("Enter all numbers first.", "info");
+      return;
     }
+
+    onSubmit?.(attempt);
+
+    const correct =
+      JSON.stringify(attempt) ===
+      JSON.stringify(solutionCode.slice(0, comboLength));
+
+    showOverlay(
+      correct ? "Unlocked!" : "Incorrect combination.",
+      correct ? "success" : "error"
+    );
   }
 
-  // Play lock open sound when parent sets unlocked
-  useEffect(() => {
-    if (!unlocked) return;
-    try {
-      const audio = lockOpenAudio.current;
-      if (audio) {
-        const snd = audio.cloneNode();
-        void snd.play();
-      }
-    } catch {
-      /* ignore */
-    }
-  }, [unlocked]);
-
-  // Dismiss overlay when the user clicks/taps anywhere in the document.
-  // This makes overlays more transient and lets the user clear hints by
-  // interacting with the UI instead of only using the close button.
-  useEffect(() => {
-    if (!overlay.message) return;
-    const onDocPointer = () => setOverlay({ message: "", type: "info" });
-    document.addEventListener("pointerdown", onDocPointer);
-    return () => document.removeEventListener("pointerdown", onDocPointer);
-  }, [overlay.message]);
-  // RESET
-  // ---------------------------------------
   function handleReset() {
     setAttempt([]);
     setStep(0);
     setValue(0);
     setAngle(0);
-    setTurnCount(0);
-    // clear step2 trackers
-    setStep2CcwCount(0);
-    setStep2FullRotation(false);
+    setLastDirection(null);
+
+    step2FullRotationRef.current = false;
+    step2CcwCountRef.current = 0;
     step2StiffPosRef.current = null;
     step2StiffCountRef.current = 0;
-    setStep1AssistShown(false);
-    setStep3AssistShown(false);
-    showOverlay("Reset. Start again.", "info");
-    if (typeof onReset === "function") onReset();
+
+    step1AssistShownRef.current = false;
+    step3AssistShownRef.current = false;
+
+    closeOverlay();
+    // showOverlay("Reset. Start again.", "info");
+    onReset?.();
   }
-  /* Each number represents 9° of rotation (360° / 40 numbers = 9°)
-   - Use accumulated `angle` to avoid large wrap-around jumps when crossing 0 */
-  const rotationDegrees = angle;
 
   return (
     <div className="dial-lock-container">
@@ -344,16 +297,24 @@ export default function DialLock({
           src="/images/dial.png"
           alt="Dial"
           className="dial-image"
-          style={{ transform: `rotate(${rotationDegrees}deg)` }}
+          style={{ transform: `rotate(${angle}deg)` }}
         />
       </div>
 
       <div className="dial-controls">
-        <button onClick={() => handleChange(1)} className="dial-button">
+        <button
+          type="button"
+          onClick={() => handleChange(1)}
+          className="dial-button"
+        >
           ▲
         </button>
         <span className="dial-number">{value}</span>
-        <button onClick={() => handleChange(-1)} className="dial-button">
+        <button
+          type="button"
+          onClick={() => handleChange(-1)}
+          className="dial-button"
+        >
           ▼
         </button>
       </div>
@@ -363,18 +324,23 @@ export default function DialLock({
       </div>
 
       <div className="dial-actions-grid">
-        <button onClick={handleConfirmNumber} className="confirm-button">
+        <button
+          type="button"
+          onClick={handleConfirmNumber}
+          className="confirm-button"
+        >
           Select Number
         </button>
 
-        <button onClick={handleReset} className="reset-button">
+        <button type="button" onClick={handleReset} className="reset-button">
           Reset
         </button>
 
         <button
+          type="button"
           onClick={handleSubmit}
           className="unlock-button"
-          disabled={attempt.length < solutionCode.length}
+          disabled={attempt.length < comboLength}
         >
           Unlock
         </button>
@@ -384,8 +350,7 @@ export default function DialLock({
         <OverlayMessage
           message={overlay.message}
           type={overlay.type}
-          successIcon="🧶"
-          onClose={() => setOverlay({ message: "", type: "info" })}
+          onClose={closeOverlay}
         />
       )}
     </div>
