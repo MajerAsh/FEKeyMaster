@@ -28,9 +28,9 @@ body {
   min-height: 100vh;
 }
 
-body.no-scroll {
+/*body.no-scroll {
   overflow: hidden;
-}
+}*/
 
 h1 {
   font-size: 3.2em;
