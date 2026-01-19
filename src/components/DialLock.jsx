@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react"; //React's useState hook to handle dynamic data (state) in this component
-import OverlayMessage from "./OverlayMessage";
+import { useState, useEffect, useRef } from "react";
+import OverlayMessage from "../components/OverlayMessage";
 import "../styles/DialLock.css";
 
 // Export the main React component for use in your app
@@ -286,7 +286,7 @@ export default function DialLock({
 
   // SUBMIT ATTEMPT (unlock) ----------
   function handleSubmit(e) {
-    e.preventDefault();
+    e?.preventDefault?.();
     if (attempt.length === solutionCode.length) {
       onSubmit(attempt);
       const correct = JSON.stringify(attempt) === JSON.stringify(solutionCode);

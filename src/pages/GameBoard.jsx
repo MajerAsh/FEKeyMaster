@@ -56,7 +56,7 @@ export default function GameBoard() {
       console.log("Found puzzle:", found);
     }
     load();
-  }, [id, puzzles, fetchPuzzles]);
+  }, [id, puzzles, fetchPuzzles, token, isDemo, demo, navigate]);
 
   useEffect(() => {
     if (puzzle?.type === "dial") {
