@@ -86,7 +86,6 @@ export default function DialLock({
 
     // STEP 3 constraint: require clockwise movement for step 3 and beyond
     if (step >= 2 && direction !== 1) {
-      // Block counter-clockwise moves during step 3 and show a hint
       showOverlay(
         "Only move counter clockwise to get the correct third number.",
         "hint"
@@ -94,7 +93,7 @@ export default function DialLock({
       return;
     }
 
-    // STEP 1: Clockwise-only click detection (user hears click 5 before answer)
+    // STEP 1: Clockwise-only click detection + user hears click 5 before answer)
     if (step === 0) {
       const target = parseInt(solutionCode[0]) || 0;
       const clickPos = norm(target - 5);
@@ -329,15 +328,12 @@ export default function DialLock({
     showOverlay("Reset. Start again.", "info");
     if (typeof onReset === "function") onReset();
   }
-  // Each number represents 9° of rotation (360° / 40 numbers = 9°)
-  // Use accumulated `angle` to avoid large wrap-around jumps when crossing 0
+  /* Each number represents 9° of rotation (360° / 40 numbers = 9°)
+   - Use accumulated `angle` to avoid large wrap-around jumps when crossing 0 */
   const rotationDegrees = angle;
 
-  // ---------- RETURN  -------------------------------------------
   return (
     <div className="dial-lock-container">
-      {/* if i get rid of the above, the header displays! */}
-
       <div className="lock-stack">
         <img
           src={unlocked ? "/images/diallockopened.png" : "/images/diallock.png"}
