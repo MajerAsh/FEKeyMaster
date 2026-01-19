@@ -43,7 +43,7 @@ export default function DialLock({
     setOverlay({ message: msg, type });
   }
 
-  // show the pre-step-1 assist once on mount (explains clockwise click + add 5)
+  // Step-1 assist on mount
   useEffect(() => {
     if (step1AssistShown) return;
     showOverlay(
@@ -53,7 +53,7 @@ export default function DialLock({
     setStep1AssistShown(true);
   }, [step1AssistShown]);
 
-  // show the pre-step-3 assist once when the user advances to step 2 (about to find the 3rd number)
+  // Pre-step-3 assist once when the user advances to step 2 (about to find the 3rd number)
   useEffect(() => {
     if (step !== 2) return;
     if (step3AssistShown) return;
@@ -64,13 +64,12 @@ export default function DialLock({
     setStep3AssistShown(true);
   }, [step, step3AssistShown]);
 
-  // play sound safely
   function playSound(ref) {
     try {
       const snd = ref.current.cloneNode();
       void snd.play();
     } catch {
-      /* ignore load errors */
+      // ignore audio errors (autoplay restrictions, missing file)
     }
   }
 
