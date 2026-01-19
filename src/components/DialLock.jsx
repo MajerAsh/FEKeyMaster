@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from "react"; //React's useState hook to handle dynamic data (state) in this component
-import OverlayMessage from "./OverlayMessage";
+import { useState, useEffect, useRef } from "react";
 import "../styles/DialLock.css";
 
 // Export the main React component for use in your app
