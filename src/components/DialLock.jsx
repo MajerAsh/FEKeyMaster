@@ -10,13 +10,10 @@ export default function DialLock({
 }) {
   const dialRange = 40;
   const [value, setValue] = useState(0);
-
   const [attempt, setAttempt] = useState([]);
-  // "step" tracks how many numbers the user has entered in the sequence
   const [step, setStep] = useState(0);
   const [overlay, setOverlay] = useState({ message: "", type: "info" }); //Set overlay?
-  // "message" stores feedback for the user, like “Number saved” or “Wrong code”
-  //const [message, setMessage] = useState("");
+
   const [lastDirection, setLastDirection] = useState(null);
   const [, setTurnCount] = useState(0);
   const [, setStep2CcwCount] = useState(0);
