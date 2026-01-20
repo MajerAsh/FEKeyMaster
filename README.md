@@ -45,6 +45,8 @@ npm run dev
 
 Open the site at the Vite dev server URL (usually http://localhost:5173). The frontend reads `VITE_API_URL` for the API base; it falls back to `http://localhost:3001` if unset.
 
+**Note:** Demo mode uses client-side validation for preview purposes.
+
 Demo & screenshots
 
 Include screenshots and a short GIF to help reviewers quickly understand the product. Suggested assets (place under `FEKeyMaster/docs/images/`):
