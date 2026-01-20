@@ -1,4 +1,5 @@
 //Puzzle fetch & set,Token usage,Demo mode, Error/message handling,handleAttempt integration, PinTumbler rendering
+
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { usePuzzles } from "../context/PuzzleContext";
 import { useEffect, useState } from "react";
@@ -82,7 +83,7 @@ export default function GameBoard() {
     } catch (err) {
       console.error(
         "Failed to parse puzzle.solution_code for local check:",
-        err
+        err,
       );
     }
 
@@ -103,7 +104,7 @@ export default function GameBoard() {
           method: "POST",
           body: JSON.stringify({ puzzle_id: puzzle.id, attempt: attemptArray }),
         },
-        token
+        token,
       )
         .then((data) => {
           if (!data || !data.success) {
@@ -132,7 +133,7 @@ export default function GameBoard() {
           method: "POST",
           body: JSON.stringify({ puzzle_id: puzzle.id, attempt: attemptArray }),
         },
-        token
+        token,
       );
 
       if (data && data.success) {
@@ -165,11 +166,11 @@ export default function GameBoard() {
             attempts,
           }),
         },
-        token
+        token,
       );
       if (res && res.awardedBadge) {
         setMessage(
-          (m) => (m ? m + " " : "") + `Badge: ${res.awardedBadge.name}`
+          (m) => (m ? m + " " : "") + `Badge: ${res.awardedBadge.name}`,
         );
       }
     } catch (err) {
@@ -196,7 +197,7 @@ export default function GameBoard() {
     "parsedCode",
     parsedCode,
     "raw solution_code",
-    puzzle?.solution_code
+    puzzle?.solution_code,
   );
 
   return (
