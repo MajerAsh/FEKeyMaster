@@ -218,12 +218,6 @@ export default function GameBoard() {
               Log Out
             </button>
           </div>
-          {/*If/when time will be displayed:
-          elapsedSeconds != null && (
-            <div style={{ marginTop: "0.5rem", fontSize: "0.9rem" }}>
-              Time: {elapsedSeconds}s • Attempts: {attempts}
-            </div>
-          )*/}
           {/* Demo mode: text indicator */}
           {isDemo && (
             <div style={{ marginBottom: "0.5rem", fontSize: "0.9rem" }}>
