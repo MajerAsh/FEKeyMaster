@@ -22,7 +22,7 @@ export default function GameBoard() {
   const [message, setMessage] = useState("");
   const [unlocked, setUnlocked] = useState(false);
   const [attempts, setAttempts] = useState(0);
-  const [elapsedSeconds, setElapsedSeconds] = useState(null);
+  const [setElapsedSeconds] = useState(null);
   const [timerKey, setTimerKey] = useState(0);
   const { logout } = useAuth();
 
