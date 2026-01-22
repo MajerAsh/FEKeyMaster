@@ -3,6 +3,13 @@
   color: #2c0041;
 }
 
+.leader-root .scene {
+  min-height: 100vh;
+  padding: 40px 10px;
+  background-size: cover;
+  background-position: center;
+}
+
 .leader-root .leader-panel {
   max-width: 980px;
   margin: 0 auto;

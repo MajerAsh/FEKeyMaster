@@ -205,7 +205,7 @@ export default function GameBoard() {
       >
         <div className="game-content">
           <div className="game-actions">
-            <button onClick={() => navigate("/play")}>← Back to Play</button>
+            <button onClick={() => navigate("/play")}>← Back </button>
             <button
               onClick={() => {
                 logout();
