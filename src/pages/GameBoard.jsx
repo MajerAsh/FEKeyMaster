@@ -147,7 +147,6 @@ export default function GameBoard() {
       setMessage("Something went wrong.");
     }
   }
-
   // Submit the score to backend when puzzle is unlocked and timer stops
   async function submitScore(finalElapsedSeconds) {
     // guard: only submit once
