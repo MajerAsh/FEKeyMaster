@@ -22,7 +22,6 @@ export default function GameBoard() {
   const [message, setMessage] = useState("");
   const [unlocked, setUnlocked] = useState(false);
   const [attempts, setAttempts] = useState(0);
-  const [setElapsedSeconds] = useState(null);
   const [timerKey, setTimerKey] = useState(0);
   const { logout } = useAuth();
 
@@ -151,7 +150,6 @@ export default function GameBoard() {
   async function submitScore(finalElapsedSeconds) {
     // guard: only submit once
     if (finalElapsedSeconds == null) return;
-    setElapsedSeconds(finalElapsedSeconds);
     const gameName = puzzle.type === "dial" ? "DialLock" : "PinTumbler";
     try {
       const res = await apiFetch(
@@ -234,7 +232,6 @@ export default function GameBoard() {
                 setMessage("");
                 setUnlocked(false);
                 setAttempts(0);
-                setElapsedSeconds(null);
                 setTimerKey((k) => k + 1);
               }}
               unlocked={unlocked}
@@ -251,7 +248,6 @@ export default function GameBoard() {
                 setMessage("");
                 setUnlocked(false);
                 setAttempts(0);
-                setElapsedSeconds(null);
                 setTimerKey((k) => k + 1);
               }}
             />
