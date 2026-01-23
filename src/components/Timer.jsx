@@ -31,7 +31,7 @@ export default function Timer({ running = true, onStop, intervalMs = 200 }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running]);
 
-  // tesx for debugging but invisible by default.
+  // text for debugging but invisible by default.
   return (
     <div style={{ display: "none" }} aria-hidden>
       {Math.max(0, Math.round(elapsedMs / 1000))}
