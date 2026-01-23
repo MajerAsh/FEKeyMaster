@@ -83,7 +83,7 @@ export default function PinTumbler({
   const drivers = Array(pinCount).fill(driver);
   const keys = Array(pinCount).fill(key);
 
-  // compute responsive shafts and scale
+  // Pin shafts and scale
   useEffect(() => {
     const update = () => {
       const body = bodyRef.current;
@@ -95,7 +95,7 @@ export default function PinTumbler({
       const naturalW = body.naturalWidth || 1332;
       const naturalH = body.naturalHeight || 552;
 
-      // Optionally snap rendered dimensions so they align to a grid (e.g. 5px)
+      // Snap rendered dimensions so they align to a grid (e.g. 5px)
       if (alignToGrid && scene) {
         const availableW = scene.clientWidth || renderedW;
         const snappedW = Math.max(
@@ -113,15 +113,15 @@ export default function PinTumbler({
       // choose scale based on width to keep horizontal placement stable
       const newScale = renderedW / naturalW;
 
-      // Use user's Procreate measurements (natural pixels)
-      // Whole canvas: naturalW x naturalH (1330 x 552)
-      // Shafts block: total area for 5 shafts + 4 gaps is 205 x 273
-      // Positioned at natural X = 219 (space to the left of shafts = 219)
+      /* "natural img size pixels" math
+      Whole canvas: naturalW x naturalH (1330 x 552)
+     Shafts block: total area for 5 shafts + 4 gaps is 205 x 273
+     Positioned at natural X = 219 (space to the left of shafts = 219)*/
       const shaftsBlockLeft = 219;
       const shaftsBlockWidth = 205;
 
       // per-part natural sizes
-      const shaftWidthNatural = 21.5; // approx 21-21.5px wide
+      const shaftWidthNatural = 21.5;
 
       // vertical partition of shaft: upper (177) and lower (95)
       const upperPortionH = 177;
@@ -134,10 +134,10 @@ export default function PinTumbler({
       const gapsTotal = shaftsBlockWidth - pinCount * shaftWidthNatural;
       const gapNatural = gapsTotal / (pinCount - 1);
 
-      // position shafts block vertically: according to your measurements there is ~20px above
+      // position shafts block vertically
       const shaftsBlockTop = 20;
 
-      // map slider 0..120 to pixel travel: driver travel spans the lower portion of the shafts
+      // map slider 0..120 to pixel travel: driver only in lower portion
       const travelNatural = lowerPortionH; // natural px travel for full driver movement
       setEffectiveTravel(travelNatural * newScale);
 
@@ -151,7 +151,7 @@ export default function PinTumbler({
         centers.push({ x: cx, y: cy });
       }
 
-      // SHEAR LINE CALCULATED 📏📏📏📏📏
+      /*---------Shear Line calculations -----*/
       // each shaft (natural) is 22px by 272px
       const shaftInnerNatural = 272;
       const shearNaturalY = shaftsBlockTop + upperPortionH; // natural Y of shear line
@@ -178,13 +178,12 @@ export default function PinTumbler({
     };
   }, [pinCount, alignToGrid, gridSize]);
 
-  // initialize click Audio once
+  // Click Audio once
   useEffect(() => {
     try {
-      // public folder served at root: /sounds/click.wav
       clickAudioRef.current = new Audio("/sounds/click.wav");
       clickAudioRef.current.volume = 0.6;
-      // load lock open sound
+      // lock open sound
       lockOpenAudioRef.current = new Audio("/sounds/lockopen.wav");
       lockOpenAudioRef.current.volume = 0.8;
     } catch (err) {
