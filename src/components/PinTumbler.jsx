@@ -191,16 +191,15 @@ export default function PinTumbler({
     }
   }, []);
 
-  // Play click when any pin transitions from unset -> set
+  // Play click when pin: unset -> set
   useEffect(() => {
     const prev = prevSetRef.current;
     for (let i = 0; i < setPinsStatus.length; i++) {
       if (setPinsStatus[i] && !prev[i]) {
-        // play click
         try {
           const audio = clickAudioRef.current;
           if (audio) {
-            // clone to allow overlapping clicks
+            // allow overlapping clicks
             const snd = audio.cloneNode();
             void snd.play();
           }
@@ -209,11 +208,11 @@ export default function PinTumbler({
         }
       }
     }
-    // update prev
+
     prevSetRef.current = [...setPinsStatus];
   }, [setPinsStatus]);
 
-  // Play lock open sound when unlocked prop becomes true
+  // Play lock open sound when unlocked = true
   useEffect(() => {
     if (!unlocked) return;
     try {
@@ -254,7 +253,7 @@ export default function PinTumbler({
           let t = (height / 120) * effectiveTravel;
           t = Math.max(0, Math.min(t, effectiveTravel));
 
-          // driver/key transforms driven directly by t
+          // driver/key transforms driven directly
 
           const shaft = shafts[i] || {
             x: 80,
