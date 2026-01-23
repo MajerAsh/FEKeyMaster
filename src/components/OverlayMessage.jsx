@@ -9,7 +9,7 @@ export default function OverlayMessage({
   duration = 2500,
   onClose,
 }) {
-  // assist overlays should remain until the user closes them
+  // assist overlays until click
   const shouldAutoHide =
     type === "assist" ? false : autoHide === undefined ? true : !!autoHide;
 
@@ -26,12 +26,12 @@ export default function OverlayMessage({
     type === "success"
       ? successIcon || "🐟"
       : type === "error"
-      ? "❌"
-      : type === "hint"
-      ? "💡"
-      : type === "assist"
-      ? "🛠️"
-      : "ℹ️";
+        ? "❌"
+        : type === "hint"
+          ? "💡"
+          : type === "assist"
+            ? "🛠️"
+            : "ℹ️";
 
   return (
     <div

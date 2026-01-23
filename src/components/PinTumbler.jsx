@@ -5,7 +5,6 @@ import "../styles/PinTumbler.css";
 import lockBody from "../assets/lockbody.png";
 import shackleClosed from "../assets/shackleClosed.png";
 import shackleOpen from "../assets/shackleOpen.png";
-//import shackleSpringClosed from "../assets/shackle-springClosed.png";
 
 // Pin components (drivers, key pins, springs)
 import driver from "../assets/driver.png";
@@ -17,7 +16,7 @@ export default function PinTumbler({
   pinCount = 5,
   solutionCode = [],
   onSubmit,
-  onReset, // optional callback from parent to clear messages
+  onReset,
   showGuides = true, //to toggle the tuning overlay/ grid
   alignToGrid = true,
   gridSize = 5,
@@ -25,12 +24,12 @@ export default function PinTumbler({
 }) {
   const [pins, setPins] = useState(Array(pinCount).fill(0));
   const [setPinsStatus, setSetPinsStatus] = useState(
-    Array(pinCount).fill(false)
+    Array(pinCount).fill(false),
   );
-  // audio for pin set click
+
   const clickAudioRef = useRef(null);
   const lockOpenAudioRef = useRef(null);
-  // keep previous set status so we can detect transitions false->true
+  // keep previous set status to detect transitions false->true
   const prevSetRef = useRef(Array(pinCount).fill(false));
 
   // Reset pins when puzzle changes
@@ -56,7 +55,7 @@ export default function PinTumbler({
     console.log(
       `Pin ${index + 1} | Height: ${height} | Target: ${target} | Set: ${
         newStatus[index]
-      }`
+      }`,
     );
 
     setPins(newPins);
@@ -71,23 +70,20 @@ export default function PinTumbler({
 
   function handleSubmit(e) {
     e.preventDefault();
-    // Submit the current pins to the parent — the parent will determine success
     onSubmit(pins);
   }
-
-  // refs + responsive geometry:  component reads the image natural width/height at runtime
-  // (via bodyRef.current.naturalWidth/naturalHeight) and falls back to 1332×552 if not available.
+  /*------------------ Scaling and responsive geometry (solution dependency) ---------------*/
+  /*component reads the image natural width/height at runtime
+  (via bodyRef.current.naturalWidth/naturalHeight) and falls back to 1332×552 if not available.*/
   const sceneRef = useRef(null);
   const bodyRef = useRef(null);
-  // scale removed (not used directly) - kept computed in layout calculations
   const [effectiveTravel, setEffectiveTravel] = useState(120);
   const [shafts, setShafts] = useState([]);
 
-  // one shared asset per part (repeat per pin)
   const drivers = Array(pinCount).fill(driver);
   const keys = Array(pinCount).fill(key);
 
-  // compute responsive shafts and scale
+  // Pin shafts and scale
   useEffect(() => {
     const update = () => {
       const body = bodyRef.current;
@@ -99,12 +95,12 @@ export default function PinTumbler({
       const naturalW = body.naturalWidth || 1332;
       const naturalH = body.naturalHeight || 552;
 
-      // Optionally snap rendered dimensions so they align to a grid (e.g. 5px)
+      // Snap rendered dimensions so they align to a grid (e.g. 5px)
       if (alignToGrid && scene) {
         const availableW = scene.clientWidth || renderedW;
         const snappedW = Math.max(
           gridSize,
-          Math.round(availableW / gridSize) * gridSize
+          Math.round(availableW / gridSize) * gridSize,
         );
         const snappedH = Math.round((snappedW / naturalW) * naturalH);
         // Apply snapped pixel-perfect size to the body image to keep coordinate math integer-aligned
@@ -117,15 +113,15 @@ export default function PinTumbler({
       // choose scale based on width to keep horizontal placement stable
       const newScale = renderedW / naturalW;
 
-      // Use user's Procreate measurements (natural pixels)
-      // Whole canvas: naturalW x naturalH (1330 x 552)
-      // Shafts block: total area for 5 shafts + 4 gaps is 205 x 273
-      // Positioned at natural X = 219 (space to the left of shafts = 219)
+      /* "natural img size pixels" math
+      Whole canvas: naturalW x naturalH (1330 x 552)
+     Shafts block: total area for 5 shafts + 4 gaps is 205 x 273
+     Positioned at natural X = 219 (space to the left of shafts = 219)*/
       const shaftsBlockLeft = 219;
       const shaftsBlockWidth = 205;
 
       // per-part natural sizes
-      const shaftWidthNatural = 21.5; // approx 21-21.5px wide
+      const shaftWidthNatural = 21.5;
 
       // vertical partition of shaft: upper (177) and lower (95)
       const upperPortionH = 177;
@@ -138,10 +134,10 @@ export default function PinTumbler({
       const gapsTotal = shaftsBlockWidth - pinCount * shaftWidthNatural;
       const gapNatural = gapsTotal / (pinCount - 1);
 
-      // position shafts block vertically: according to your measurements there is ~20px above
+      // position shafts block vertically
       const shaftsBlockTop = 20;
 
-      // map slider 0..120 to pixel travel: driver travel spans the lower portion of the shafts
+      // map slider 0..120 to pixel travel: driver only in lower portion
       const travelNatural = lowerPortionH; // natural px travel for full driver movement
       setEffectiveTravel(travelNatural * newScale);
 
@@ -155,7 +151,7 @@ export default function PinTumbler({
         centers.push({ x: cx, y: cy });
       }
 
-      // SHEAR LINE CALCULATED 📏📏📏📏📏
+      /*---------Shear Line calculations -----*/
       // each shaft (natural) is 22px by 272px
       const shaftInnerNatural = 272;
       const shearNaturalY = shaftsBlockTop + upperPortionH; // natural Y of shear line
@@ -182,13 +178,12 @@ export default function PinTumbler({
     };
   }, [pinCount, alignToGrid, gridSize]);
 
-  // initialize click Audio once
+  // Click Audio once
   useEffect(() => {
     try {
-      // public folder served at root: /sounds/click.wav
       clickAudioRef.current = new Audio("/sounds/click.wav");
       clickAudioRef.current.volume = 0.6;
-      // load lock open sound
+      // lock open sound
       lockOpenAudioRef.current = new Audio("/sounds/lockopen.wav");
       lockOpenAudioRef.current.volume = 0.8;
     } catch (err) {
@@ -196,16 +191,15 @@ export default function PinTumbler({
     }
   }, []);
 
-  // Play click when any pin transitions from unset -> set
+  // Play click when pin: unset -> set
   useEffect(() => {
     const prev = prevSetRef.current;
     for (let i = 0; i < setPinsStatus.length; i++) {
       if (setPinsStatus[i] && !prev[i]) {
-        // play click
         try {
           const audio = clickAudioRef.current;
           if (audio) {
-            // clone to allow overlapping clicks
+            // allow overlapping clicks
             const snd = audio.cloneNode();
             void snd.play();
           }
@@ -214,11 +208,11 @@ export default function PinTumbler({
         }
       }
     }
-    // update prev
+
     prevSetRef.current = [...setPinsStatus];
   }, [setPinsStatus]);
 
-  // Play lock open sound when unlocked prop becomes true
+  // Play lock open sound when unlocked = true
   useEffect(() => {
     if (!unlocked) return;
     try {
@@ -259,7 +253,7 @@ export default function PinTumbler({
           let t = (height / 120) * effectiveTravel;
           t = Math.max(0, Math.min(t, effectiveTravel));
 
-          // driver/key transforms driven directly by t
+          // driver/key transforms driven directly
 
           const shaft = shafts[i] || {
             x: 80,
@@ -330,7 +324,7 @@ export default function PinTumbler({
             </div>
           );
         })}
-        {/* shackle should be on top of pins */}
+        {/* Shackle on top */}
         <img
           src={unlocked ? shackleOpen : shackleClosed}
           alt={unlocked ? "Shackle open" : "Shackle closed"}
@@ -338,7 +332,7 @@ export default function PinTumbler({
         />
       </div>
 
-      {/* 🕹️ Sliders */}
+      {/* Sliders */}
       <div className="pin-controls">
         {pins.map((height, i) => (
           <input
@@ -352,7 +346,7 @@ export default function PinTumbler({
         ))}
       </div>
 
-      {/* 🔘 Buttons */}
+      {/* Buttons */}
       <div style={{ marginTop: "1rem" }}>
         <button className="unlock-button" onClick={handleSubmit}>
           Unlock
