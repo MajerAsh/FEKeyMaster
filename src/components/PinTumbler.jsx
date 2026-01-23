@@ -5,7 +5,6 @@ import "../styles/PinTumbler.css";
 import lockBody from "../assets/lockbody.png";
 import shackleClosed from "../assets/shackleClosed.png";
 import shackleOpen from "../assets/shackleOpen.png";
-//import shackleSpringClosed from "../assets/shackle-springClosed.png";
 
 // Pin components (drivers, key pins, springs)
 import driver from "../assets/driver.png";
@@ -17,7 +16,7 @@ export default function PinTumbler({
   pinCount = 5,
   solutionCode = [],
   onSubmit,
-  onReset, // optional callback from parent to clear messages
+  onReset,
   showGuides = true, //to toggle the tuning overlay/ grid
   alignToGrid = true,
   gridSize = 5,
@@ -25,12 +24,12 @@ export default function PinTumbler({
 }) {
   const [pins, setPins] = useState(Array(pinCount).fill(0));
   const [setPinsStatus, setSetPinsStatus] = useState(
-    Array(pinCount).fill(false)
+    Array(pinCount).fill(false),
   );
-  // audio for pin set click
+
   const clickAudioRef = useRef(null);
   const lockOpenAudioRef = useRef(null);
-  // keep previous set status so we can detect transitions false->true
+  // keep previous set status to detect transitions false->true
   const prevSetRef = useRef(Array(pinCount).fill(false));
 
   // Reset pins when puzzle changes
@@ -56,7 +55,7 @@ export default function PinTumbler({
     console.log(
       `Pin ${index + 1} | Height: ${height} | Target: ${target} | Set: ${
         newStatus[index]
-      }`
+      }`,
     );
 
     setPins(newPins);
@@ -71,19 +70,16 @@ export default function PinTumbler({
 
   function handleSubmit(e) {
     e.preventDefault();
-    // Submit the current pins to the parent — the parent will determine success
     onSubmit(pins);
   }
-
-  // refs + responsive geometry:  component reads the image natural width/height at runtime
-  // (via bodyRef.current.naturalWidth/naturalHeight) and falls back to 1332×552 if not available.
+  /*------------------ Scaling and responsive geometry (solution dependency) ---------------*/
+  /*component reads the image natural width/height at runtime
+  (via bodyRef.current.naturalWidth/naturalHeight) and falls back to 1332×552 if not available.*/
   const sceneRef = useRef(null);
   const bodyRef = useRef(null);
-  // scale removed (not used directly) - kept computed in layout calculations
   const [effectiveTravel, setEffectiveTravel] = useState(120);
   const [shafts, setShafts] = useState([]);
 
-  // one shared asset per part (repeat per pin)
   const drivers = Array(pinCount).fill(driver);
   const keys = Array(pinCount).fill(key);
 
@@ -104,7 +100,7 @@ export default function PinTumbler({
         const availableW = scene.clientWidth || renderedW;
         const snappedW = Math.max(
           gridSize,
-          Math.round(availableW / gridSize) * gridSize
+          Math.round(availableW / gridSize) * gridSize,
         );
         const snappedH = Math.round((snappedW / naturalW) * naturalH);
         // Apply snapped pixel-perfect size to the body image to keep coordinate math integer-aligned
@@ -330,7 +326,7 @@ export default function PinTumbler({
             </div>
           );
         })}
-        {/* shackle should be on top of pins */}
+        {/* Shackle on top */}
         <img
           src={unlocked ? shackleOpen : shackleClosed}
           alt={unlocked ? "Shackle open" : "Shackle closed"}
@@ -338,7 +334,7 @@ export default function PinTumbler({
         />
       </div>
 
-      {/* 🕹️ Sliders */}
+      {/* Sliders */}
       <div className="pin-controls">
         {pins.map((height, i) => (
           <input
@@ -352,7 +348,7 @@ export default function PinTumbler({
         ))}
       </div>
 
-      {/* 🔘 Buttons */}
+      {/* Buttons */}
       <div style={{ marginTop: "1rem" }}>
         <button className="unlock-button" onClick={handleSubmit}>
           Unlock
