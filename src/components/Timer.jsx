@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 
-/* Props:
-- running (bool) : when true timer runs, when false it stops and calls onStop
-- onStop(elapsedSeconds) : called once when timer stops (with integer seconds)*/
 export default function Timer({ running = true, onStop, intervalMs = 200 }) {
   const startRef = useRef(null);
   const timerRef = useRef(null);
@@ -31,7 +28,7 @@ export default function Timer({ running = true, onStop, intervalMs = 200 }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running]);
 
-  // tesx for debugging but invisible by default.
+  // text for debugging [invisible by default]
   return (
     <div style={{ display: "none" }} aria-hidden>
       {Math.max(0, Math.round(elapsedMs / 1000))}
