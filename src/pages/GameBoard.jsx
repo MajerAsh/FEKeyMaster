@@ -253,7 +253,7 @@ export default function GameBoard() {
             />
           )}
 
-          {/* Timer (not displayed) Starts when puzzle loads, stops when `unlocked`*/}
+          {/* Timer starts when puzzle loads, stops when `unlocked`*/}
           <Timer
             key={timerKey}
             running={!unlocked}
