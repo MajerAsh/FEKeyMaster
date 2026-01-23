@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "../styles/DialLock.css";
-import OverlayMessage from "./OverlayMessage"; // adjust path if needed
+import OverlayMessage from "./OverlayMessage";
 
 const DIAL_RANGE = 40;
 const DEGREES_PER_TICK = 360 / DIAL_RANGE; // 9
@@ -37,11 +37,10 @@ export default function DialLock({
   const step2StiffPosRef = useRef(null);
   const step2StiffCountRef = useRef(0);
 
-  // Assist flags (useRef so we don't trigger re-renders)
+  // Assist flags/useRef to not trigger re-renders
   const step1AssistShownRef = useRef(false);
   const step3AssistShownRef = useRef(false);
 
-  // Audio
   const clickAudio = useRef(null);
   const subClickAudio = useRef(null);
   const lockOpenAudio = useRef(null);
@@ -82,7 +81,7 @@ export default function DialLock({
     }
   }, [step]);
 
-  // Close overlays when the user interacts anywhere
+  // Close message on click
   useEffect(() => {
     if (!overlay.message) return;
     const onDocPointer = () => closeOverlay();
@@ -90,7 +89,6 @@ export default function DialLock({
     return () => document.removeEventListener("pointerdown", onDocPointer);
   }, [overlay.message]);
 
-  // Play lock sound when unlocked
   useEffect(() => {
     if (unlocked) playSound(lockOpenAudio);
   }, [unlocked]);
@@ -278,7 +276,6 @@ export default function DialLock({
     step3AssistShownRef.current = false;
 
     closeOverlay();
-    // showOverlay("Reset. Start again.", "info");
     onReset?.();
   }
 
