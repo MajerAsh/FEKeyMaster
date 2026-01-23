@@ -66,7 +66,7 @@ export default function DialLock({
     if (!step1AssistShownRef.current) {
       showOverlay(
         "Turn counter-clockwise and listen for a click — then add 5. That’s the first number.",
-        "assist"
+        "assist",
       );
       step1AssistShownRef.current = true;
     }
@@ -76,7 +76,7 @@ export default function DialLock({
     if (step === 2 && !step3AssistShownRef.current) {
       showOverlay(
         "Turn clockwise — when you hear a louder click, that's the number.",
-        "assist"
+        "assist",
       );
       step3AssistShownRef.current = true;
     }
@@ -119,7 +119,8 @@ export default function DialLock({
   function handleStep2Turn(direction, newValue) {
     const target = targets[1];
 
-    // Require a full CCW rotation before stiff-zone behavior applies
+    /*---------- Stiff zone logic-----*/
+    // Require a full rotation before stiff-zone behavior applies
     if (!step2FullRotationRef.current) {
       if (direction === -1) {
         step2CcwCountRef.current += 1;
@@ -130,7 +131,7 @@ export default function DialLock({
       return;
     }
 
-    // Clockwise allowed, but it resets stiff-zone counters
+    // Turn direction can reset stiff-zone
     if (direction === 1) {
       step2StiffPosRef.current = null;
       step2StiffCountRef.current = 0;
@@ -138,7 +139,6 @@ export default function DialLock({
       return;
     }
 
-    // CCW stiff zone: last 5 numbers before target
     const distToTargetCCW = (newValue - target + DIAL_RANGE) % DIAL_RANGE;
     if (distToTargetCCW > 0 && distToTargetCCW <= 5) {
       const pos = newValue;
@@ -156,14 +156,13 @@ export default function DialLock({
       step2StiffCountRef.current = 0;
     }
 
-    // Prevent moving past the target CCW
+    // Prevent moving past the target
     if (newValue === norm(target - 1)) return;
 
     applyTurn(direction, newValue);
   }
 
   function handleStep3Turn(direction, newValue) {
-    // Step 3 requires clockwise movement
     if (direction !== 1) {
       showOverlay("Turn clockwise to find the third number.", "hint");
       return;
@@ -185,13 +184,11 @@ export default function DialLock({
     if (step === 1) return handleStep2Turn(direction, newValue);
     if (step === 2) return handleStep3Turn(direction, newValue);
 
-    // Beyond expected steps: allow turning but no extra logic
     applyTurn(direction, newValue);
   }
 
   function handleConfirmNumber() {
     if (step >= comboLength) {
-      // showOverlay("All numbers already entered.", "info");
       return;
     }
 
@@ -208,7 +205,7 @@ export default function DialLock({
         playSound(subClickAudio);
         showOverlay(
           "Add 5 to the click position — that’s the first number.",
-          "info"
+          "info",
         );
       }
       if (current === correctNumber) playSound(clickAudio);
@@ -218,7 +215,7 @@ export default function DialLock({
       step2FullRotationRef.current = false;
       showOverlay(
         "Second number: turn counter-clockwise one full rotation, then feel for resistance.",
-        "assist"
+        "assist",
       );
     }
 
@@ -226,7 +223,7 @@ export default function DialLock({
       if (dir !== -1)
         return showOverlay(
           "Turn counter-clockwise to confirm the second number.",
-          "hint"
+          "hint",
         );
       if (current === targets[1]) playSound(clickAudio);
     }
@@ -235,7 +232,7 @@ export default function DialLock({
       if (dir !== 1)
         return showOverlay(
           "Turn clockwise to confirm the third number.",
-          "hint"
+          "hint",
         );
       if (current === targets[2]) playSound(clickAudio);
       else showOverlay("Listen for a different click.", "info");
@@ -261,7 +258,7 @@ export default function DialLock({
 
     showOverlay(
       correct ? "Unlocked!" : "Incorrect combination.",
-      correct ? "success" : "error"
+      correct ? "success" : "error",
     );
   }
 
