@@ -1,26 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 
-// Simple Timer component
-// Props:
-// - running (bool) : when true timer runs, when false it stops and calls onStop
-// - onStop(elapsedSeconds) : called once when timer stops (with integer seconds)
-// - intervalMs (optional) : update interval in ms
+/* Props:
+- running (bool) : when true timer runs, when false it stops and calls onStop
+- onStop(elapsedSeconds) : called once when timer stops (with integer seconds)*/
 export default function Timer({ running = true, onStop, intervalMs = 200 }) {
   const startRef = useRef(null);
   const timerRef = useRef(null);
   const [elapsedMs, setElapsedMs] = useState(0);
 
-  // start timer on mount or when running becomes true
   useEffect(() => {
     if (running) {
-      // start or resume
+      //start
       if (!startRef.current) startRef.current = Date.now();
       timerRef.current = setInterval(() => {
         setElapsedMs((Date.now() - startRef.current) | 0);
       }, intervalMs);
       return () => clearInterval(timerRef.current);
     } else {
-      // stopped: clear and call onStop once
+      //stop
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
@@ -34,7 +31,7 @@ export default function Timer({ running = true, onStop, intervalMs = 200 }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running]);
 
-  // Expose a small textual render for debugging; invisible by default.
+  // tesx for debugging but invisible by default.
   return (
     <div style={{ display: "none" }} aria-hidden>
       {Math.max(0, Math.round(elapsedMs / 1000))}
