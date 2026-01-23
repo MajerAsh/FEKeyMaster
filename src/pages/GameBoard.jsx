@@ -71,7 +71,6 @@ export default function GameBoard() {
   if (!puzzle) return <p>Loading puzzle...</p>;
 
   async function handleAttempt(attemptArray) {
-    // increment attempts each time Unlock is pressed
     setAttempts((a) => a + 1);
     setMessage("");
 
@@ -96,7 +95,7 @@ export default function GameBoard() {
       setUnlocked(true);
 
       if (isDemo) return;
-      // Persist result but don't block UI; log any server-side errors
+      // Persist result; log any server-side errors
       apiFetch(
         "/puzzles/solve",
         {
@@ -179,7 +178,7 @@ export default function GameBoard() {
   try {
     if (puzzle?.solution_code) {
       /* NOTE: solution_code should NOT be returned from the server for deployed DBs.
-       If present (local dev), parse it. Otherwise fall back to a sensible
+     AS SOON AS YOU CAN: parse it. Otherwise fall back to a
      default length per puzzle type so the UI can render without revealing answers.*/
       parsedCode = JSON.parse(puzzle.solution_code);
     } else {
@@ -258,7 +257,6 @@ export default function GameBoard() {
             key={timerKey}
             running={!unlocked}
             onStop={(secs) => {
-              // when timer stops because unlocked is true, submit score
               if (unlocked) submitScore(secs);
             }}
           />
