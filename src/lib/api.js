@@ -1,7 +1,9 @@
 /* Small API helper for VITE_API_URL fetch calls.
  Centralizes base URL, optional Authorization, JSON conveniences, and error normalization.*/
 
-export const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001";
+export const API_BASE = (
+  import.meta.env.VITE_API_URL || "http://localhost:3001"
+).replace(/\/+$/, "");
 
 /**
  * apiFetch - wrapper around fetch that prefixes the API base, sets JSON
