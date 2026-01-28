@@ -30,6 +30,7 @@ export async function apiFetch(path, options = {}, token) {
   // Read text to avoid JSON.parse throwing on empty responses
   const text = await res.text().catch(() => "");
   let data = null;
+
   try {
     data = text ? JSON.parse(text) : null;
   } catch {
