@@ -1,11 +1,11 @@
-/* Small API helper for VITE_API_URL fetch calls.
-Centralizes the base URL and small conveniences like JSON headers,
- optional Authorization injection, and standardized error handling.*/
-
-export const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001";
-
-// show which API base the client will use
-console.log("API_BASE ->", API_BASE);
+/**
+ * API fetch helper for VITE_API_URL requests.
+ * Centralizes base URL usage, JSON headers, optional Authorization,
+ * and normalized error handling.
+ */
+export const API_BASE = (
+  import.meta.env.VITE_API_URL || "http://localhost:3001"
+).replace(/\/+$/, "");
 
 /**
  * apiFetch - wrapper around fetch that prefixes the API base, sets JSON
@@ -30,6 +30,7 @@ export async function apiFetch(path, options = {}, token) {
   // Read text to avoid JSON.parse throwing on empty responses
   const text = await res.text().catch(() => "");
   let data = null;
+
   try {
     data = text ? JSON.parse(text) : null;
   } catch {
@@ -39,7 +40,7 @@ export async function apiFetch(path, options = {}, token) {
 
   if (!res.ok) {
     const err = new Error(
-      (data && data.error) || `Request failed (${res.status})`
+      (data && data.error) || `Request failed (${res.status})`,
     );
     err.status = res.status;
     err.body = data;
