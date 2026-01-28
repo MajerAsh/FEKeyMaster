@@ -12,7 +12,7 @@ export const API_BASE = (
  * headers, optionally injects a Bearer token, and throws on non-OK responses.
  *
  * @param {string} path - Path w '/' (e.g. '/puzzles') or a full URL
- * @param {object} options - fetch options (method, body, headers...+)
+ * @param {object} options - fetch options (method, body, headers, ect)
  * @param {string} [token] - Bearer token to include in Authorization header (not required)
  */
 export async function apiFetch(path, options = {}, token) {
