@@ -38,11 +38,9 @@ export async function apiFetch(path, options = {}, token) {
   }
 
   if (!res.ok) {
-    (data && (data.error || data.message)) ||
-      (text && text.trim()) ||
-      `Request failed (${res.status})`;
-
-    const err = new Error(message);
+    const err = new Error(
+      (data && data.error) || `Request failed (${res.status})`,
+    );
     err.status = res.status;
     err.body = data;
     throw err;
