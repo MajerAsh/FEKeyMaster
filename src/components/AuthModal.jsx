@@ -39,7 +39,6 @@ export default function AuthModal({ onClose, onSuccess }) {
         body: JSON.stringify(payload),
       });
 
-      // update auth context and navigate
       login(data.user, data.token);
 
       if (onSuccess) onSuccess();
