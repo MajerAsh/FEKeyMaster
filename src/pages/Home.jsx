@@ -35,12 +35,11 @@ used a ResizeObserver so the
 
     let frameIndex = 0;
     let intervalId = null;
-    const PAUSE_BETWEEN_LOOPS_MS = 3000; // pause 3s after the last frame
+    const PAUSE_BETWEEN_LOOPS_MS = 3000;
 
     function update() {
       const wrapperW = wrapper.clientWidth;
       const wrapperH = wrapper.clientHeight;
-      // Use the image's natural size to compute the displayed image
       const natW = img.naturalWidth || 1693;
       const natH = img.naturalHeight || 1667;
       const scale = Math.min(wrapperW / natW, wrapperH / natH);
