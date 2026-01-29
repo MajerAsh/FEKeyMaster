@@ -27,8 +27,8 @@ used a ResizeObserver so the
     if (!wrapper || !sprite || !img) return;
 
     const FRAME_COUNT = 15;
-    const FRAME_NATIVE_W = 144; // each frame natural width in px
-    const FRAME_NATIVE_H = 145; // " " natural height in px
+    const FRAME_NATIVE_W = 144;
+    const FRAME_NATIVE_H = 145;
 
     const TOTAL_ANIMATION_MS = 1500;
     const FRAME_DURATION_MS = TOTAL_ANIMATION_MS / FRAME_COUNT;
