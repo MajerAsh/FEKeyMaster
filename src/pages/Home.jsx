@@ -12,13 +12,13 @@ export default function Home() {
   const spriteRef = useRef(null);
   const imgRef = useRef(null);
 
-  // Cat center (from Procreate measurements)
+  // Cat center (native)
   const CAT_CENTER_X = 0.3059; // 30.59% from left
   const CAT_CENTER_Y = 0.854; // 85.40% from top
 
-  /* Position the sprite in px inside the procreate img wrapper so it remains
+  /* Position the sprite in px inside the native wrapper so it remains
   locked to the image as it scales. 
-used a ResizeObserver so the
+  ResizeObserver -
  sprite updates whenever the artwork box changes size.*/
   useLayoutEffect(() => {
     const wrapper = wrapperRef.current;
