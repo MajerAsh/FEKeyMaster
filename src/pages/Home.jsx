@@ -41,7 +41,6 @@ used a ResizeObserver so the
       const wrapperW = wrapper.clientWidth;
       const wrapperH = wrapper.clientHeight;
       // Use the image's natural size to compute the displayed image
-      // rectangle inside the wrapper (object-fit: contain behavior).
       const natW = img.naturalWidth || 1693;
       const natH = img.naturalHeight || 1667;
       const scale = Math.min(wrapperW / natW, wrapperH / natH);
