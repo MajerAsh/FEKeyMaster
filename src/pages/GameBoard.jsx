@@ -29,8 +29,6 @@ export default function GameBoard() {
   const demo = searchParams.get("demo");
   const isDemo = demo === "dial" || demo === "pin" || demo === "1";
 
-  console.log("GameBoard id:", id, "puzzles:", puzzles);
-
   useEffect(() => {
     async function load() {
       if (isDemo) {
@@ -39,7 +37,6 @@ export default function GameBoard() {
         const pid = Number.parseInt(id, 10);
         const p = getDemoPuzzle(Number.isFinite(pid) ? pid : null, demoType);
         setPuzzle(p);
-        console.log("Found DEMO puzzle:", p);
         return;
       }
       // Non-demo token
@@ -53,7 +50,6 @@ export default function GameBoard() {
       }
       const found = puzzles.find((p) => p.id === parseInt(id));
       setPuzzle(found);
-      console.log("Found puzzle:", found);
     }
     load();
   }, [id, puzzles, fetchPuzzles, token, isDemo, demo, navigate]);
@@ -189,12 +185,6 @@ export default function GameBoard() {
   } catch (err) {
     console.error("Failed to parse puzzle.solution_code:", err);
   }
-  console.log(
-    "parsedCode",
-    parsedCode,
-    "raw solution_code",
-    puzzle?.solution_code,
-  );
 
   return (
     <div className="game-root">
