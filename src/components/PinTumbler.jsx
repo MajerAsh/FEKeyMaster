@@ -50,12 +50,6 @@ export default function PinTumbler({
       newStatus[index] = false;
     }
 
-    console.log(
-      `Pin ${index + 1} | Height: ${height} | Target: ${target} | Set: ${
-        newStatus[index]
-      }`,
-    );
-
     setPins(newPins);
     setIsPinSet(newStatus);
   }
