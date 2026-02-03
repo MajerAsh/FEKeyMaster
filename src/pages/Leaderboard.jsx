@@ -64,9 +64,8 @@ export default function Leaderboard() {
             <h2 className="leader-title">Leaderboard</h2>
 
             <div className="leader-actions">
-              <button type="button" onClick={() => navigate("/play")}>← Back</button>
+              <button onClick={() => navigate("/play")}>← Back</button>
               <button
-                type="button"
                 onClick={() => {
                   logout();
                   navigate("/");
@@ -83,21 +82,18 @@ export default function Leaderboard() {
             aria-label="Leaderboard filter"
           >
             <button
-              type="button"
               className={mode === "overall" ? "active" : ""}
               onClick={() => setMode("overall")}
             >
               Overall
             </button>
             <button
-              type="button"
               className={mode === "dial" ? "active" : ""}
               onClick={() => setMode("dial")}
             >
               DialLock
             </button>
             <button
-              type="button"
               className={mode === "pin" ? "active" : ""}
               onClick={() => setMode("pin")}
             >
