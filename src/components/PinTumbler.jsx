@@ -12,8 +12,33 @@ import driverGreen from "../assets/driverGreen.png";
 import key from "../assets/key.png";
 import springs from "../assets/springs.png";
 
+const DEFAULT_PIN_COUNT = 5;
+const SLIDER_MIN = 0;
+const SLIDER_MAX = 120;
+const SET_TOLERANCE = 2;
+const FALLBACK_BODY_W = 1332;
+const FALLBACK_BODY_H = 552;
+const SHAFTS_BLOCK_LEFT = 219;
+const SHAFTS_BLOCK_WIDTH = 205;
+const SHAFT_WIDTH_NATURAL = 21.5;
+const UPPER_PORTION_H = 177;
+const LOWER_PORTION_H = 95;
+const SHAFTS_BLOCK_TOP = 20;
+const SHAFT_INNER_NATURAL = 272;
+const BASELINE_KEY_HEIGHT = 76;
+const BASELINE_SOLUTION = 20;
+const SHEARLINE_OFFSET = 20;
+const DEFAULT_RENDERED_H = 400;
+const DEFAULT_SHAFT_FALLBACK = {
+  x: 80,
+  top: 40,
+  innerLength: 200,
+  width: 24,
+  shearX: 73,
+};
+
 export default function PinTumbler({
-  pinCount = 5,
+  pinCount = DEFAULT_PIN_COUNT,
   solutionCode = [],
   onSubmit,
   onReset,
@@ -44,17 +69,11 @@ export default function PinTumbler({
     newPins[index] = height;
 
     const target = parseInt(solutionCode[index]);
-    if (!isNaN(target) && Math.abs(height - target) <= 2) {
+    if (!isNaN(target) && Math.abs(height - target) <= SET_TOLERANCE) {
       newStatus[index] = true;
     } else {
       newStatus[index] = false;
     }
-
-    console.log(
-      `Pin ${index + 1} | Height: ${height} | Target: ${target} | Set: ${
-        newStatus[index]
-      }`,
-    );
 
     setPins(newPins);
     setIsPinSet(newStatus);
@@ -90,8 +109,8 @@ export default function PinTumbler({
       let renderedW = body.clientWidth || body.getBoundingClientRect().width;
       let renderedH = body.clientHeight || body.getBoundingClientRect().height;
 
-      const naturalW = body.naturalWidth || 1332;
-      const naturalH = body.naturalHeight || 552;
+      const naturalW = body.naturalWidth || FALLBACK_BODY_W;
+      const naturalH = body.naturalHeight || FALLBACK_BODY_H;
 
       // Snap rendered dimensions so they align to a grid (e.g. 5px)
       if (alignToGrid && scene) {
@@ -115,15 +134,15 @@ export default function PinTumbler({
       Whole canvas: naturalW x naturalH (1330 x 552)
      Shafts block: total area for 5 shafts + 4 gaps is 205 x 273
      Positioned at natural X = 219 (space to the left of shafts = 219)*/
-      const shaftsBlockLeft = 219;
-      const shaftsBlockWidth = 205;
+      const shaftsBlockLeft = SHAFTS_BLOCK_LEFT;
+      const shaftsBlockWidth = SHAFTS_BLOCK_WIDTH;
 
       // per-part natural sizes
-      const shaftWidthNatural = 21.5;
+      const shaftWidthNatural = SHAFT_WIDTH_NATURAL;
 
       // vertical partition of shaft: upper (177) and lower (95)
-      const upperPortionH = 177;
-      const lowerPortionH = 95;
+      const upperPortionH = UPPER_PORTION_H;
+      const lowerPortionH = LOWER_PORTION_H;
 
       // derive shafts block height from upper+lower
       const shaftsBlockHeight = upperPortionH + lowerPortionH;
@@ -133,7 +152,7 @@ export default function PinTumbler({
       const gapNatural = gapsTotal / (pinCount - 1);
 
       // position shafts block vertically
-      const shaftsBlockTop = 20;
+      const shaftsBlockTop = SHAFTS_BLOCK_TOP;
 
       // map slider 0..120 to pixel travel: driver only in lower portion
       const travelNatural = lowerPortionH; // natural px travel for full driver movement
@@ -151,7 +170,7 @@ export default function PinTumbler({
 
       /*---------Shear Line calculations -----*/
       // each shaft (natural) is 22px by 272px
-      const shaftInnerNatural = 272;
+      const shaftInnerNatural = SHAFT_INNER_NATURAL;
       const shearNaturalY = shaftsBlockTop + upperPortionH; // natural Y of shear line
 
       const newShafts = centers.map((c) => ({
@@ -245,21 +264,15 @@ export default function PinTumbler({
         {/* Dynamic pins - each pin-layer is anchored to a computed shaft box */}
         {pins.map((height, i) => {
           const target = parseInt(solutionCode[i]) || 0;
-          const isSet = Math.abs(pins[i] - target) <= 2;
+          const isSet = Math.abs(pins[i] - target) <= SET_TOLERANCE;
 
           // compute movement in px based on effectiveTravel
-          let t = (height / 120) * effectiveTravel;
+          let t = (height / SLIDER_MAX) * effectiveTravel;
           t = Math.max(0, Math.min(t, effectiveTravel));
 
           // driver/key transforms driven directly
 
-          const shaft = shafts[i] || {
-            x: 80,
-            top: 40,
-            innerLength: 200,
-            width: 24,
-            shearX: 73,
-          };
+          const shaft = shafts[i] || DEFAULT_SHAFT_FALLBACK;
 
           const pinLayerStyle = {
             left: `${shaft.x - shaft.width / 2}px`,
@@ -298,22 +311,25 @@ export default function PinTumbler({
                   style={{
                     height: `${(() => {
                       // Pin 4 (solution 20) works perfectly at 76px natural height
-                      const baselineHeight = 76; // keep pin 4 at 76px for solution 20
-                      const baselineSolution = 20; // pin 4's solution value
-                      const currentSolution = parseInt(solutionCode[i]) || 20;
+                      const baselineHeight = BASELINE_KEY_HEIGHT; // keep pin 4 at 76px for solution 20
+                      const baselineSolution = BASELINE_SOLUTION; // pin 4's solution value
+                      const currentSolution =
+                        parseInt(solutionCode[i]) || BASELINE_SOLUTION;
 
                       // Calculate natural height using inverse relationship
                       let keyHeightNatural =
                         (baselineHeight * baselineSolution) / currentSolution;
 
                       // Apply shear line offset only to pins other than pin 4
-                      if (currentSolution !== 20) {
-                        keyHeightNatural += 20; // adjust for visual shear line alignment
+                      if (currentSolution !== BASELINE_SOLUTION) {
+                        keyHeightNatural += SHEARLINE_OFFSET; // adjust for visual shear line alignment
                       }
 
                       // Convert to rendered pixels
-                      const naturalH = bodyRef.current?.naturalHeight || 552;
-                      const renderedH = bodyRef.current?.clientHeight || 400;
+                      const naturalH =
+                        bodyRef.current?.naturalHeight || FALLBACK_BODY_H;
+                      const renderedH =
+                        bodyRef.current?.clientHeight || DEFAULT_RENDERED_H;
                       return (keyHeightNatural / naturalH) * renderedH;
                     })()}px`,
                   }}
@@ -336,8 +352,8 @@ export default function PinTumbler({
           <input
             key={i}
             type="range"
-            min="0"
-            max="120"
+            min={SLIDER_MIN}
+            max={SLIDER_MAX}
             value={height}
             onChange={(e) => handleChange(i, e.target.value)}
           />
