@@ -64,10 +64,12 @@ export default function Leaderboard() {
             <h2 className="leader-title">Leaderboard</h2>
 
             <div className="leader-actions">
-              <button onClick={() => navigate("/play")}>← Back</button>
+              <button type="button" onClick={() => navigate("/play")}>
+                ← Back
+              </button>
               <button
+                type="button"
                 onClick={() => {
-                  logout();
                   navigate("/");
                 }}
               >
@@ -114,8 +116,8 @@ export default function Leaderboard() {
                     mode === "dial"
                       ? r.best_dial_time
                       : mode === "pin"
-                      ? r.best_pin_time
-                      : r.best_time;
+                        ? r.best_pin_time
+                        : r.best_time;
 
                   return (
                     <div key={r.user_id} className={`podium-card rank-${rank}`}>
@@ -158,8 +160,8 @@ export default function Leaderboard() {
                     mode === "dial"
                       ? r.best_dial_time
                       : mode === "pin"
-                      ? r.best_pin_time
-                      : r.best_time;
+                        ? r.best_pin_time
+                        : r.best_time;
 
                   return (
                     <div className="leader-row" key={r.user_id}>
