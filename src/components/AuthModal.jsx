@@ -53,7 +53,12 @@ export default function AuthModal({ onClose, onSuccess }) {
   return (
     <div className="auth-backdrop">
       <div className="auth-modal">
-        <button className="auth-close" onClick={onClose} aria-label="Close">
+        <button
+          type="button"
+          className="auth-close"
+          onClick={onClose}
+          aria-label="Close"
+        >
           ✕
         </button>
 
@@ -62,6 +67,7 @@ export default function AuthModal({ onClose, onSuccess }) {
 
         <div className="auth-switch">
           <button
+            type="button"
             className={mode === "login" ? "active" : ""}
             onClick={() => {
               setMode("login");
