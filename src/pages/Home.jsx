@@ -143,7 +143,12 @@ export default function Home() {
           </>
         )}
 
-        <button className="play-btn" onClick={handlePlay} aria-label="Play">
+        <button
+          type="button"
+          className="play-btn"
+          onClick={handlePlay}
+          aria-label="Play"
+        >
           <span className="arrow">▶</span>
           <span className="play-text">Play</span>
         </button>
