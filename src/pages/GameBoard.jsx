@@ -210,6 +210,7 @@ export default function GameBoard() {
             <button
               type="button"
               onClick={() => {
+                logout();
                 navigate("/");
               }}
             >
