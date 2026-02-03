@@ -70,6 +70,7 @@ export default function Leaderboard() {
               <button
                 type="button"
                 onClick={() => {
+                  logout();
                   navigate("/");
                 }}
               >
