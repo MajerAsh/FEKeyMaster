@@ -12,13 +12,13 @@ export default function Home() {
   const spriteRef = useRef(null);
   const imgRef = useRef(null);
 
-  // Cat center (from Procreate measurements)
+  // Cat center (native)
   const CAT_CENTER_X = 0.3059; // 30.59% from left
   const CAT_CENTER_Y = 0.854; // 85.40% from top
 
-  /* Position the sprite in px inside the procreate img wrapper so it remains
+  /* Position the sprite in px inside the native wrapper so it remains
   locked to the image as it scales. 
-used a ResizeObserver so the
+  ResizeObserver -
  sprite updates whenever the artwork box changes size.*/
   useLayoutEffect(() => {
     const wrapper = wrapperRef.current;
@@ -27,21 +27,19 @@ used a ResizeObserver so the
     if (!wrapper || !sprite || !img) return;
 
     const FRAME_COUNT = 15;
-    const FRAME_NATIVE_W = 144; // each frame natural width in px
-    const FRAME_NATIVE_H = 145; // " " natural height in px
-    // Total animation duration (ms). Increase this to slow the loop.
-    const TOTAL_ANIMATION_MS = 1500; // was 900ms, increased for a slower loop
+    const FRAME_NATIVE_W = 144;
+    const FRAME_NATIVE_H = 145;
+
+    const TOTAL_ANIMATION_MS = 1500;
     const FRAME_DURATION_MS = TOTAL_ANIMATION_MS / FRAME_COUNT;
 
     let frameIndex = 0;
     let intervalId = null;
-    const PAUSE_BETWEEN_LOOPS_MS = 3000; // pause 3s after the last frame
+    const PAUSE_BETWEEN_LOOPS_MS = 3000;
 
     function update() {
       const wrapperW = wrapper.clientWidth;
       const wrapperH = wrapper.clientHeight;
-      // Use the image's natural size to compute the displayed image
-      // rectangle inside the wrapper (object-fit: contain behavior).
       const natW = img.naturalWidth || 1693;
       const natH = img.naturalHeight || 1667;
       const scale = Math.min(wrapperW / natW, wrapperH / natH);
@@ -145,7 +143,12 @@ used a ResizeObserver so the
           </>
         )}
 
-        <button className="play-btn" onClick={handlePlay} aria-label="Play">
+        <button
+          type="button"
+          className="play-btn"
+          onClick={handlePlay}
+          aria-label="Play"
+        >
           <span className="arrow">▶</span>
           <span className="play-text">Play</span>
         </button>

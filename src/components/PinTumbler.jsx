@@ -22,10 +22,8 @@ export default function PinTumbler({
   gridSize = 5,
   unlocked = false,
 }) {
-  const [pins, setPins] = useState(Array(pinCount).fill(0));
-  const [setPinsStatus, setSetPinsStatus] = useState(
-    Array(pinCount).fill(false),
-  );
+  const [pins, setPins] = useState(() => Array(pinCount).fill(0));
+  const [isPinSet, setIsPinSet] = useState(() => Array(pinCount).fill(false));
 
   const clickAudioRef = useRef(null);
   const lockOpenAudioRef = useRef(null);
@@ -35,13 +33,13 @@ export default function PinTumbler({
   // Reset pins when puzzle changes
   useEffect(() => {
     setPins(Array(pinCount).fill(0));
-    setSetPinsStatus(Array(pinCount).fill(false));
+    setIsPinSet(Array(pinCount).fill(false));
   }, [pinCount]);
 
   function handleChange(index, value) {
     const height = parseInt(value);
     const newPins = [...pins];
-    const newStatus = [...setPinsStatus];
+    const newStatus = [...isPinSet];
 
     newPins[index] = height;
 
@@ -59,12 +57,12 @@ export default function PinTumbler({
     );
 
     setPins(newPins);
-    setSetPinsStatus(newStatus);
+    setIsPinSet(newStatus);
   }
 
   function handleReset() {
     setPins(Array(pinCount).fill(0));
-    setSetPinsStatus(Array(pinCount).fill(false));
+    setIsPinSet(Array(pinCount).fill(false));
     if (typeof onReset === "function") onReset();
   }
 
@@ -194,8 +192,8 @@ export default function PinTumbler({
   // Play click when pin: unset -> set
   useEffect(() => {
     const prev = prevSetRef.current;
-    for (let i = 0; i < setPinsStatus.length; i++) {
-      if (setPinsStatus[i] && !prev[i]) {
+    for (let i = 0; i < isPinSet.length; i++) {
+      if (isPinSet[i] && !prev[i]) {
         try {
           const audio = clickAudioRef.current;
           if (audio) {
@@ -209,8 +207,8 @@ export default function PinTumbler({
       }
     }
 
-    prevSetRef.current = [...setPinsStatus];
-  }, [setPinsStatus]);
+    prevSetRef.current = [...isPinSet];
+  }, [isPinSet]);
 
   // Play lock open sound when unlocked = true
   useEffect(() => {
@@ -348,10 +346,11 @@ export default function PinTumbler({
 
       {/* Buttons */}
       <div style={{ marginTop: "1rem" }}>
-        <button className="unlock-button" onClick={handleSubmit}>
+        <button type="button" className="unlock-button" onClick={handleSubmit}>
           Unlock
         </button>
         <button
+          type="button"
           className="reset-button"
           onClick={handleReset}
           style={{ marginLeft: "10px" }}
