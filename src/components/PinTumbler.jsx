@@ -195,7 +195,6 @@ export default function PinTumbler({
     };
   }, [pinCount, alignToGrid, gridSize]);
 
-  // Click Audio once
   useEffect(() => {
     try {
       clickAudioRef.current = new Audio("/sounds/click.wav");
@@ -208,7 +207,6 @@ export default function PinTumbler({
     }
   }, []);
 
-  // Play click when pin: unset -> set
   useEffect(() => {
     const prev = prevSetRef.current;
     for (let i = 0; i < isPinSet.length; i++) {
